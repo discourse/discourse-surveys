@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
-module DiscourseSurveys
+module DiscourseSurvey
+  HAS_SURVEYS ||= "has_surveys"
+  DEFAULT_SURVEY_NAME ||= "survey"
+
   class Engine < ::Rails::Engine
-    engine_name "discourse-surveys".freeze
-    isolate_namespace DiscourseSurveys
+    engine_name PLUGIN_NAME
+    isolate_namespace DiscourseSurvey
 
     config.after_initialize do
       Discourse::Application.routes.append do
-        mount ::DiscourseSurveys::Engine, at: "/"
+        mount ::DiscourseSurvey::Engine, at: "/"
       end
     end
   end
