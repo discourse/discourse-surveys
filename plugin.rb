@@ -13,5 +13,12 @@ PLUGIN_NAME ||= 'discourse-surveys'.freeze
 load File.expand_path('lib/discourse-surveys/engine.rb', __dir__)
 
 after_initialize do
-  #
+  %w{
+    ../app/models/survey.rb
+    ../app/models/survey_field.rb
+    ../app/models/survey_field_option.rb
+    ../app/models/survey_response.rb
+  }.each do |path|
+    load File.expand_path(path, __FILE__)
+  end
 end
