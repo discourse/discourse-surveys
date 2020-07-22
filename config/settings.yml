@@ -1,0 +1,4 @@
+plugins:
+  surveys_enabled:
+    default: false
+    client: true
