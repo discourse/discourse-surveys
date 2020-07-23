@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module DiscourseSurvey
-  class SurveysUpdater
+  class SurveyUpdater
 
     SURVEY_ATTRIBUTES ||= %w{status visibility}
 

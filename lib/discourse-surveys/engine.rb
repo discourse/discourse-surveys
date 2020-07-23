@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module DiscourseSurvey
+  PLUGIN_NAME ||= 'discourse-surveys'.freeze
   HAS_SURVEYS ||= "has_surveys"
   DEFAULT_SURVEY_NAME ||= "survey"
 

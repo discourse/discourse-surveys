@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module DiscourseSurvey
-  class SurveysValidator
+  class SurveyValidator
     #
   end
 end

@@ -8,8 +8,6 @@
 
 enabled_site_setting :surveys_enabled
 
-PLUGIN_NAME ||= 'discourse-surveys'.freeze
-
 load File.expand_path('lib/discourse-surveys/engine.rb', __dir__)
 
 after_initialize do
@@ -18,7 +16,10 @@ after_initialize do
     ../app/models/survey_field.rb
     ../app/models/survey_field_option.rb
     ../app/models/survey_response.rb
-    ../app/lib/discourse-surveys/survey.rb
+    ../lib/discourse-surveys/post_validator.rb
+    ../lib/discourse-surveys/survey.rb
+    ../lib/discourse-surveys/survey_updater.rb
+    ../lib/discourse-surveys/survey_validator.rb
   }.each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -52,7 +53,7 @@ after_initialize do
   validate(:post, :validate_surveys) do |force = nil|
     return unless self.raw_changed? || force
 
-    validator = DiscourseSurvey::SurveysValidator.new(self)
+    validator = DiscourseSurvey::SurveyValidator.new(self)
     return unless (surveys = validator.validate_surveys)
 
     if surveys.present?
@@ -62,7 +63,7 @@ after_initialize do
 
     # are we updating a post?
     if self.id.present?
-      DiscourseSurvey::SurveysUpdater.update(self, surveys)
+      DiscourseSurvey::SurveyUpdater.update(self, surveys)
     else
       self.extracted_surveys = surveys
     end
