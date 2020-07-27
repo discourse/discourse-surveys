@@ -49,8 +49,6 @@ function getListItems(tokens, startToken) {
     }
 
     let token = tokens[i];
-    // console.log(token);
-
     if (token.tag === "li") {
       listItems.push([token, buffer.reverse().join(" ")]);
       buffer = [];
@@ -66,40 +64,19 @@ function getListItems(tokens, startToken) {
 
 const surveyRule = {
   tag: 'survey',
+
   before: function(state, tagInfo) {
-    let token = state.push('survey_open', 'div', 1);
-    token.attrs = [];
-    token.attrs.push(['class', 'survey']);
-  },
-  after: function(state) {
-    state.push('survey_close', 'div', -1);
-    console.log(state);
-  }
-}
-
-const surveyFieldRule = {
-  tag: "field",
-
-  before: function(state, tagInfo, raw) {
     let token = state.push("text", "", 0);
-    token.content = raw;
+    token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
-    token.bbcode_type = "field_open";
+    token.bbcode_type = "survey_open";
   },
 
   after: function(state, openToken) {
-    let items = getListItems(state.tokens, openToken);
-    // console.log(items.length);
-
     const attrs = openToken.bbcode_attrs;
-    // console.log(attrs);
 
     // default survey attributes
-    const attributes = [["class", "field"]];
-
-    if (!attrs["status"]) {
-      attributes.push([DATA_PREFIX + "status", "open"]);
-    }
+    const attributes = [["class", "survey"]];
 
     WHITELISTED_ATTRIBUTES.forEach(name => {
       if (attrs[name]) {
@@ -112,25 +89,45 @@ const surveyFieldRule = {
     }
 
     let header = [];
+    let token = new state.Token("survey_open", "div", 1);
+    token.block = true;
+    token.attrs = attributes;
+    header.push(token);
 
+    replaceToken(state.tokens, openToken, header);
+    state.push('survey_close', 'div', -1);
+  }
+}
+
+const surveyFieldRule = {
+  tag: "field",
+
+  before: function(state, tagInfo, raw) {
+    let token = state.push("text", "", 0);
+    token.attrs = [];
+    token.bbcode_attrs = tagInfo.attrs;
+    token.bbcode_type = "field_open";
+  },
+
+  after: function(state, openToken) {
+    const items = getListItems(state.tokens, openToken);
+    const attrs = openToken.bbcode_attrs;
+    const attributes = [["class", "survey-field"]];
+
+    let header = [];
     let token = new state.Token("field_open", "div", 1);
     token.block = true;
     token.attrs = attributes;
     header.push(token);
 
-    token = new state.Token("field_open", "div", 1);
-    token.attrs = [["class", "field-container"]];
-
-    header.push(token);
-
     // flag items so we add hashes
     for (let o = 0; o < items.length; o++) {
-      token = items[o][0];
+      let item_token = items[o][0];
       let text = items[o][1];
 
-      token.attrs = token.attrs || [];
+      item_token.attrs = item_token.attrs || [];
       let md5Hash = md5(JSON.stringify([text]));
-      token.attrs.push([DATA_PREFIX + "option-id", md5Hash]);
+      item_token.attrs.push([DATA_PREFIX + "option-id", md5Hash]);
     }
 
     replaceToken(state.tokens, openToken, header);
@@ -139,7 +136,6 @@ const surveyFieldRule = {
     // we just resequenced
     state.level = state.tokens[state.tokens.length - 1].level;
 
-    state.push("field_close", "div", -1);
     state.push("field_close", "div", -1);
   }
 };
@@ -150,14 +146,15 @@ function newApiInit(helper) {
     opts.surveyMaximumOptions = siteSettings.survey_maximum_options;
   });
   helper.registerPlugin(md => {
-    md.block.bbcode.ruler.push("field", surveyFieldRule);
     md.block.bbcode.ruler.push("survey", surveyRule);
+    md.block.bbcode.ruler.push("field", surveyFieldRule);
   });
 }
 
 export function setup(helper) {
   helper.whiteList([
     "div.survey",
+    "div.survey-field",
     "div.survey-info",
     "div.survey-container",
     "div.survey-buttons",
