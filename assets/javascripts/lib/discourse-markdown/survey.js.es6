@@ -64,20 +64,16 @@ function getListItems(tokens, startToken) {
   return listItems.reverse();
 }
 
-function invalidSurvey(state, tag) {
-  let token = state.push("text", "", 0);
-  token.content = "[/" + tag + "]";
-}
-
 const surveyRule = {
   tag: 'survey',
   before: function(state, tagInfo) {
-    let token = state.push('div_open', 'div', 1);
+    let token = state.push('survey_open', 'div', 1);
     token.attrs = [];
     token.attrs.push(['class', 'survey']);
   },
   after: function(state) {
-    state.push('div_close', 'div', -1);
+    state.push('survey_close', 'div', -1);
+    console.log(state);
   }
 }
 
@@ -91,9 +87,9 @@ const surveyFieldRule = {
     token.bbcode_type = "field_open";
   },
 
-  after: function(state, openToken, raw) {
+  after: function(state, openToken) {
     let items = getListItems(state.tokens, openToken);
-    console.log(items.length);
+    // console.log(items.length);
 
     const attrs = openToken.bbcode_attrs;
     // console.log(attrs);
@@ -143,7 +139,6 @@ const surveyFieldRule = {
     // we just resequenced
     state.level = state.tokens[state.tokens.length - 1].level;
 
-    state.push("field_close", "div", -1);
     state.push("field_close", "div", -1);
     state.push("field_close", "div", -1);
   }
