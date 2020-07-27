@@ -49,7 +49,7 @@ function getListItems(tokens, startToken) {
     }
 
     let token = tokens[i];
-    console.log(token);
+    // console.log(token);
 
     if (token.tag === "li") {
       listItems.push([token, buffer.reverse().join(" ")]);
@@ -123,10 +123,6 @@ const surveyFieldRule = {
     header.push(token);
 
     token = new state.Token("field_open", "div", 1);
-    token.block = true;
-    header.push(token);
-
-    token = new state.Token("field_open", "div", 1);
     token.attrs = [["class", "field-container"]];
 
     header.push(token);
@@ -146,8 +142,6 @@ const surveyFieldRule = {
     // we got to correct the level on the state
     // we just resequenced
     state.level = state.tokens[state.tokens.length - 1].level;
-
-    state.push("field_close", "div", -1);
 
     state.push("field_close", "div", -1);
     state.push("field_close", "div", -1);
