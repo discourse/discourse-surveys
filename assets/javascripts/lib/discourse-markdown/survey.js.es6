@@ -99,23 +99,23 @@ const surveyRule = {
   }
 }
 
-const surveyFieldRule = {
-  tag: "field",
+const surveyRadioRule = {
+  tag: "radio",
 
   before: function(state, tagInfo, raw) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
-    token.bbcode_type = "field_open";
+    token.bbcode_type = "radio_open";
   },
 
   after: function(state, openToken) {
     const items = getListItems(state.tokens, openToken);
     const attrs = openToken.bbcode_attrs;
-    const attributes = [["class", "survey-field"]];
+    const attributes = [["class", "survey-radio"]];
 
     let header = [];
-    let token = new state.Token("field_open", "div", 1);
+    let token = new state.Token("radio_open", "div", 1);
     token.block = true;
     token.attrs = attributes;
     header.push(token);
@@ -136,7 +136,7 @@ const surveyFieldRule = {
     // we just resequenced
     state.level = state.tokens[state.tokens.length - 1].level;
 
-    state.push("field_close", "div", -1);
+    state.push("radio_close", "div", -1);
   }
 };
 
@@ -147,14 +147,14 @@ function newApiInit(helper) {
   });
   helper.registerPlugin(md => {
     md.block.bbcode.ruler.push("survey", surveyRule);
-    md.block.bbcode.ruler.push("field", surveyFieldRule);
+    md.block.bbcode.ruler.push("radio", surveyRadioRule);
   });
 }
 
 export function setup(helper) {
   helper.whiteList([
     "div.survey",
-    "div.survey-field",
+    "div.survey-radio",
     "div.survey-info",
     "div.survey-container",
     "div.survey-buttons",
