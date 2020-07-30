@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 class SurveyField < ActiveRecord::Base
+  has_many :survey_field_options, -> { order(:id) }, dependent: :destroy
+
+  enum response_type: {
+    radio: 0,
+    checkbox: 1,
+    number: 2,
+    text: 3,
+    star: 4,
+    thumbs: 5
+  }
 end
 
 # == Schema Information

@@ -12,7 +12,7 @@ module DiscourseSurvey
     def validate_surveys
       surveys = {}
 
-      Discoursesurvey::Survey::extract(@post.raw, @post.topic_id, @post.user_id).each do |survey|
+      DiscourseSurvey::Survey::extract(@post.raw, @post.topic_id, @post.user_id).each do |survey|
         # return false unless valid_arguments?(survey)
         # return false unless valid_numbers?(survey)
         # return false unless unique_survey_name?(surveys, survey)
@@ -21,6 +21,7 @@ module DiscourseSurvey
         # return false unless at_least_one_option?(survey)
         # return false unless valid_number_of_options?(survey)
         # return false unless valid_multiple_choice_settings?(survey)
+
         surveys[survey["name"]] = survey
       end
 

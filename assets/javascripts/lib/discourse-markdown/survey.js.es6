@@ -10,6 +10,7 @@ const WHITELISTED_ATTRIBUTES = [
   "name",
   "order",
   "public",
+  "question",
   "results",
   "groups",
   "status",
@@ -113,6 +114,13 @@ const surveyRadioRule = {
     const items = getListItems(state.tokens, openToken);
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-radio"]];
+    attributes.push([DATA_PREFIX + "type", "radio"]);
+
+    WHITELISTED_ATTRIBUTES.forEach(name => {
+      if (attrs[name]) {
+        attributes.push([DATA_PREFIX + name, attrs[name]]);
+      }
+    });
 
     let header = [];
     let token = new state.Token("radio_open", "div", 1);
@@ -120,7 +128,6 @@ const surveyRadioRule = {
     token.attrs = attributes;
     header.push(token);
 
-    // flag items so we add hashes
     for (let o = 0; o < items.length; o++) {
       let item_token = items[o][0];
       let text = items[o][1];
@@ -131,12 +138,51 @@ const surveyRadioRule = {
     }
 
     replaceToken(state.tokens, openToken, header);
-
-    // we got to correct the level on the state
-    // we just resequenced
     state.level = state.tokens[state.tokens.length - 1].level;
-
     state.push("radio_close", "div", -1);
+  }
+};
+
+const surveyCheckboxRule = {
+  tag: "checkbox",
+
+  before: function(state, tagInfo, raw) {
+    let token = state.push("text", "", 0);
+    token.attrs = [];
+    token.bbcode_attrs = tagInfo.attrs;
+    token.bbcode_type = "checkbox_open";
+  },
+
+  after: function(state, openToken) {
+    const items = getListItems(state.tokens, openToken);
+    const attrs = openToken.bbcode_attrs;
+    const attributes = [["class", "survey-checkbox"]];
+    attributes.push([DATA_PREFIX + "type", "checkbox"]);
+
+    WHITELISTED_ATTRIBUTES.forEach(name => {
+      if (attrs[name]) {
+        attributes.push([DATA_PREFIX + name, attrs[name]]);
+      }
+    });
+
+    let header = [];
+    let token = new state.Token("checkbox_open", "div", 1);
+    token.block = true;
+    token.attrs = attributes;
+    header.push(token);
+
+    for (let o = 0; o < items.length; o++) {
+      let item_token = items[o][0];
+      let text = items[o][1];
+
+      item_token.attrs = item_token.attrs || [];
+      let md5Hash = md5(JSON.stringify([text]));
+      item_token.attrs.push([DATA_PREFIX + "option-id", md5Hash]);
+    }
+
+    replaceToken(state.tokens, openToken, header);
+    state.level = state.tokens[state.tokens.length - 1].level;
+    state.push("checkbox_close", "div", -1);
   }
 };
 
@@ -148,6 +194,7 @@ function newApiInit(helper) {
   helper.registerPlugin(md => {
     md.block.bbcode.ruler.push("survey", surveyRule);
     md.block.bbcode.ruler.push("radio", surveyRadioRule);
+    md.block.bbcode.ruler.push("checkbox", surveyCheckboxRule);
   });
 }
 
@@ -155,6 +202,7 @@ export function setup(helper) {
   helper.whiteList([
     "div.survey",
     "div.survey-radio",
+    "div.survey-checkbox",
     "div.survey-info",
     "div.survey-container",
     "div.survey-buttons",

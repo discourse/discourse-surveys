@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Survey < ActiveRecord::Base
+  belongs_to :post, -> { unscope(:where) }
+  has_many :survey_fields, -> { order(:id) }, dependent: :destroy
+
+
 end
 
 # == Schema Information
@@ -11,7 +15,6 @@ end
 #  post_id       :bigint
 #  survey_number :integer          default(1), not null
 #  name          :string           default("survey"), not null
-#  user_id       :bigint           not null
 #  active        :boolean          default(TRUE), not null
 #  visibility    :integer          default(0), not null
 #  created_at    :datetime         not null
