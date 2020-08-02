@@ -3,7 +3,7 @@
 class SurveyField < ActiveRecord::Base
   has_many :survey_field_options, -> { order(:id) }, dependent: :destroy
 
-  def response_type
+  def self.response_type
     @response_type ||= Enum.new(:radio, :checkbox, :number, :text, :star, :thumbs, start: 0)
   end
 end

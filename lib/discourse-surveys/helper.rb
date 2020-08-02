@@ -5,28 +5,30 @@ module DiscourseSurvey
     class << self
 
       def create!(post_id, survey = nil)
-        created_survey = Survey.create!(
-          post_id: post_id,
-          survey_number: survey["survey_number"].presence || 1,
-          name: survey["name"].presence || "survey",
-          active: survey["active"].presence || true,
-          visibility: survey["public"] == "true" ? "everyone" : "secret",
-        )
-
-        survey["fields"].each do |field|
-          created_survey_field = SurveyField.create!(
-            survey_id: created_survey.id,
-            digest:  field["field-id"].presence,
-            question: field["question"],
-            response_type: field["type"] || "radio",
+        Survey.transaction do
+          created_survey = Survey.create!(
+            post_id: post_id,
+            survey_number: survey["survey_number"].presence || 1,
+            name: survey["name"].presence || "survey",
+            active: survey["active"].presence || true,
+            visibility: survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
           )
 
-          field["options"].each do |option|
-            SurveyFieldOption.create!(
-              survey_field_id: created_survey_field.id,
-              digest: option["id"].presence,
-              html: option["html"].presence&.strip
+          survey["fields"].each do |field|
+            created_survey_field = SurveyField.create!(
+              survey_id: created_survey.id,
+              digest:  field["field-id"].presence,
+              question: field["question"],
+              response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
             )
+
+            field["options"].each do |option|
+              SurveyFieldOption.create!(
+                survey_field_id: created_survey_field.id,
+                digest: option["id"].presence,
+                html: option["html"].presence&.strip
+              )
+            end
           end
         end
       end
