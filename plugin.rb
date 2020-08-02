@@ -17,7 +17,7 @@ after_initialize do
     ../app/models/survey_field_option.rb
     ../app/models/survey_response.rb
     ../lib/discourse-surveys/post_validator.rb
-    ../lib/discourse-surveys/survey.rb
+    ../lib/discourse-surveys/helper.rb
     ../lib/discourse-surveys/survey_updater.rb
     ../lib/discourse-surveys/survey_validator.rb
   }.each do |path|
@@ -37,7 +37,7 @@ after_initialize do
 
         Survey.transaction do
           surveys.values.each do |survey|
-            DiscourseSurvey::Survey.create!(post.id, survey)
+            DiscourseSurvey::Helper.create!(post.id, survey)
           end
           post.custom_fields[DiscourseSurvey::HAS_SURVEYS] = true
           post.save_custom_fields(true)

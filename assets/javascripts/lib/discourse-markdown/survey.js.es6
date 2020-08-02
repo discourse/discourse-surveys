@@ -116,6 +116,12 @@ const surveyRadioRule = {
     const attributes = [["class", "survey-radio"]];
     attributes.push([DATA_PREFIX + "type", "radio"]);
 
+    let question = attrs["question"];
+    if (question) {
+      let md5HashField = md5(JSON.stringify([question]));
+      attributes.push([DATA_PREFIX + "field-id", md5HashField]);
+    }
+
     WHITELISTED_ATTRIBUTES.forEach(name => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
@@ -158,6 +164,12 @@ const surveyCheckboxRule = {
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-checkbox"]];
     attributes.push([DATA_PREFIX + "type", "checkbox"]);
+
+    let question = attrs["question"];
+    if (question) {
+      let md5HashField = md5(JSON.stringify([question]));
+      attributes.push([DATA_PREFIX + "field-id", md5HashField]);
+    }
 
     WHITELISTED_ATTRIBUTES.forEach(name => {
       if (attrs[name]) {

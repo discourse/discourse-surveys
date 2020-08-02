@@ -4,7 +4,13 @@ class Survey < ActiveRecord::Base
   belongs_to :post, -> { unscope(:where) }
   has_many :survey_fields, -> { order(:id) }, dependent: :destroy
 
+  def status
+    @status ||= Enum.new(:open, :closed, start: 0)
+  end
 
+  def visibility
+    @visibility ||= Enum.new(:secret, :everyone, start: 0)
+  end
 end
 
 # == Schema Information

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module DiscourseSurvey
-  class Survey
+  class Helper
     class << self
 
-      def create!(post_id, survey)
+      def create!(post_id, survey = nil)
         created_survey = Survey.create!(
           post_id: post_id,
           survey_number: survey["survey_number"].presence || 1,
@@ -14,18 +14,16 @@ module DiscourseSurvey
         )
 
         survey["fields"].each do |field|
-
           created_survey_field = SurveyField.create!(
-            survey: created_survey,
-            field_number:  field["field_number"].presence || 1,
+            survey_id: created_survey.id,
+            digest:  field["field-id"].presence,
             question: field["question"],
             response_type: field["type"] || "radio",
-            visibility: survey["public"] == "true" ? "everyone" : "secret",
           )
 
           field["options"].each do |option|
             SurveyFieldOption.create!(
-              survey_field: created_survey_field,
+              survey_field_id: created_survey_field.id,
               digest: option["id"].presence,
               html: option["html"].presence&.strip
             )
@@ -88,7 +86,6 @@ module DiscourseSurvey
           survey
         end
       end
-
     end
   end
 end

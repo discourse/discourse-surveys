@@ -3,14 +3,9 @@
 class SurveyField < ActiveRecord::Base
   has_many :survey_field_options, -> { order(:id) }, dependent: :destroy
 
-  enum response_type: {
-    radio: 0,
-    checkbox: 1,
-    number: 2,
-    text: 3,
-    star: 4,
-    thumbs: 5
-  }
+  def response_type
+    @response_type ||= Enum.new(:radio, :checkbox, :number, :text, :star, :thumbs, start: 0)
+  end
 end
 
 # == Schema Information
@@ -19,16 +14,16 @@ end
 #
 #  id            :bigint           not null, primary key
 #  survey_id     :bigint
-#  field_number  :integer          default(1), not null
 #  question      :text             not null
 #  response_type :integer          default(0), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  digest        :string           not null
 #
 # Indexes
 #
-#  index_survey_fields_on_survey_id                   (survey_id)
-#  index_survey_fields_on_survey_id_and_field_number  (survey_id,field_number) UNIQUE
+#  index_survey_fields_on_survey_id             (survey_id)
+#  index_survey_fields_on_survey_id_and_digest  (survey_id,digest) UNIQUE
 #
 # Foreign Keys
 #

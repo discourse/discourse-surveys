@@ -12,7 +12,7 @@ module DiscourseSurvey
     def validate_surveys
       surveys = {}
 
-      DiscourseSurvey::Survey::extract(@post.raw, @post.topic_id, @post.user_id).each do |survey|
+      DiscourseSurvey::Helper::extract(@post.raw, @post.topic_id, @post.user_id).each do |survey|
         # return false unless valid_arguments?(survey)
         # return false unless valid_numbers?(survey)
         # return false unless unique_survey_name?(surveys, survey)
