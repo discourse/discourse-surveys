@@ -6,6 +6,11 @@ module DiscourseSurvey
 
       def create!(post_id, survey = nil)
         # todo: allow only one survey per post.
+
+        if Survey.where(post_id: post_id).exists?
+          raise StandardError.new I18n.t("poll.post_is_deleted")
+        end
+
         Survey.transaction do
           created_survey = Survey.create!(
             post_id: post_id,

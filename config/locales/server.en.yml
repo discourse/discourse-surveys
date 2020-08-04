@@ -1,3 +1,7 @@
 en:
   site_settings:
     surveys_enabled: "Enable Surveys plugin"
+
+  survey:
+    survey: "survey"
+    survey_exists: "There is a survey associated already with this topic."

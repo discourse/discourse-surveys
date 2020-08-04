@@ -28,7 +28,6 @@ module DiscourseSurvey
 
         # create survey fields
         if created_field_digests.present?
-          Rails.logger.warn "created_field_digests -- #{created_field_digests.inspect}"
           has_changed = true
 
           survey["fields"].each do |field|
@@ -85,7 +84,21 @@ module DiscourseSurvey
                 html: option["html"].presence&.strip
               )
             end
+
+            has_changed = true
           end
+        end
+
+        if ::Survey.exists?(post_id: post_id)
+          post.custom_fields[HAS_SURVEYS] = true
+        else
+          post.custom_fields.delete(HAS_SURVEYS)
+        end
+
+        post.save_custom_fields(true)
+
+        if has_changed
+          # do something
         end
       end
     end
