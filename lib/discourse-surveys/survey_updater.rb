@@ -6,19 +6,97 @@ module DiscourseSurvey
     SURVEY_ATTRIBUTES ||= %w{status visibility}
 
     def self.update(post, surveys)
-      #
+      ::Survey.transaction do
+        has_changed = false
+
+        survey = surveys['survey']
+        survey_id = ::Survey.where(post_id: post.id).first.id
+        old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
+
+        new_field_digests = []
+        survey["fields"].each do |field|
+          new_field_digests << field["field-id"]
+        end
+
+        deleted_field_digests = old_field_digests - new_field_digests
+        created_field_digests = new_field_digests - old_field_digests
+
+        # delete survey fields
+        if deleted_field_digests.present?
+          ::SurveyField.where(survey_id: survey_id, digest: deleted_field_digests).destroy_all
+        end
+
+        # create survey fields
+        if created_field_digests.present?
+          Rails.logger.warn "created_field_digests -- #{created_field_digests.inspect}"
+          has_changed = true
+
+          survey["fields"].each do |field|
+            if created_field_digests.include?(field["field-id"])
+              created_survey_field = SurveyField.create!(
+                survey_id: survey_id,
+                digest:  field["field-id"],
+                question: field["question"],
+                response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
+              )
+
+              field["options"].each do |option|
+                SurveyFieldOption.create!(
+                  survey_field_id: created_survey_field.id,
+                  digest: option["id"].presence,
+                  html: option["html"].presence&.strip
+                )
+              end
+            end
+          end
+        end
+
+        # todo: check if allowed to updated, if not return
+
+        # update survey
+        attributes = survey.slice(*SURVEY_ATTRIBUTES)
+        survey.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
+        survey.status = survey["active"].presence || true
+        survey.save!
+
+        # update survey fields
+        ::SurveyField.includes(:survey_field_options).where(survey_id: survey_id).find_each do |old_field|
+          new_field = survey["fields"].select { |key| key.values.include?(old_field.digest) }
+          new_field = new_field.first
+          new_field_options = new_field["options"]
+
+          # update field attributes
+          if is_different?(old_field, new_field, new_field_options)
+            # destroy existing field and options
+            ::SurveyField.where(survey_id: survey_id, digest: old_field.digest).destroy_all
+
+            # create new field
+            created_survey_field = SurveyField.create!(
+              survey_id: survey_id,
+              digest:  new_field["field-id"].presence,
+              question: new_field["question"],
+              response_type: SurveyField.response_type[new_field["type"].to_sym] || SurveyField.response_type[:radio]
+            )
+
+            new_field["options"].each do |option|
+              SurveyFieldOption.create!(
+                survey_field_id: created_survey_field.id,
+                digest: option["id"].presence,
+                html: option["html"].presence&.strip
+              )
+            end
+          end
+        end
+      end
     end
 
     private
 
-    def self.is_different?(old_survey, new_survey, new_options)
-      # an attribute was changed?
-      SURVEY_ATTRIBUTES.each do |attr|
-        return true if old_survey.public_send(attr) != new_survey.public_send(attr)
-      end
-
+    def self.is_different?(old_field, new_field, new_field_options)
+      # field response type was changed?
+      return true if old_field.response_type != SurveyField.response_type[new_field["type"].to_sym]
       # an option was changed?
-      return true if old_survey.survey_options.map { |o| o.digest }.sort != new_options.map { |o| o["id"] }.sort
+      return true if old_field.survey_field_options.map { |o| o.digest }.sort != new_field_options.map { |o| o["id"] }.sort
 
       # it's the same!
       false
