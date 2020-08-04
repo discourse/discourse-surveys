@@ -3,7 +3,7 @@
 module DiscourseSurvey
   class SurveyUpdater
 
-    SURVEY_ATTRIBUTES ||= %w{status visibility}
+    SURVEY_ATTRIBUTES ||= %w{name active visibility}
 
     def self.update(post, surveys)
       ::Survey.transaction do
@@ -53,9 +53,10 @@ module DiscourseSurvey
         # todo: check if allowed to updated, if not return
 
         # update survey
-        attributes = survey.slice(*SURVEY_ATTRIBUTES)
+        # attributes = survey.slice(*SURVEY_ATTRIBUTES)
+        survey.name = survey["name"].presence || "survey"
         survey.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
-        survey.status = survey["active"].presence || true
+        survey.active = survey["active"].presence || true
         survey.save!
 
         # update survey fields
