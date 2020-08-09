@@ -34,7 +34,8 @@ createWidget("discourse-survey-field", {
           return this.attach("discourse-survey-field-option", {
             option,
             fieldId: attrs.field.digest,
-            isMultiple
+            isMultiple,
+            response: attrs.response[attrs.field.digest]
           })
         })
       )
@@ -62,12 +63,18 @@ createWidget("discourse-survey-field-option", {
   },
 
   html(attrs) {
+    const { option, response } = attrs;
     const contents = [];
+    let chosen = false;
+
+    if (response) {
+      chosen = response.includes(option.digest);
+    }
 
     if (attrs.isMultiple) {
-      contents.push(iconNode("far-square"));
+      contents.push(iconNode(chosen ? "far-check-square" : "far-square"));
     } else {
-      contents.push(iconNode("far-circle"));
+      contents.push(iconNode(chosen ? "circle" : "far-circle"));
     }
 
     contents.push(" ");
@@ -107,7 +114,7 @@ export default createWidget("discourse-survey", {
     contents.push(
       h("div",
         attrs.survey.fields.map(field => {
-          return this.attach("discourse-survey-field", { field })
+          return this.attach("discourse-survey-field", { field, response: attrs.response })
         })
       )
     );
@@ -147,7 +154,10 @@ export default createWidget("discourse-survey", {
 
     if (typeof response[optionInfo.fieldId] != 'undefined' && response[optionInfo.fieldId] instanceof Array ) {
       if (optionInfo.isMultiple) {
-        if(response[optionInfo.fieldId].indexOf(optionInfo.option.digest) === -1) {
+        const chosenIdx = response[optionInfo.fieldId].indexOf(optionInfo.option.digest);
+        if (chosenIdx !== -1) {
+          response[optionInfo.fieldId].splice(chosenIdx, 1);
+        } else {
           response[optionInfo.fieldId].push(optionInfo.option.digest);
         }
       } else {
