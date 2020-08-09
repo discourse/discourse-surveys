@@ -6,6 +6,8 @@ module DiscourseSurvey
     SURVEY_ATTRIBUTES ||= %w{name active visibility}
 
     def self.update(post, surveys)
+      return false unless post.present?
+
       ::Survey.transaction do
         has_changed = false
 

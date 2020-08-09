@@ -8,6 +8,8 @@
 
 enabled_site_setting :surveys_enabled
 
+register_asset "stylesheets/common/survey.scss"
+
 load File.expand_path('lib/discourse-surveys/engine.rb', __dir__)
 
 after_initialize do
@@ -70,5 +72,53 @@ after_initialize do
 
     true
   end
+
+
+  register_post_custom_field_type(DiscourseSurvey::HAS_SURVEYS, :boolean)
+
+  topic_view_post_custom_fields_whitelister { [DiscourseSurvey::HAS_SURVEYS] }
+
+  add_to_class(:topic_view, :surveys) do
+    @surveys ||= begin
+      surveys = {}
+
+      post_with_surveys = @post_custom_fields.each_with_object([]) do |fields, obj|
+        obj << fields[0] if fields[1][DiscourseSurvey::HAS_SURVEYS]
+      end
+
+      if post_with_surveys.present?
+        Survey
+          .includes(survey_fields: :survey_field_options)
+          .where(post_id: post_with_surveys)
+          .each do |p|
+            surveys[p.post_id] ||= []
+            surveys[p.post_id] << p
+          end
+      end
+
+      surveys
+    end
+  end
+
+  add_to_serializer(:post, :preloaded_surveys, false) do
+    @preloaded_surveys ||= if @topic_view.present?
+      @topic_view.surveys[object.id]
+    else
+      Survey.includes(survey_fields: :survey_field_options).where(post: object)
+    end
+  end
+
+  add_to_serializer(:post, :include_preloaded_surveys?) do
+    false
+  end
+
+  add_to_serializer(:post, :surveys, false) do
+    preloaded_surveys.map { |s| SurveySerializer.new(s, root: false, scope: self.scope) }
+  end
+
+  add_to_serializer(:post, :include_surveys?) do
+    SiteSetting.surveys_enabled && preloaded_surveys.present?
+  end
+
 end
 

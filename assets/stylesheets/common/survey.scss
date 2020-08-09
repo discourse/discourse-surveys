@@ -1,0 +1,24 @@
+div.survey {
+  margin: 1em 0;
+  border: 1px solid $primary-low;
+
+  @include unselectable;
+
+  .field-question {
+    font-size: $font-up-2;
+    padding: 0 0.2em;
+  }
+
+  ul,
+  li {
+    list-style: none;
+    cursor: pointer;
+    font-size: $font-up-1;
+  }
+
+  li[data-survey-option-id] {
+    color: $primary;
+    padding: 0.3em 0.6em;
+    word-break: break-word;
+  }
+}
