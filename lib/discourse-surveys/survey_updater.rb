@@ -12,7 +12,8 @@ module DiscourseSurveys
         has_changed = false
 
         survey = surveys['survey']
-        survey_id = ::Survey.where(post_id: post.id).first.id
+        survey_record = ::Survey.where(post_id: post.id).first
+        survey_id = survey_record.id
         old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
 
         new_field_digests = []
@@ -56,10 +57,10 @@ module DiscourseSurveys
 
         # update survey
         # attributes = survey.slice(*SURVEY_ATTRIBUTES)
-        survey.name = survey["name"].presence || "survey"
-        survey.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
-        survey.active = survey["active"].presence || true
-        survey.save!
+        survey_record.name = survey["name"].presence || "survey"
+        survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
+        survey_record.active = survey["active"].presence || true
+        survey_record.save!
 
         # update survey fields
         ::SurveyField.includes(:survey_field_options).where(survey_id: survey_id).find_each do |old_field|
@@ -92,7 +93,7 @@ module DiscourseSurveys
           end
         end
 
-        if ::Survey.exists?(post_id: post_id)
+        if ::Survey.exists?(post_id: post.id)
           post.custom_fields[HAS_SURVEYS] = true
         else
           post.custom_fields.delete(HAS_SURVEYS)

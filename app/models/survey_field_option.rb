@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class SurveyFieldOption < ActiveRecord::Base
+  belongs_to :survey_field
 end
 
 # == Schema Information

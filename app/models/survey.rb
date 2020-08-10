@@ -3,9 +3,14 @@
 class Survey < ActiveRecord::Base
   belongs_to :post, -> { unscope(:where) }
   has_many :survey_fields, -> { order(:id) }, dependent: :destroy
+  has_many :survey_responses, through: :survey_fields
 
   def self.visibility
     @visibility ||= Enum.new(:secret, :everyone, start: 0)
+  end
+
+  def has_responded?(user)
+    user&.id && survey_responses.any? { |v| v.user_id == user.id }
   end
 end
 

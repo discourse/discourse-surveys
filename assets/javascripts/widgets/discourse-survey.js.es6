@@ -143,7 +143,7 @@ export default createWidget("discourse-survey", {
     const contents = [];
 
     // todo: check if response is already submitted and do not show survey if so.
-    if (state.submitted) {
+    if (state.submitted || attrs.survey.user_responded) {
       contents.push(submittedHtml());
     } else {
       contents.push(
