@@ -116,6 +116,11 @@ createWidget("discourse-survey-buttons", {
   }
 });
 
+function submittedHtml() {
+  const $node = $(`<span>${I18n.t("discourse_surveys.survey-submitted")}</span>`);
+  return new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` });
+}
+
 export default createWidget("discourse-survey", {
   tagName: "div",
   buildKey: attrs => `survey-${attrs.id}`,
@@ -131,21 +136,26 @@ export default createWidget("discourse-survey", {
 
   defaultState(attrs) {
     const { post, survey } = attrs;
-    return { loading: false };
+    return { loading: false, submitted: false };
   },
 
   html(attrs, state) {
     const contents = [];
 
-    contents.push(
-      h("div",
-        attrs.survey.fields.map(field => {
-          return this.attach("discourse-survey-field", { field, response: attrs.response })
-        })
-      )
-    );
+    // todo: check if response is already submitted and do not show survey if so.
+    if (state.submitted) {
+      contents.push(submittedHtml());
+    } else {
+      contents.push(
+        h("div",
+          attrs.survey.fields.map(field => {
+            return this.attach("discourse-survey-field", { field, response: attrs.response })
+          })
+        )
+      );
+      contents.push(this.attach("discourse-survey-buttons", attrs));
+    }
 
-    contents.push(this.attach("discourse-survey-buttons", attrs));
     return contents;
   },
 
@@ -216,8 +226,8 @@ export default createWidget("discourse-survey", {
         response: attrs.response
       }
     })
-      .then(({ survey }) => {
-        // attrs.survey.setProperties(survey);
+      .then(() => {
+        state.submitted = true;
       })
       .catch(error => {
         if (error) {

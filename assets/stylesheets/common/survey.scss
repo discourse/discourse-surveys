@@ -34,5 +34,11 @@ div.survey {
       margin-left: 0.5em;
     }
   }
+
+  .survey-submitted {
+    font-size: $font-up-2;
+    padding: 0 0.2em;
+    color: $primary;
+  }
 }
 

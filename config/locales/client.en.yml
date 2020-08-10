@@ -4,3 +4,4 @@ en:
       submit-response:
         title: "Submit your response"
         label: "Submit"
+      survey-submitted: "Response has been submitted successfully!"
