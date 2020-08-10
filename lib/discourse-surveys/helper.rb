@@ -8,7 +8,7 @@ module DiscourseSurveys
         # todo: allow only one survey per post.
 
         if Survey.where(post_id: post_id).exists?
-          raise StandardError.new I18n.t("survey.post_is_deleted")
+          raise StandardError.new I18n.t("survey.post_survey_exists")
         end
 
         Survey.transaction do
@@ -96,8 +96,6 @@ module DiscourseSurveys
       end
 
       def submit_response(post_id, survey_name, response, user)
-        # do not allow if user response already exists.
-
         Survey.transaction do
           post = Post.find_by(id: post_id)
 
@@ -119,6 +117,7 @@ module DiscourseSurveys
 
           survey = Survey.includes(survey_fields: :survey_field_options).find_by(post_id: post_id, name: survey_name)
           raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name) unless survey
+          raise StandardError.new I18n.t("survey.user_already_responded") if survey.has_responded?(user)
 
           # remove options that aren't available in the survey
           available_fields = survey.survey_fields.map { |o| o.digest }.to_set

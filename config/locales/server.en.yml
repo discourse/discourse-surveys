@@ -4,4 +4,5 @@ en:
 
   survey:
     survey: "survey"
-    survey_exists: "There is a survey associated already with this topic."
+    post_survey_exists: "There is a survey associated already with this post."
+    user_already_responded: "You have already responded to this survey."
