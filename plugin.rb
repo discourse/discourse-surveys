@@ -9,11 +9,13 @@
 enabled_site_setting :surveys_enabled
 
 register_asset "stylesheets/common/survey.scss"
+register_asset "stylesheets/desktop/survey.scss"
 
 load File.expand_path('lib/discourse-surveys/engine.rb', __dir__)
 
 after_initialize do
   %w{
+    ../app/controller/discourse_surveys/survey_controller.rb
     ../app/models/survey.rb
     ../app/models/survey_field.rb
     ../app/models/survey_field_option.rb
@@ -39,9 +41,9 @@ after_initialize do
 
         Survey.transaction do
           surveys.values.each do |survey|
-            DiscourseSurvey::Helper.create!(post.id, survey)
+            DiscourseSurveys::Helper.create!(post.id, survey)
           end
-          post.custom_fields[DiscourseSurvey::HAS_SURVEYS] = true
+          post.custom_fields[DiscourseSurveys::HAS_SURVEYS] = true
           post.save_custom_fields(true)
         end
       end
@@ -55,17 +57,17 @@ after_initialize do
   validate(:post, :validate_surveys) do |force = nil|
     return unless self.raw_changed? || force
 
-    validator = DiscourseSurvey::SurveyValidator.new(self)
+    validator = DiscourseSurveys::SurveyValidator.new(self)
     return unless (surveys = validator.validate_surveys)
 
     if surveys.present?
-      validator = DiscourseSurvey::PostValidator.new(self)
+      validator = DiscourseSurveys::PostValidator.new(self)
       return unless validator.validate_post
     end
 
     # are we updating a post?
     if self.id.present?
-      DiscourseSurvey::SurveyUpdater.update(self, surveys)
+      DiscourseSurveys::SurveyUpdater.update(self, surveys)
     else
       self.extracted_surveys = surveys
     end
@@ -73,17 +75,16 @@ after_initialize do
     true
   end
 
+  register_post_custom_field_type(DiscourseSurveys::HAS_SURVEYS, :boolean)
 
-  register_post_custom_field_type(DiscourseSurvey::HAS_SURVEYS, :boolean)
-
-  topic_view_post_custom_fields_whitelister { [DiscourseSurvey::HAS_SURVEYS] }
+  topic_view_post_custom_fields_whitelister { [DiscourseSurveys::HAS_SURVEYS] }
 
   add_to_class(:topic_view, :surveys) do
     @surveys ||= begin
       surveys = {}
 
       post_with_surveys = @post_custom_fields.each_with_object([]) do |fields, obj|
-        obj << fields[0] if fields[1][DiscourseSurvey::HAS_SURVEYS]
+        obj << fields[0] if fields[1][DiscourseSurveys::HAS_SURVEYS]
       end
 
       if post_with_surveys.present?

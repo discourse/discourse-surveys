@@ -1,1 +1,18 @@
-// desktop style
+div.survey {
+  display: table;
+  width: 100%;
+  box-sizing: border-box;
+
+  .survey-buttons {
+    border-top: 1px solid $primary-low;
+    padding: 1em;
+
+    .info-text {
+      line-height: 2em;
+    }
+
+    :not(:first-child):not(:last-child) {
+      margin-left: 1em;
+    }
+  }
+}

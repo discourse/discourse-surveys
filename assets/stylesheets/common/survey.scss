@@ -1,12 +1,14 @@
 div.survey {
   margin: 1em 0;
   border: 1px solid $primary-low;
+  padding: 0.5em;
 
   @include unselectable;
 
   .field-question {
     font-size: $font-up-2;
     padding: 0 0.2em;
+    color: $primary-medium;
   }
 
   ul,
@@ -21,4 +23,16 @@ div.survey {
     padding: 0.3em 0.6em;
     word-break: break-word;
   }
+
+  .survey-buttons {
+    .info-text {
+      margin: 0.25em 0;
+      color: $primary-medium;
+    }
+    .info-text + .info-text,
+    button + .info-text {
+      margin-left: 0.5em;
+    }
+  }
 }
+

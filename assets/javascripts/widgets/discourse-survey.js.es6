@@ -90,6 +90,32 @@ createWidget("discourse-survey-field-option", {
   }
 });
 
+createWidget("discourse-survey-buttons", {
+  tagName: "div.survey-buttons",
+
+  html(attrs) {
+    const contents = [];
+    const { survey, post } = attrs;
+
+    // const submitDisabled = !attrs.canSubmitResponse;
+    const submitDisabled = false;
+
+    contents.push(
+      this.attach("button", {
+        className: `submit-response ${
+          submitDisabled ? "btn-default" : "btn-primary"
+        }`,
+        label: "discourse_surveys.submit-response.label",
+        title: "discourse_surveys.submit-response.title",
+        disabled: submitDisabled,
+        action: "submitResponse"
+      })
+    );
+
+    return contents;
+  }
+});
+
 export default createWidget("discourse-survey", {
   tagName: "div",
   buildKey: attrs => `survey-${attrs.id}`,
@@ -119,6 +145,7 @@ export default createWidget("discourse-survey", {
       )
     );
 
+    contents.push(this.attach("discourse-survey-buttons", attrs));
     return contents;
   },
 
@@ -127,14 +154,14 @@ export default createWidget("discourse-survey", {
     return vote && vote.length > 0;
   },
 
-  canCastVotes() {
+  canSubmitResponse() {
     const { state, attrs } = this;
 
     if (state.loading) {
       return false;
     }
 
-    const selectedOptionCount = attrs.vote.length;
+    const selectedOptionCount = attrs.response.length;
 
     if (this.isMultiple()) {
       return (
@@ -173,34 +200,24 @@ export default createWidget("discourse-survey", {
     this._toggleOption(optionInfo);
   },
 
-  castVotes() {
-    if (!this.canCastVotes()) return;
+  submitResponse() {
+    // if (!this.canSubmitResponse()) return;
     if (!this.currentUser) return this.showLogin();
 
     const { attrs, state } = this;
 
     state.loading = true;
 
-    return ajax("/surveys/vote", {
+    return ajax("/surveys/submit-response", {
       type: "PUT",
       data: {
         post_id: attrs.post.id,
         survey_name: attrs.survey.get("name"),
-        options: attrs.vote
+        response: attrs.response
       }
     })
       .then(({ survey }) => {
-        attrs.survey.setProperties(survey);
-        if (attrs.survey.get("results") !== "on_close") {
-          state.showResults = true;
-        }
-        if (attrs.survey.results === "staff_only") {
-          if (this.currentUser && this.currentUser.get("staff")) {
-            state.showResults = true;
-          } else {
-            state.showResults = false;
-          }
-        }
+        // attrs.survey.setProperties(survey);
       })
       .catch(error => {
         if (error) {

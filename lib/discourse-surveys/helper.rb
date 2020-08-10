@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DiscourseSurvey
+module DiscourseSurveys
   class Helper
     class << self
 
@@ -8,7 +8,7 @@ module DiscourseSurvey
         # todo: allow only one survey per post.
 
         if Survey.where(post_id: post_id).exists?
-          raise StandardError.new I18n.t("poll.post_is_deleted")
+          raise StandardError.new I18n.t("survey.post_is_deleted")
         end
 
         Survey.transaction do
@@ -43,7 +43,7 @@ module DiscourseSurvey
         cooked = PrettyText.cook(raw, topic_id: topic_id, user_id: user_id)
 
         Nokogiri::HTML5(cooked).css("div.survey").map do |s|
-          survey = { "name" => DiscourseSurvey::DEFAULT_SURVEY_NAME, "fields" => [] }
+          survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => [] }
 
           s.attributes.values.each do |attribute|
             if attribute.name.start_with?(DATA_PREFIX)
@@ -92,6 +92,52 @@ module DiscourseSurvey
           end
 
           survey
+        end
+      end
+
+      def submit_response(post_id, survey_name, response, user)
+        # do not allow if user response already exists.
+
+        Survey.transaction do
+          post = Post.find_by(id: post_id)
+
+          # post must not be deleted
+          if post.nil? || post.trashed?
+            raise StandardError.new I18n.t("survey.post_is_deleted")
+          end
+
+          # topic must not be archived
+          if post.topic&.archived
+            raise StandardError.new I18n.t("survey.topic_must_be_open_to_vote")
+          end
+
+          # user must be allowed to post in topic
+          guardian = Guardian.new(user)
+          if !guardian.can_create_post?(post.topic)
+            raise StandardError.new I18n.t("survey.user_cant_post_in_topic")
+          end
+
+          survey = Survey.includes(survey_fields: :survey_field_options).find_by(post_id: post_id, name: survey_name)
+          raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name) unless survey
+
+          # remove options that aren't available in the survey
+          available_fields = survey.survey_fields.map { |o| o.digest }.to_set
+          response.select! { |k| available_fields.include?(k) }
+          raise StandardError.new I18n.t("survey.requires_at_least_1_valid_option") if response.empty?
+
+          fields = survey.survey_fields.each_with_object({}) do |field, obj|
+            if response.include?(field.digest)
+              option_ids = SurveyFieldOption.where(survey_field_id: field.id, digest: response[field.digest]).pluck(:id)
+              obj[field.id] = option_ids if option_ids.present?
+            end
+          end
+
+          # save response
+          fields.each do |field_id, option_ids|
+            option_ids.each do |option_id|
+              SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, survey_field_option_id: option_id)
+            end
+          end
         end
       end
     end

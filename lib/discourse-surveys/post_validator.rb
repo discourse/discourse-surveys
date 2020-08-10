@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DiscourseSurvey
+module DiscourseSurveys
   class PostValidator
     def initialize(post)
       @post = post

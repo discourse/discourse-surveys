@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DiscourseSurvey
+module DiscourseSurveys
   class SurveyUpdater
 
     SURVEY_ATTRIBUTES ||= %w{name active visibility}

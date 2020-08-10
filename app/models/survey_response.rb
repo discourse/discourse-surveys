@@ -17,8 +17,8 @@ end
 #
 # Indexes
 #
-#  index_survey_responses_on_survey_field_id              (survey_field_id)
-#  index_survey_responses_on_survey_field_id_and_user_id  (survey_field_id,user_id) UNIQUE
+#  index_survey_responses_on_survey_field_id                     (survey_field_id)
+#  index_survey_responses_on_user_id_and_survey_field_option_id  (user_id,survey_field_option_id) UNIQUE
 #
 # Foreign Keys
 #

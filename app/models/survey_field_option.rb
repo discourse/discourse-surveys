@@ -16,7 +16,8 @@ end
 #
 # Indexes
 #
-#  index_survey_field_options_on_survey_field_id  (survey_field_id)
+#  index_survey_field_options_on_survey_field_id             (survey_field_id)
+#  index_survey_field_options_on_survey_field_id_and_digest  (survey_field_id,digest) UNIQUE
 #
 # Foreign Keys
 #
