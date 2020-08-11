@@ -11,14 +11,20 @@ module DiscourseSurveys
 
     def validate_surveys
       surveys = {}
+      survey_count = 0
 
       DiscourseSurveys::Helper::extract(@post.raw, @post.topic_id, @post.user_id).each do |survey|
         # return false unless valid_arguments?(survey)
         # return false unless unique_options?(survey)
         # return false unless any_blank_options?(survey)
         # return false unless at_least_one_option?(survey)
-
         surveys[survey["name"]] = survey
+        survey_count += 1
+      end
+
+      if survey_count > 1
+        @post.errors.add(:base, I18n.t("survey.max_one_survey_per_post"))
+        return false
       end
 
       surveys

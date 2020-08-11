@@ -65,8 +65,7 @@ after_initialize do
       return unless validator.validate_post
     end
 
-    # are we updating a post?
-    if self.id.present?
+    if Survey.where(post_id: self.id).exists?
       DiscourseSurveys::SurveyUpdater.update(self, surveys)
     else
       self.extracted_surveys = surveys

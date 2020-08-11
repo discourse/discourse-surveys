@@ -3,7 +3,6 @@
 module DiscourseSurveys
   class Helper
     class << self
-
       def create!(post_id, survey = nil)
         # todo: allow only one survey per post.
 
