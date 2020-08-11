@@ -12,7 +12,7 @@ function fieldHtml(field) {
 }
 
 createWidget("discourse-survey-field", {
-  tagName: "div",
+  tagName: "div.survey-field",
 
   buildAttributes(attrs) {
     return { "data-survey-field-id": attrs.field.digest };
@@ -147,7 +147,7 @@ export default createWidget("discourse-survey", {
       contents.push(submittedHtml());
     } else {
       contents.push(
-        h("div",
+        h("div.survey-fields-container",
           attrs.survey.fields.map(field => {
             return this.attach("discourse-survey-field", { field, response: attrs.response })
           })

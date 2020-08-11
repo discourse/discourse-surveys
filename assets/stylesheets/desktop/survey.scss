@@ -3,9 +3,17 @@ div.survey {
   width: 100%;
   box-sizing: border-box;
 
+  .survey-fields-container {
+    padding: 0.2em;
+  }
+
+  .survey-field {
+    padding: 0.2em 0.2em 1em 0.2em;
+  }
+
   .survey-buttons {
     border-top: 1px solid $primary-low;
-    padding: 1em;
+    padding: 0.7em;
 
     .info-text {
       line-height: 2em;
