@@ -7,3 +7,4 @@ en:
     post_survey_exists: "There is a survey associated already with this post."
     user_already_responded: "You have already responded to this survey."
     max_one_survey_per_post: "Only one survey is allowed in a post."
+    cannot_edit: "Survey cannot be edited because it has a response."

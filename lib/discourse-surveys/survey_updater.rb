@@ -14,8 +14,19 @@ module DiscourseSurveys
         survey = surveys['survey']
         survey_record = ::Survey.where(post_id: post.id).first
         survey_id = survey_record.id
-        old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
 
+        response = ::SurveyResponse
+          .includes(:survey_field)
+          .where("survey_fields.survey_id = ?", survey_id)
+          .references(:survey_field)
+          .first
+
+        if response.present?
+          return false
+          # raise StandardError.new I18n.t("survey.cannot_edit")
+        end
+
+        old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
         new_field_digests = []
         survey["fields"].each do |field|
           new_field_digests << field["field-id"]
@@ -53,10 +64,7 @@ module DiscourseSurveys
           end
         end
 
-        # todo: check if allowed to updated, if not return
-
         # update survey
-        # attributes = survey.slice(*SURVEY_ATTRIBUTES)
         survey_record.name = survey["name"].presence || "survey"
         survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
         survey_record.active = survey["active"].presence || true
