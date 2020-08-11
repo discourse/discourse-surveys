@@ -15,16 +15,11 @@ module DiscourseSurveys
         survey_record = ::Survey.where(post_id: post.id).first
         survey_id = survey_record.id
 
-        response = ::SurveyResponse
-          .includes(:survey_field)
-          .where("survey_fields.survey_id = ?", survey_id)
-          .references(:survey_field)
-          .first
-
-        if response.present?
-          return false
-          # raise StandardError.new I18n.t("survey.cannot_edit")
-        end
+        # update survey
+        survey_record.name = survey["name"].presence || "survey"
+        survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
+        survey_record.active = survey["active"].presence || true
+        survey_record.save!
 
         old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
         new_field_digests = []
@@ -37,6 +32,7 @@ module DiscourseSurveys
 
         # delete survey fields
         if deleted_field_digests.present?
+          has_changed = true
           ::SurveyField.where(survey_id: survey_id, digest: deleted_field_digests).destroy_all
         end
 
@@ -63,12 +59,6 @@ module DiscourseSurveys
             end
           end
         end
-
-        # update survey
-        survey_record.name = survey["name"].presence || "survey"
-        survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
-        survey_record.active = survey["active"].presence || true
-        survey_record.save!
 
         # update survey fields
         ::SurveyField.includes(:survey_field_options).where(survey_id: survey_id).find_each do |old_field|
@@ -101,6 +91,18 @@ module DiscourseSurveys
           end
         end
 
+        if has_changed
+          response = ::SurveyResponse
+            .includes(:survey_field)
+            .where("survey_fields.survey_id = ?", survey_id)
+            .references(:survey_field)
+            .first
+
+          if response.present?
+            raise StandardError.new I18n.t("survey.cannot_edit")
+          end
+        end
+
         if ::Survey.exists?(post_id: post.id)
           post.custom_fields[HAS_SURVEYS] = true
         else
@@ -108,10 +110,6 @@ module DiscourseSurveys
         end
 
         post.save_custom_fields(true)
-
-        if has_changed
-          # do something
-        end
       end
     end
 

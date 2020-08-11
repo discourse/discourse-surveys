@@ -66,7 +66,12 @@ after_initialize do
     end
 
     if Survey.where(post_id: self.id).exists?
-      DiscourseSurveys::SurveyUpdater.update(self, surveys)
+      begin
+        DiscourseSurveys::SurveyUpdater.update(self, surveys)
+      rescue StandardError => e
+        self.errors.add(:base, e.message)
+        return false
+      end
     else
       self.extracted_surveys = surveys
     end
