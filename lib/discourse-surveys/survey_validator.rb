@@ -18,7 +18,7 @@ module DiscourseSurveys
         # return false unless unique_options?(survey)
         # return false unless any_blank_options?(survey)
         # return false unless at_least_one_option?(survey)
-        surveys[survey["name"]] = survey
+        surveys["survey"] = survey
         survey_count += 1
       end
 
