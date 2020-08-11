@@ -8,7 +8,7 @@ module DiscourseSurveys
     def self.update(post, surveys)
       return false unless post.present?
 
-      ::Survey.transaction do
+      ActiveRecord::Base.transaction do
         has_changed = false
 
         survey = surveys['survey']
@@ -21,6 +21,13 @@ module DiscourseSurveys
         survey_record.active = survey["active"].presence || true
         survey_record.save!
 
+        response = ::SurveyResponse
+          .includes(:survey_field)
+          .where("survey_fields.survey_id = ?", survey_id)
+          .references(:survey_field)
+          .first
+        has_response = response.present?
+
         old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
         new_field_digests = []
         survey["fields"].each do |field|
@@ -32,12 +39,14 @@ module DiscourseSurveys
 
         # delete survey fields
         if deleted_field_digests.present?
+          raise StandardError.new I18n.t("survey.cannot_edit") if has_response
           has_changed = true
           ::SurveyField.where(survey_id: survey_id, digest: deleted_field_digests).destroy_all
         end
 
         # create survey fields
         if created_field_digests.present?
+          raise StandardError.new I18n.t("survey.cannot_edit") if has_response
           has_changed = true
 
           survey["fields"].each do |field|
@@ -68,6 +77,8 @@ module DiscourseSurveys
 
           # update field attributes
           if is_different?(old_field, new_field, new_field_options)
+            raise StandardError.new I18n.t("survey.cannot_edit") if has_response
+
             # destroy existing field and options
             ::SurveyField.where(survey_id: survey_id, digest: old_field.digest).destroy_all
 
@@ -91,16 +102,8 @@ module DiscourseSurveys
           end
         end
 
-        if has_changed
-          response = ::SurveyResponse
-            .includes(:survey_field)
-            .where("survey_fields.survey_id = ?", survey_id)
-            .references(:survey_field)
-            .first
-
-          if response.present?
-            raise StandardError.new I18n.t("survey.cannot_edit")
-          end
+        if has_changed && has_response
+          raise StandardError.new I18n.t("survey.cannot_edit")
         end
 
         if ::Survey.exists?(post_id: post.id)
