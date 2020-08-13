@@ -6,7 +6,17 @@ class SurveyField < ActiveRecord::Base
   belongs_to :survey
 
   def self.response_type
-    @response_type ||= Enum.new(:radio, :checkbox, :number, :text, :star, :thumbs, start: 0)
+    @response_type ||= Enum.new(:radio, :checkbox, :number, :textarea, :star, :thumbs, :dropdown, start: 0)
+  end
+
+  def has_options?
+    response_type == SurveyField.response_type[:radio] ||
+    response_type == SurveyField.response_type[:checkbox] ||
+    response_type == SurveyField.response_type[:dropdown]
+  end
+
+  def is_multiple_choice?
+    response_type == SurveyField.response_type[:checkbox]
   end
 end
 

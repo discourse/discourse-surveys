@@ -25,12 +25,14 @@ module DiscourseSurveys
               response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
             )
 
-            field["options"].each do |option|
-              SurveyFieldOption.create!(
-                survey_field_id: created_survey_field.id,
-                digest: option["id"].presence,
-                html: option["html"].presence&.strip
-              )
+            if field["options"].present?
+              field["options"].each do |option|
+                SurveyFieldOption.create!(
+                  survey_field_id: created_survey_field.id,
+                  digest: option["id"].presence,
+                  html: option["html"].presence&.strip
+                )
+              end
             end
           end
         end
@@ -88,6 +90,20 @@ module DiscourseSurveys
             survey["fields"] << checkbox_hash
           end
 
+          # textarea field
+          s.css("div[#{DATA_PREFIX}type='textarea']").each do |textarea|
+            textarea_hash = { "type" => "textarea" }
+
+            # attributes
+            textarea.attributes.values.each do |attribute|
+              if attribute.name.start_with?(DATA_PREFIX)
+                textarea_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+              end
+            end
+
+            survey["fields"] << textarea_hash
+          end
+
           survey
         end
       end
@@ -116,22 +132,31 @@ module DiscourseSurveys
           raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name) unless survey
           raise StandardError.new I18n.t("survey.user_already_responded") if survey.has_responded?(user)
 
-          # remove options that aren't available in the survey
+          # remove fields that aren't available in the survey
           available_fields = survey.survey_fields.map { |o| o.digest }.to_set
           response.select! { |k| available_fields.include?(k) }
-          raise StandardError.new I18n.t("survey.requires_at_least_1_valid_option") if response.empty?
+          raise StandardError.new I18n.t("survey.requires_at_least_1_valid_field") if response.empty?
 
+          # update to save text response
           fields = survey.survey_fields.each_with_object({}) do |field, obj|
             if response.include?(field.digest)
-              option_ids = SurveyFieldOption.where(survey_field_id: field.id, digest: response[field.digest]).pluck(:id)
-              obj[field.id] = option_ids if option_ids.present?
+              if field.has_options?
+                option_ids = SurveyFieldOption.where(survey_field_id: field.id, digest: response[field.digest]).pluck(:id)
+                obj[field.id] = { option_ids: option_ids, has_options: true }
+              else
+                obj[field.id] = { value: response[field.digest], has_options: false }
+              end
             end
           end
 
           # save response
-          fields.each do |field_id, option_ids|
-            option_ids.each do |option_id|
-              SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, survey_field_option_id: option_id)
+          fields.each do |field_id, response|
+            if response[:has_options]
+              response[:option_ids].each do |option_id|
+                SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, survey_field_option_id: option_id)
+              end
+            else
+              SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, value: response[:value])
             end
           end
         end

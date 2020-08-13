@@ -20,28 +20,56 @@ createWidget("discourse-survey-field", {
 
   html(attrs) {
     const field = attrs.field;
+    const hasOptions = field.has_options;
+    const isMultiple = field.is_multiple_choice;
+
     const contents = [];
     contents.push(fieldHtml(field));
 
-    let isMultiple = false
-    if (field.response_type == 1) {
-      isMultiple = true
+    if (hasOptions) {
+      contents.push(
+        h("div",
+          field.options.map(option => {
+            return this.attach("discourse-survey-field-option", {
+              option,
+              fieldId: attrs.field.digest,
+              isMultiple,
+              response: attrs.response[attrs.field.digest]
+            })
+          })
+        )
+      )
+    } else {
+      contents.push(
+        h("div.field-textarea",
+          this.attach("discourse-survey-field-textarea", {
+            fieldId: attrs.field.digest
+          })
+        )
+      )
     }
 
-    contents.push(
-      h("div",
-        field.options.map(option => {
-          return this.attach("discourse-survey-field-option", {
-            option,
-            fieldId: attrs.field.digest,
-            isMultiple,
-            response: attrs.response[attrs.field.digest]
-          })
-        })
-      )
-    );
-
     return contents;
+  }
+});
+
+function textareaHtml() {
+  return new RawHtml({ html: `<textarea></textarea>` });
+}
+
+createWidget("discourse-survey-field-textarea", {
+  tagName: "span",
+
+  html(attrs) {
+    const contents = [];
+    contents.push(textareaHtml());
+    return contents;
+  },
+
+  keyUp(e) {
+    // remove zero-width chars
+    const value = e.target.value.replace(/[\u200B-\u200D\uFEFF]/, "");
+    this.sendWidgetAction("textChanged", {value: value, fieldId: this.attrs.fieldId});
   }
 });
 
@@ -208,6 +236,11 @@ export default createWidget("discourse-survey", {
   toggleOption(optionInfo) {
     if (!this.currentUser) return this.showLogin();
     this._toggleOption(optionInfo);
+  },
+
+  textChanged(fieldInfo) {
+    const { response } = this.attrs;
+    response[fieldInfo.fieldId] = fieldInfo.value;
   },
 
   submitResponse() {

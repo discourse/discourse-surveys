@@ -48,7 +48,6 @@ module DiscourseSurveys
         if created_field_digests.present?
           raise StandardError.new I18n.t("survey.cannot_edit") if has_response
           has_changed = true
-
           survey["fields"].each do |field|
             if created_field_digests.include?(field["field-id"])
               created_survey_field = SurveyField.create!(
@@ -58,12 +57,14 @@ module DiscourseSurveys
                 response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
               )
 
-              field["options"].each do |option|
-                SurveyFieldOption.create!(
-                  survey_field_id: created_survey_field.id,
-                  digest: option["id"].presence,
-                  html: option["html"].presence&.strip
-                )
+              if field["options"].present?
+                field["options"].each do |option|
+                  SurveyFieldOption.create!(
+                    survey_field_id: created_survey_field.id,
+                    digest: option["id"].presence,
+                    html: option["html"].presence&.strip
+                  )
+                end
               end
             end
           end
@@ -90,12 +91,14 @@ module DiscourseSurveys
               response_type: SurveyField.response_type[new_field["type"].to_sym] || SurveyField.response_type[:radio]
             )
 
-            new_field["options"].each do |option|
-              SurveyFieldOption.create!(
-                survey_field_id: created_survey_field.id,
-                digest: option["id"].presence,
-                html: option["html"].presence&.strip
-              )
+            if new_field["options"].present?
+              new_field["options"].each do |option|
+                SurveyFieldOption.create!(
+                  survey_field_id: created_survey_field.id,
+                  digest: option["id"].presence,
+                  html: option["html"].presence&.strip
+                )
+              end
             end
 
             has_changed = true
@@ -121,6 +124,8 @@ module DiscourseSurveys
     def self.is_different?(old_field, new_field, new_field_options)
       # field response type was changed?
       return true if old_field.response_type != SurveyField.response_type[new_field["type"].to_sym]
+      # field has no options
+      return false if old_field.survey_field_options.blank? && new_field_options.blank?
       # an option was changed?
       return true if old_field.survey_field_options.map { |o| o.digest }.sort != new_field_options.map { |o| o["id"] }.sort
 
