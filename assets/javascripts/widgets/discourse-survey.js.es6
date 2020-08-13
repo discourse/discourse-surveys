@@ -239,6 +239,7 @@ export default createWidget("discourse-survey", {
   },
 
   textChanged(fieldInfo) {
+    if (!this.currentUser) return this.showLogin();
     const { response } = this.attrs;
     response[fieldInfo.fieldId] = fieldInfo.value;
   },
