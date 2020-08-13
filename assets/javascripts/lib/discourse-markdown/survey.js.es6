@@ -253,7 +253,7 @@ export function setup(helper) {
     "div.survey",
     "div.survey-radio",
     "div.survey-checkbox",
-    "div.survey-text",
+    "div.survey-textarea",
     "div.survey-info",
     "div.survey-container",
     "div.survey-buttons",
