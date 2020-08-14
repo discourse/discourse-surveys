@@ -235,6 +235,45 @@ const surveyTextareaRule = {
   }
 }
 
+const surveyNumberRule = {
+  tag: "number",
+
+  before: function(state, tagInfo) {
+    let token = state.push("number", "", 0);
+    token.attrs = [];
+    token.bbcode_attrs = tagInfo.attrs;
+    token.bbcode_type = "number_open";
+  },
+
+  after: function(state, openToken) {
+    const attrs = openToken.bbcode_attrs;
+    const attributes = [["class", "survey-number"]];
+    attributes.push([DATA_PREFIX + "type", "number"]);
+
+    let question = attrs["question"];
+    if (question) {
+      let md5HashField = md5(JSON.stringify([question]));
+      attributes.push([DATA_PREFIX + "field-id", md5HashField]);
+    }
+
+    WHITELISTED_ATTRIBUTES.forEach(name => {
+      if (attrs[name]) {
+        attributes.push([DATA_PREFIX + name, attrs[name]]);
+      }
+    });
+
+    let header = [];
+    let token = new state.Token("number_open", "div", 1);
+    token.block = true;
+    token.attrs = attributes;
+    header.push(token);
+
+    replaceToken(state.tokens, openToken, header);
+    state.level = state.tokens[state.tokens.length - 1].level;
+    state.push("number_close", "div", -1);
+  }
+}
+
 function newApiInit(helper) {
   helper.registerOptions((opts, siteSettings) => {
     opts.features.survey = !!siteSettings.surveys_enabled;
@@ -244,7 +283,8 @@ function newApiInit(helper) {
     md.block.bbcode.ruler.push("survey", surveyRule);
     md.block.bbcode.ruler.push("radio", surveyRadioRule);
     md.block.bbcode.ruler.push("checkbox", surveyCheckboxRule);
-    md.block.bbcode.ruler.push("texta", surveyTextareaRule);
+    md.block.bbcode.ruler.push("textarea", surveyTextareaRule);
+    md.block.bbcode.ruler.push("number", surveyNumberRule);
   });
 }
 
@@ -254,6 +294,7 @@ export function setup(helper) {
     "div.survey-radio",
     "div.survey-checkbox",
     "div.survey-textarea",
+    "div.survey-number",
     "div.survey-info",
     "div.survey-container",
     "div.survey-buttons",

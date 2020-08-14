@@ -39,7 +39,23 @@ createWidget("discourse-survey-field", {
           })
         )
       )
-    } else {
+    } else if (field.response_type === 2) {
+      // number field
+      const values = Array.from(Array(10), (_, i) => i + 1)
+
+      contents.push(
+        h("div.field-number",
+          values.map(value => {
+            return this.attach("discourse-survey-field-number", {
+              fieldId: attrs.field.digest,
+              value: value,
+              response: attrs.response[attrs.field.digest]
+            })
+          })
+        )
+      )
+    } else if (field.response_type === 3) {
+      // textarea field
       contents.push(
         h("div.field-textarea",
           this.attach("discourse-survey-field-textarea", {
@@ -50,26 +66,6 @@ createWidget("discourse-survey-field", {
     }
 
     return contents;
-  }
-});
-
-function textareaHtml() {
-  return new RawHtml({ html: `<textarea></textarea>` });
-}
-
-createWidget("discourse-survey-field-textarea", {
-  tagName: "span",
-
-  html(attrs) {
-    const contents = [];
-    contents.push(textareaHtml());
-    return contents;
-  },
-
-  keyUp(e) {
-    // remove zero-width chars
-    const value = e.target.value.replace(/[\u200B-\u200D\uFEFF]/, "");
-    this.sendWidgetAction("textChanged", {value: value, fieldId: this.attrs.fieldId});
   }
 });
 
@@ -84,7 +80,7 @@ function optionHtml(option) {
 }
 
 createWidget("discourse-survey-field-option", {
-  tagName: "li",
+  tagName: "li.survey-field-option",
 
   buildAttributes(attrs) {
     return { "data-survey-option-id": attrs.option.digest };
@@ -114,6 +110,56 @@ createWidget("discourse-survey-field-option", {
   click(e) {
     if ($(e.target).closest("a").length === 0) {
       this.sendWidgetAction("toggleOption", this.attrs);
+    }
+  }
+});
+
+function textareaHtml() {
+  return new RawHtml({ html: `<textarea></textarea>` });
+}
+
+createWidget("discourse-survey-field-textarea", {
+  tagName: "span",
+
+  html(attrs) {
+    const contents = [];
+    contents.push(textareaHtml());
+    return contents;
+  },
+
+  keyUp(e) {
+    // remove zero-width chars
+    const value = e.target.value.replace(/[\u200B-\u200D\uFEFF]/, "");
+    this.sendWidgetAction("toggleValue", {value: value, fieldId: this.attrs.fieldId});
+  }
+});
+
+function numberHtml(value) {
+  return new RawHtml({ html: `<span>${value}</span>` });
+}
+
+createWidget("discourse-survey-field-number", {
+  tagName: "li.survey-field-number",
+
+  html(attrs) {
+    const { value, response } = attrs;
+    const contents = [];
+    let chosen = false;
+
+    if (response) {
+      chosen = value === response;
+    }
+
+    contents.push(iconNode(chosen ? "circle" : "far-circle"));
+    contents.push(" ");
+    contents.push(numberHtml(value));
+
+    return contents;
+  },
+
+  click(e) {
+    if ($(e.target).closest("a").length === 0) {
+      this.sendWidgetAction("toggleValue", {value: this.attrs.value, fieldId: this.attrs.fieldId});
     }
   }
 });
@@ -238,7 +284,7 @@ export default createWidget("discourse-survey", {
     this._toggleOption(optionInfo);
   },
 
-  textChanged(fieldInfo) {
+  toggleValue(fieldInfo) {
     if (!this.currentUser) return this.showLogin();
     const { response } = this.attrs;
     response[fieldInfo.fieldId] = fieldInfo.value;

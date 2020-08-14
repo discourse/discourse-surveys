@@ -104,6 +104,20 @@ module DiscourseSurveys
             survey["fields"] << textarea_hash
           end
 
+          # number field
+          s.css("div[#{DATA_PREFIX}type='number']").each do |number|
+            number_hash = { "type" => "number" }
+
+            # attributes
+            number.attributes.values.each do |attribute|
+              if attribute.name.start_with?(DATA_PREFIX)
+                number_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+              end
+            end
+
+            survey["fields"] << number_hash
+          end
+
           survey
         end
       end
@@ -137,7 +151,6 @@ module DiscourseSurveys
           response.select! { |k| available_fields.include?(k) }
           raise StandardError.new I18n.t("survey.requires_at_least_1_valid_field") if response.empty?
 
-          # update to save text response
           fields = survey.survey_fields.each_with_object({}) do |field, obj|
             if response.include?(field.digest)
               if field.has_options?

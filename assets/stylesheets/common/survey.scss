@@ -24,6 +24,12 @@ div.survey {
     word-break: break-word;
   }
 
+  li.survey-field-number {
+    display: inline-block;
+    width: 3.25em;
+    padding: 0.3em 0.2em;
+  }
+
   .survey-buttons {
     .info-text {
       margin: 0.25em 0;
