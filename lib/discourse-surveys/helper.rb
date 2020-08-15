@@ -90,6 +90,26 @@ module DiscourseSurveys
             survey["fields"] << checkbox_hash
           end
 
+          # dropdown field
+          s.css("div[#{DATA_PREFIX}type='dropdown']").each do |dropdown|
+            dropdown_hash = { "type" => "dropdown", "options" => [] }
+
+            # attributes
+            dropdown.attributes.values.each do |attribute|
+              if attribute.name.start_with?(DATA_PREFIX)
+                dropdown_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+              end
+            end
+
+            # options
+            dropdown.css("li[#{DATA_PREFIX}option-id]").each do |o|
+              option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+              dropdown_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+            end
+
+            survey["fields"] << dropdown_hash
+          end
+
           # textarea field
           s.css("div[#{DATA_PREFIX}type='textarea']").each do |textarea|
             textarea_hash = { "type" => "textarea" }

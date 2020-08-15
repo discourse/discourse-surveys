@@ -26,7 +26,18 @@ createWidget("discourse-survey-field", {
     const contents = [];
     contents.push(fieldHtml(field));
 
-    if (hasOptions) {
+    if (field.response_type === 6) {
+      // dropdown field
+      contents.push(
+        h("div.field-dropdown",
+          this.attach("discourse-survey-field-dropdown", {
+            options: field.options,
+            fieldId: attrs.field.digest
+          })
+        )
+      )
+    } else if (hasOptions) {
+      // radio & checkbox field
       contents.push(
         h("div",
           field.options.map(option => {
@@ -69,7 +80,7 @@ createWidget("discourse-survey-field", {
   }
 });
 
-function optionHtml(option) {
+function listHtml(option) {
   const $node = $(`<span>${option.html}</span>`);
 
   $node.find(".discourse-local-date").each((_index, elem) => {
@@ -102,7 +113,7 @@ createWidget("discourse-survey-field-option", {
     }
 
     contents.push(" ");
-    contents.push(optionHtml(attrs.option));
+    contents.push(listHtml(attrs.option));
 
     return contents;
   },
@@ -161,6 +172,27 @@ createWidget("discourse-survey-field-number", {
     if ($(e.target).closest("a").length === 0) {
       this.sendWidgetAction("toggleValue", {value: this.attrs.value, fieldId: this.attrs.fieldId});
     }
+  }
+});
+
+function optionHtml(option) {
+  return new RawHtml({ html: `<option value="${option.digest}">${option.html}</option>` });
+}
+
+createWidget("discourse-survey-field-dropdown", {
+  tagName: "select.survey-field-dropdown",
+
+  html(attrs) {
+    const contents = [];
+    attrs.options.map(option => {
+      contents.push(optionHtml(option));
+    })
+
+    return contents;
+  },
+
+  change(e) {
+    this.sendWidgetAction("toggleValue", {value: e.target.value, fieldId: this.attrs.fieldId});
   }
 });
 

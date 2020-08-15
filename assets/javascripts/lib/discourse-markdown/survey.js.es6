@@ -196,6 +196,55 @@ const surveyCheckboxRule = {
   }
 };
 
+const surveyDropdownRule = {
+  tag: "dropdown",
+
+  before: function(state, tagInfo, raw) {
+    let token = state.push("text", "", 0);
+    token.attrs = [];
+    token.bbcode_attrs = tagInfo.attrs;
+    token.bbcode_type = "dropdown_open";
+  },
+
+  after: function(state, openToken) {
+    const items = getListItems(state.tokens, openToken);
+    const attrs = openToken.bbcode_attrs;
+    const attributes = [["class", "survey-dropdown"]];
+    attributes.push([DATA_PREFIX + "type", "dropdown"]);
+
+    let question = attrs["question"];
+    if (question) {
+      let md5HashField = md5(JSON.stringify([question]));
+      attributes.push([DATA_PREFIX + "field-id", md5HashField]);
+    }
+
+    WHITELISTED_ATTRIBUTES.forEach(name => {
+      if (attrs[name]) {
+        attributes.push([DATA_PREFIX + name, attrs[name]]);
+      }
+    });
+
+    let header = [];
+    let token = new state.Token("dropdown_open", "div", 1);
+    token.block = true;
+    token.attrs = attributes;
+    header.push(token);
+
+    for (let o = 0; o < items.length; o++) {
+      let item_token = items[o][0];
+      let text = items[o][1];
+
+      item_token.attrs = item_token.attrs || [];
+      let md5Hash = md5(JSON.stringify([text]));
+      item_token.attrs.push([DATA_PREFIX + "option-id", md5Hash]);
+    }
+
+    replaceToken(state.tokens, openToken, header);
+    state.level = state.tokens[state.tokens.length - 1].level;
+    state.push("dropdown_close", "div", -1);
+  }
+};
+
 const surveyTextareaRule = {
   tag: "textarea",
 
@@ -283,6 +332,7 @@ function newApiInit(helper) {
     md.block.bbcode.ruler.push("survey", surveyRule);
     md.block.bbcode.ruler.push("radio", surveyRadioRule);
     md.block.bbcode.ruler.push("checkbox", surveyCheckboxRule);
+    md.block.bbcode.ruler.push("dropdown", surveyDropdownRule);
     md.block.bbcode.ruler.push("textarea", surveyTextareaRule);
     md.block.bbcode.ruler.push("number", surveyNumberRule);
   });
@@ -293,6 +343,7 @@ export function setup(helper) {
     "div.survey",
     "div.survey-radio",
     "div.survey-checkbox",
+    "div.survey-dropdown",
     "div.survey-textarea",
     "div.survey-number",
     "div.survey-info",
