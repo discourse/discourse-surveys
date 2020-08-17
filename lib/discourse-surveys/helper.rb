@@ -138,6 +138,20 @@ module DiscourseSurveys
             survey["fields"] << number_hash
           end
 
+          # star field
+          s.css("div[#{DATA_PREFIX}type='star']").each do |star|
+            star_hash = { "type" => "star" }
+
+            # attributes
+            star.attributes.values.each do |attribute|
+              if attribute.name.start_with?(DATA_PREFIX)
+                star_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+              end
+            end
+
+            survey["fields"] << star_hash
+          end
+
           survey
         end
       end

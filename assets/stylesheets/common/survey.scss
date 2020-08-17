@@ -30,6 +30,39 @@ div.survey {
     padding: 0.3em 0.2em;
   }
 
+  .field-star {
+    .survey-field-star {
+      display: inline-flex;
+      padding: 0.3em 0.2em;
+    }
+
+    .star-rating-label {
+      font-size: 1.6em;
+      cursor: pointer;
+    }
+
+    .star-rating-input {
+      position: absolute !important;
+      left: -9999px !important;
+    }
+
+    .d-icon-star {
+      color: orange;
+    }
+
+    .star-rating-input:checked ~ .star-rating-label .d-icon-star {
+      color: #ddd;
+    }
+
+    .survey-field-star:hover .star-rating-label .d-icon-star {
+      color: orange;
+    }
+
+    .star-rating-input:hover ~ .star-rating-label .d-icon-star {
+      color: #ddd;
+    }
+  }
+
   .survey-buttons {
     .info-text {
       margin: 0.25em 0;
