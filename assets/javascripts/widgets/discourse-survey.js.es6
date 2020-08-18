@@ -236,8 +236,8 @@ createWidget("discourse-survey-buttons", {
         className: `submit-response ${
           submitDisabled ? "btn-default" : "btn-primary"
         }`,
-        label: "discourse_surveys.submit-response.label",
-        title: "discourse_surveys.submit-response.title",
+        label: "discourse_surveys.submit_response.label",
+        title: "discourse_surveys.submit_response.title",
         disabled: submitDisabled,
         action: "submitResponse"
       })
@@ -246,11 +246,6 @@ createWidget("discourse-survey-buttons", {
     return contents;
   }
 });
-
-function submittedHtml() {
-  const $node = $(`<span>${I18n.t("discourse_surveys.survey-submitted")}</span>`);
-  return new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` });
-}
 
 export default createWidget("discourse-survey", {
   tagName: "div",
@@ -274,8 +269,12 @@ export default createWidget("discourse-survey", {
     const contents = [];
 
     // todo: check if response is already submitted and do not show survey if so.
-    if (state.submitted || attrs.survey.user_responded) {
-      contents.push(submittedHtml());
+    if (state.submitted) {
+      const $node = $(`<span>${I18n.t("discourse_surveys.survey_submitted")}</span>`);
+      contents.push(new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` }));
+    } else if (attrs.survey.user_responded) {
+      const $node = $(`<span>${I18n.t("discourse_surveys.user_responded")}</span>`);
+      contents.push(new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` }));
     } else {
       contents.push(
         h("div.survey-fields-container",
@@ -288,11 +287,6 @@ export default createWidget("discourse-survey", {
     }
 
     return contents;
-  },
-
-  hasVoted() {
-    const { vote } = this.attrs;
-    return vote && vote.length > 0;
   },
 
   canSubmitResponse() {

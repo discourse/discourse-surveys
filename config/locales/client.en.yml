@@ -1,7 +1,8 @@
 en:
   js:
     discourse_surveys:
-      submit-response:
+      submit_response:
         title: "Submit your response"
         label: "Submit"
-      survey-submitted: "Response has been submitted successfully!"
+      survey_submitted: "Response has been submitted successfully!"
+      user_responded: "You have already taken this survey."
