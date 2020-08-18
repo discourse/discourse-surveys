@@ -82,6 +82,7 @@ createWidget("discourse-survey-field", {
         h("div.field-star",
           this.attach("discourse-survey-field-star", {
             fieldId: attrs.field.digest,
+            postId: attrs.postId,
             values
           })
         )
@@ -203,13 +204,14 @@ createWidget("discourse-survey-field-star", {
 
   html(attrs) {
     const contents = [];
+    const postId = attrs.postId;
 
     attrs.values.forEach(value => {
       if (value > 0) {
-        contents.push(new RawHtml({ html: `<label class="star-rating-label" for="star-rating-${value}">${iconHTML("star")}</label>` }));
-        contents.push(new RawHtml({ html: `<input id="star-rating-${value}" name="star-rating" class="star-rating-input" value="${value}" type="radio">` }));
+        contents.push(new RawHtml({ html: `<label class="star-rating-label" for="star-rating-${postId}-${value}">${iconHTML("star")}</label>` }));
+        contents.push(new RawHtml({ html: `<input id="star-rating-${postId}-${value}" name="star-rating-${postId}" class="star-rating-input" value="${value}" type="radio">` }));
       } else {
-        contents.push(new RawHtml({ html: `<input id="star-rating-0" name="star-rating" disabled checked class="star-rating-input" value="0" type="radio">` }));
+        contents.push(new RawHtml({ html: `<input id="star-rating-${postId}-0" name="star-rating-${postId}" disabled checked class="star-rating-input" value="0" type="radio">` }));
       }
     });
 
@@ -279,7 +281,7 @@ export default createWidget("discourse-survey", {
       contents.push(
         h("div.survey-fields-container",
           attrs.survey.fields.map(field => {
-            return this.attach("discourse-survey-field", { field, response: attrs.response })
+            return this.attach("discourse-survey-field", { field, response: attrs.response, postId: attrs.post.id })
           })
         )
       );
