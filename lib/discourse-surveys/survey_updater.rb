@@ -15,6 +15,13 @@ module DiscourseSurveys
         survey_record = ::Survey.where(post_id: post.id).first
         survey_id = survey_record.id
 
+        unless survey.present?
+          # disassociate survey with post
+          survey_record.post_id = nil
+          survey_record.save!
+          return true
+        end
+
         # update survey
         survey_record.name = survey["name"].presence || "survey"
         survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
