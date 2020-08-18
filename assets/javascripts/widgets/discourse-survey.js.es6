@@ -184,6 +184,8 @@ createWidget("discourse-survey-field-dropdown", {
 
   html(attrs) {
     const contents = [];
+
+    contents.push(new RawHtml({ html: `<option label=" "></option>` }));
     attrs.options.map(option => {
       contents.push(new RawHtml({ html: `<option value="${option.digest}">${option.html}</option>` }));
     })
@@ -226,10 +228,8 @@ createWidget("discourse-survey-buttons", {
 
   html(attrs) {
     const contents = [];
-    const { survey, post } = attrs;
 
-    // const submitDisabled = !attrs.canSubmitResponse;
-    const submitDisabled = false;
+    const submitDisabled = !attrs.canSubmitResponse;
 
     contents.push(
       this.attach("button", {
@@ -283,7 +283,7 @@ export default createWidget("discourse-survey", {
           })
         )
       );
-      contents.push(this.attach("discourse-survey-buttons", attrs));
+      contents.push(this.attach("discourse-survey-buttons", {canSubmitResponse: this.canSubmitResponse()}));
     }
 
     return contents;
@@ -296,15 +296,10 @@ export default createWidget("discourse-survey", {
       return false;
     }
 
-    const selectedOptionCount = attrs.response.length;
+    const respondedFieldCount = Object.keys(attrs.response).length;
+    const totalFieldCount = attrs.survey.fields.length;
 
-    if (this.isMultiple()) {
-      return (
-        selectedOptionCount >= this.min() && selectedOptionCount <= this.max()
-      );
-    }
-
-    return selectedOptionCount > 0;
+    return totalFieldCount === respondedFieldCount;
   },
 
   showLogin() {
@@ -342,7 +337,7 @@ export default createWidget("discourse-survey", {
   },
 
   submitResponse() {
-    // if (!this.canSubmitResponse()) return;
+    if (!this.canSubmitResponse()) return;
     if (!this.currentUser) return this.showLogin();
 
     const { attrs, state } = this;
