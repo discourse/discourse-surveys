@@ -11,6 +11,7 @@ const WHITELISTED_ATTRIBUTES = [
   "order",
   "public",
   "question",
+  "position",
   "results",
   "status",
   "type"

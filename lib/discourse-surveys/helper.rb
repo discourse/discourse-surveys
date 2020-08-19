@@ -22,6 +22,7 @@ module DiscourseSurveys
               survey_id: created_survey.id,
               digest:  field["field-id"].presence,
               question: field["question"],
+              position: field["position"],
               response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
             )
 

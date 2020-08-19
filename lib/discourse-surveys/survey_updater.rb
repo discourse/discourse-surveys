@@ -83,6 +83,10 @@ module DiscourseSurveys
           new_field = new_field.first
           new_field_options = new_field["options"]
 
+          # update field position
+          old_field["position"] = new_field["position"]
+          old_field.save!
+
           # update field attributes
           if is_different?(old_field, new_field, new_field_options)
             raise StandardError.new I18n.t("survey.cannot_edit") if has_response
