@@ -2,8 +2,3 @@ plugins:
   surveys_enabled:
     default: false
     client: true
-  survey_maximum_options:
-    default: 20
-    min: 2
-    max: 100
-    client: true
