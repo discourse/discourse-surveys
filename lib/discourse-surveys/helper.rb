@@ -17,12 +17,12 @@ module DiscourseSurveys
             visibility: survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
           )
 
-          survey["fields"].each do |field|
+          survey["fields"].each.with_index do |field, position|
             created_survey_field = SurveyField.create!(
               survey_id: created_survey.id,
               digest:  field["field-id"].presence,
               question: field["question"],
-              position: field["position"],
+              position: position,
               response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
             )
 
@@ -43,7 +43,7 @@ module DiscourseSurveys
         cooked = PrettyText.cook(raw, topic_id: topic_id, user_id: user_id)
 
         Nokogiri::HTML5(cooked).css("div.survey").map do |s|
-          survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => [] }
+          survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => Set.new }
 
           s.attributes.values.each do |attribute|
             if attribute.name.start_with?(DATA_PREFIX)
@@ -51,106 +51,24 @@ module DiscourseSurveys
             end
           end
 
-          # radio field
-          s.css("div[#{DATA_PREFIX}type='radio']").each do |radio|
-            radio_hash = { "type" => "radio", "options" => [] }
+          type_attribute = "#{DATA_PREFIX}type"
+          s.css("div[#{type_attribute}]").each.with_index do |field, position|
+            attribute = field.attributes[type_attribute].value.to_s
 
-            # attributes
-            radio.attributes.values.each do |attribute|
-              if attribute.name.start_with?(DATA_PREFIX)
-                radio_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-              end
+            case attribute
+            when 'radio'
+              survey['fields'] << extract_radio(field, position)
+            when 'checkbox'
+              survey['fields'] << extract_checkbox(field, position)
+            when 'dropdown'
+              survey['fields'] << extract_dropdown(field, position)
+            when 'textarea'
+              survey['fields'] << extract_textarea(field, position)
+            when 'number'
+              survey['fields'] << extract_number(field, position)
+            when 'star'
+              survey['fields'] << extract_star(field, position)
             end
-
-            # options
-            radio.css("li[#{DATA_PREFIX}option-id]").each do |o|
-              option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
-              radio_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
-            end
-
-            survey["fields"] << radio_hash
-          end
-
-          # checkbox field
-          s.css("div[#{DATA_PREFIX}type='checkbox']").each do |checkbox|
-            checkbox_hash = { "type" => "checkbox", "options" => [] }
-
-            # attributes
-            checkbox.attributes.values.each do |attribute|
-              if attribute.name.start_with?(DATA_PREFIX)
-                checkbox_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-              end
-            end
-
-            # options
-            checkbox.css("li[#{DATA_PREFIX}option-id]").each do |o|
-              option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
-              checkbox_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
-            end
-
-            survey["fields"] << checkbox_hash
-          end
-
-          # dropdown field
-          s.css("div[#{DATA_PREFIX}type='dropdown']").each do |dropdown|
-            dropdown_hash = { "type" => "dropdown", "options" => [] }
-
-            # attributes
-            dropdown.attributes.values.each do |attribute|
-              if attribute.name.start_with?(DATA_PREFIX)
-                dropdown_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-              end
-            end
-
-            # options
-            dropdown.css("li[#{DATA_PREFIX}option-id]").each do |o|
-              option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
-              dropdown_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
-            end
-
-            survey["fields"] << dropdown_hash
-          end
-
-          # textarea field
-          s.css("div[#{DATA_PREFIX}type='textarea']").each do |textarea|
-            textarea_hash = { "type" => "textarea" }
-
-            # attributes
-            textarea.attributes.values.each do |attribute|
-              if attribute.name.start_with?(DATA_PREFIX)
-                textarea_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-              end
-            end
-
-            survey["fields"] << textarea_hash
-          end
-
-          # number field
-          s.css("div[#{DATA_PREFIX}type='number']").each do |number|
-            number_hash = { "type" => "number" }
-
-            # attributes
-            number.attributes.values.each do |attribute|
-              if attribute.name.start_with?(DATA_PREFIX)
-                number_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-              end
-            end
-
-            survey["fields"] << number_hash
-          end
-
-          # star field
-          s.css("div[#{DATA_PREFIX}type='star']").each do |star|
-            star_hash = { "type" => "star" }
-
-            # attributes
-            star.attributes.values.each do |attribute|
-              if attribute.name.start_with?(DATA_PREFIX)
-                star_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-              end
-            end
-
-            survey["fields"] << star_hash
           end
 
           survey
@@ -208,6 +126,104 @@ module DiscourseSurveys
             end
           end
         end
+      end
+
+      private
+
+      def extract_checkbox(checkbox, position)
+        checkbox_hash = { "type" => "checkbox", "options" => [], "position" => position }
+
+        # attributes
+        checkbox.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            checkbox_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        # options
+        checkbox.css("li[#{DATA_PREFIX}option-id]").each do |o|
+          option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+          checkbox_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+        end
+
+        checkbox_hash
+      end
+
+      def extract_radio(radio, position)
+        radio_hash = { "type" => "radio", "options" => [], "position" => position }
+
+        # attributes
+        radio.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            radio_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        # options
+        radio.css("li[#{DATA_PREFIX}option-id]").each do |o|
+          option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+          radio_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+        end
+
+        radio_hash
+      end
+
+      def extract_dropdown(dropdown, position)
+        dropdown_hash = { "type" => "dropdown", "options" => [], "position" => position }
+
+        # attributes
+        dropdown.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            dropdown_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        # options
+        dropdown.css("li[#{DATA_PREFIX}option-id]").each do |o|
+          option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+          dropdown_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+        end
+
+        dropdown_hash
+      end
+
+      def extract_textarea(textarea, position)
+        textarea_hash = { "type" => "textarea", "position" => position }
+
+        # attributes
+        textarea.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            textarea_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        textarea_hash
+      end
+
+      def extract_number(number, position)
+        number_hash = { "type" => "number", "position" => position }
+
+        # attributes
+        number.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            number_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        number_hash
+      end
+
+      def extract_star(star, position)
+        star_hash = { "type" => "star", "position" => position }
+
+        # attributes
+        star.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            star_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        star_hash
       end
     end
   end
