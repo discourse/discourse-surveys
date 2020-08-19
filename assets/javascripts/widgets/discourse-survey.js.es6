@@ -278,7 +278,6 @@ export default createWidget("discourse-survey", {
       const $node = $(`<span>${I18n.t("discourse_surveys.user_responded")}</span>`);
       contents.push(new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` }));
     } else {
-      attrs.survey.fields.sort((a, b) => (a.position > b.position) ? 1 : -1);
       contents.push(
         h("div.survey-fields-container",
           attrs.survey.fields.map(field => {

@@ -5,6 +5,8 @@ class SurveyField < ActiveRecord::Base
   has_many :survey_responses, dependent: :destroy
   belongs_to :survey
 
+  default_scope { order('position ASC') }
+
   def self.response_type
     @response_type ||= Enum.new(:radio, :checkbox, :number, :textarea, :star, :thumbs, :dropdown, start: 0)
   end
