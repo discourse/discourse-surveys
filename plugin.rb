@@ -65,7 +65,7 @@ after_initialize do
       return unless validator.validate_post
     end
 
-    if Survey.where(post_id: self.id).exists?
+    if self.id && Survey.where(post_id: self.id).exists?
       begin
         DiscourseSurveys::SurveyUpdater.update(self, surveys)
       rescue StandardError => e
