@@ -33,6 +33,7 @@ end
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  digest        :string           not null
+#  position      :integer          default(0)
 #
 # Indexes
 #

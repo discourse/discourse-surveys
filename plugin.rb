@@ -81,7 +81,7 @@ after_initialize do
 
   register_post_custom_field_type(DiscourseSurveys::HAS_SURVEYS, :boolean)
 
-  topic_view_post_custom_fields_whitelister { [DiscourseSurveys::HAS_SURVEYS] }
+  topic_view_post_custom_fields_allowlister { [DiscourseSurveys::HAS_SURVEYS] }
 
   add_to_class(:topic_view, :surveys) do
     @surveys ||= begin
