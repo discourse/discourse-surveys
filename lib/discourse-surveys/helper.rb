@@ -68,6 +68,8 @@ module DiscourseSurveys
               survey['fields'] << extract_number(field, position)
             when 'star'
               survey['fields'] << extract_star(field, position)
+            when 'thumbs'
+              survey['fields'] << extract_thumbs(field, position)
             end
           end
 
@@ -224,6 +226,19 @@ module DiscourseSurveys
         end
 
         star_hash
+      end
+
+      def extract_thumbs(thumbs, position)
+        thumbs_hash = { "type" => "thumbs", "position" => position }
+
+        # attributes
+        thumbs.attributes.values.each do |attribute|
+          if attribute.name.start_with?(DATA_PREFIX)
+            thumbs_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+          end
+        end
+
+        thumbs_hash
       end
     end
   end

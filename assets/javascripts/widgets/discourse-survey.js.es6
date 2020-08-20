@@ -75,7 +75,7 @@ createWidget("discourse-survey-field", {
         )
       )
     } else if (field.response_type === 4) {
-      // star field
+      // star rating field
       const values = Array.from(Array(6).keys())
 
       contents.push(
@@ -84,6 +84,17 @@ createWidget("discourse-survey-field", {
             fieldId: attrs.field.digest,
             postId: attrs.postId,
             values
+          })
+        )
+      )
+    } else if (field.response_type === 5) {
+      // thumbs up/down field
+
+      contents.push(
+        h("div.field-thumbs",
+          this.attach("discourse-survey-field-thumbs", {
+            fieldId: attrs.field.digest,
+            postId: attrs.postId
           })
         )
       )
@@ -220,7 +231,32 @@ createWidget("discourse-survey-field-star", {
 
   click(e) {
     if ($(e.target).closest("a").length === 0) {
-      this.sendWidgetAction("toggleValue", {value: $("input[name*='star-rating']:checked").val(), fieldId: this.attrs.fieldId});
+      this.sendWidgetAction("toggleValue", {value: $(`input[name*='star-rating-${this.attrs.postId}']:checked`).val(), fieldId: this.attrs.fieldId});
+    }
+  }
+});
+
+createWidget("discourse-survey-field-thumbs", {
+  tagName: "div.survey-field-thumbs",
+
+  html(attrs) {
+    const contents = [];
+    const postId = attrs.postId;
+
+    // thumbs up
+    contents.push(new RawHtml({ html: `<input id="thumbs-rating-up-${postId}" name="thumbs-rating-${postId}" class="thumbs-rating-input" value="+1" type="radio">` }));
+    contents.push(new RawHtml({ html: `<label class="thumbs-rating-label thumbs-up" for="thumbs-rating-up-${postId}">${iconHTML("thumbs-up", { class: "thumbs-icon" })}</label>` }));
+
+    // thumbs down
+    contents.push(new RawHtml({ html: `<input id="thumbs-rating-down-${postId}" name="thumbs-rating-${postId}" class="thumbs-rating-input" value="-1" type="radio">` }));
+    contents.push(new RawHtml({ html: `<label class="thumbs-rating-label thumbs-down" for="thumbs-rating-down-${postId}">${iconHTML("thumbs-down", { class: "thumbs-icon" })}</label>` }));
+
+    return contents;
+  },
+
+  click(e) {
+    if ($(e.target).closest("a").length === 0) {
+      this.sendWidgetAction("toggleValue", {value: $(`input[name*='thumbs-rating-${this.attrs.postId}']:checked`).val(), fieldId: this.attrs.fieldId});
     }
   }
 });

@@ -63,6 +63,35 @@ div.survey {
     }
   }
 
+  .field-thumbs {
+    .survey-field-thumbs {
+      display: inline-flex;
+      padding: 0.5em 0.8em;
+    }
+
+    .thumbs-rating-label {
+      font-size: 2.2em;
+      cursor: pointer;
+    }
+
+    .thumbs-rating-input {
+      position: absolute !important;
+      left: -9999px !important;
+    }
+
+    .thumbs-icon {
+      color: #ddd;
+    }
+
+    .thumbs-rating-input:checked+label .thumbs-icon {
+      color: #1e90ff;
+    }
+
+    .thumbs-rating-label:hover .thumbs-icon {
+      color: #1e90ff;
+    }
+  }
+
   .survey-buttons {
     .info-text {
       margin: 0.25em 0;

@@ -4,14 +4,11 @@ import I18n from "I18n";
 const DATA_PREFIX = "data-survey-";
 const DEFAULT_SURVEY_NAME = "survey";
 const WHITELISTED_ATTRIBUTES = [
-  "close",
   "max",
   "min",
   "name",
-  "order",
   "public",
   "question",
-  "results",
   "status",
   "type"
 ];
@@ -362,6 +359,45 @@ const surveyStarRule = {
   }
 }
 
+const surveyThumbsRule = {
+  tag: "thumbs",
+
+  before: function(state, tagInfo) {
+    let token = state.push("thumbs", "", 0);
+    token.attrs = [];
+    token.bbcode_attrs = tagInfo.attrs;
+    token.bbcode_type = "thumbs_open";
+  },
+
+  after: function(state, openToken) {
+    const attrs = openToken.bbcode_attrs;
+    const attributes = [["class", "survey-thumbs"]];
+    attributes.push([DATA_PREFIX + "type", "thumbs"]);
+
+    let question = attrs["question"];
+    if (question) {
+      let md5HashField = md5(JSON.stringify([question]));
+      attributes.push([DATA_PREFIX + "field-id", md5HashField]);
+    }
+
+    WHITELISTED_ATTRIBUTES.forEach(name => {
+      if (attrs[name]) {
+        attributes.push([DATA_PREFIX + name, attrs[name]]);
+      }
+    });
+
+    let header = [];
+    let token = new state.Token("thumbs_open", "div", 1);
+    token.block = true;
+    token.attrs = attributes;
+    header.push(token);
+
+    replaceToken(state.tokens, openToken, header);
+    state.level = state.tokens[state.tokens.length - 1].level;
+    state.push("thumbs_close", "div", -1);
+  }
+}
+
 function newApiInit(helper) {
   helper.registerOptions((opts, siteSettings) => {
     opts.features.survey = !!siteSettings.surveys_enabled;
@@ -375,6 +411,7 @@ function newApiInit(helper) {
     md.block.bbcode.ruler.push("textarea", surveyTextareaRule);
     md.block.bbcode.ruler.push("number", surveyNumberRule);
     md.block.bbcode.ruler.push("star", surveyStarRule);
+    md.block.bbcode.ruler.push("thumbs", surveyThumbsRule);
   });
 }
 
@@ -387,6 +424,7 @@ export function setup(helper) {
     "div.survey-textarea",
     "div.survey-number",
     "div.survey-star",
+    "div.survey-thumbs",
     "div.survey-info",
     "div.survey-container",
     "div.survey-buttons",
