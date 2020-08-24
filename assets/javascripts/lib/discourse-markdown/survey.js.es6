@@ -85,13 +85,20 @@ const surveyRule = {
     }
 
     let header = [];
+    let wrapperDivToken = new state.Token("div_survey_wrap", "div", 1);
+    wrapperDivToken.block = true;
+    wrapperDivToken.attrs = [["data-survey-wrapper", "true"]];
+    header.push(wrapperDivToken);
+
     let token = new state.Token("survey_open", "div", 1);
     token.block = true;
     token.attrs = attributes;
     header.push(token);
 
     replaceToken(state.tokens, openToken, header);
+
     state.push('survey_close', 'div', -1);
+    state.push("div_survey_wrap", "div", -1);
   }
 }
 
