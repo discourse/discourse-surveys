@@ -1,112 +1,168 @@
-div.survey {
-  margin: 1em 0;
-  border: 1px solid $primary-low;
-  padding: 0.5em;
+.cooked .survey {
+  --star-color: orange;
+  --border-radius: 4px;
 
   @include unselectable;
+  margin: 1em 0;
+  border: 1px solid var(--primary-low-mid);
+  border-radius: var(--border-radius);
 
-  .field-question {
-    font-size: $font-up-2;
-    padding: 0 0.2em;
-    color: $primary-medium;
-  }
-
+  // base
   ul,
   li {
     list-style: none;
     cursor: pointer;
+  }
+
+  .survey-fields-container {
+    padding: 1.5em 2.5em;
+  }
+
+  .survey-field {
+    padding-bottom: 1.25em;
+  }
+
+  .field-question {
     font-size: $font-up-1;
+    color: var(--primary);
+    margin-bottom: 0.25em;
   }
 
-  li[data-survey-option-id] {
-    color: $primary;
-    padding: 0.3em 0.6em;
+  // single / multi select radios
+  .survey-field-option {
+    color: var(--primary-high);
+    padding: 0.25em 0;
     word-break: break-word;
+
+    .d-icon-far-check-circle,
+    .d-icon-far-check-square {
+      color: var(--tertiary);
+    }
   }
 
-  li.survey-field-number {
+  // numbers
+  .survey-field-number {
     display: inline-block;
     width: 3.25em;
-    padding: 0.3em 0.2em;
+    padding: 0.25em 0;
+    color: var(--primary-high);
+
+    .d-icon-circle {
+      color: var(--tertiary);
+    }
   }
 
+  // dropdowns
+  .survey-field-dropdown {
+    background: var(--secondary);
+    border: 1px solid var(--primary-medium);
+    border-radius: var(--border-radius);
+    min-width: 150px;
+    padding: 0.25em;
+  }
+
+  // textarea
+  .field-textarea {
+    textarea {
+      border: 1px solid var(--primary-medium);
+      border-radius: var(--border-radius);
+      width: 100%;
+      min-height: 100px;
+      box-sizing: border-box;
+    }
+  }
+
+  // star rating
   .field-star {
+    .star-rating-input {
+      display: none;
+    }
+
     .survey-field-star {
       display: inline-flex;
-      padding: 0.3em 0.2em;
-    }
-
-    .star-rating-label {
-      font-size: 1.6em;
-      cursor: pointer;
-    }
-
-    .star-rating-input {
-      position: absolute !important;
-      left: -9999px !important;
     }
 
     .d-icon-star {
-      color: orange;
+      cursor: pointer;
+      color: var(--star-color);
+      font-size: $font-up-3;
     }
 
     .star-rating-input:checked ~ .star-rating-label .d-icon-star {
-      color: #ddd;
+      color: var(--primary-medium);
     }
 
     .survey-field-star:hover .star-rating-label .d-icon-star {
-      color: orange;
+      color: var(--star-color);
     }
 
     .star-rating-input:hover ~ .star-rating-label .d-icon-star {
-      color: #ddd;
+      color: var(--primary-medium);
     }
   }
 
+  // thumbs up / downs
   .field-thumbs {
+    .thumbs-rating-input {
+      display: none;
+    }
+
     .survey-field-thumbs {
       display: inline-flex;
-      padding: 0.5em 0.8em;
-    }
-
-    .thumbs-rating-label {
-      font-size: 2.2em;
-      cursor: pointer;
-    }
-
-    .thumbs-rating-input {
-      position: absolute !important;
-      left: -9999px !important;
     }
 
     .thumbs-icon {
-      color: #ddd;
+      cursor: pointer;
+      color: var(--primary-medium);
+      border: 1px solid var(--primary-medium);
+      border-radius: var(--border-radius);
+      font-size: $font-up-3;
+      padding: 0.25em 0.75em;
+      margin: 0.25em 0.25em 0 0;
     }
 
-    .thumbs-rating-input:checked+label .thumbs-icon {
-      color: #1e90ff;
-    }
-
-    .thumbs-rating-label:hover .thumbs-icon {
-      color: #1e90ff;
+    .thumbs-rating-label:hover .thumbs-icon,
+    .thumbs-rating-input:checked + label .thumbs-icon {
+      color: var(--secondary);
+      background: var(--tertiary);
+      border-color: var(--tertiary);
     }
   }
 
+  // bottom submit panel
   .survey-buttons {
-    .info-text {
-      margin: 0.25em 0;
-      color: $primary-medium;
-    }
-    .info-text + .info-text,
-    button + .info-text {
-      margin-left: 0.5em;
+    font-size: $font-up-2;
+    display: flex;
+    justify-content: center;
+    padding: 1em 0;
+
+    .submit-response {
+      &:disabled {
+        background: var(--tertiary);
+        color: var(--secondary);
+      }
     }
   }
 
+  // submitted message
   .survey-submitted {
-    font-size: $font-up-2;
-    padding: 0 0.2em;
-    color: $primary-medium;
+    color: var(--primary-high);
+    display: inline-flex;
+    align-items: center;
+    font-size: $font-up-1;
+    padding: 0.25em 0.5em;
+
+    .d-icon-far-check-circle {
+      margin-right: 0.25em;
+      color: var(--success);
+    }
   }
 }
 
+// temp styles for composer preview
+.d-editor-preview .survey {
+  border: 1px solid var(--primary-low-mid);
+  border-radius: var(--border-radius);
+  font-size: 0;
+  height: 150px;
+}

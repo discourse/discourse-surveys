@@ -8,7 +8,9 @@ import { popupAjaxError } from "discourse/lib/ajax-error";
 
 function fieldHtml(field) {
   const $node = $(`<span>${field.question}</span>`);
-  return new RawHtml({ html: `<span class="field-question">${$node.html()}</span>` });
+  return new RawHtml({
+    html: `<span class="field-question">${$node.html()}</span>`
+  });
 }
 
 createWidget("discourse-survey-field", {
@@ -29,75 +31,81 @@ createWidget("discourse-survey-field", {
     if (field.response_type === 6) {
       // dropdown field
       contents.push(
-        h("div.field-dropdown",
+        h(
+          "div.field-dropdown",
           this.attach("discourse-survey-field-dropdown", {
             options: field.options,
             fieldId: attrs.field.digest
           })
         )
-      )
+      );
     } else if (hasOptions) {
       // radio & checkbox field
       contents.push(
-        h("div",
+        h(
+          "div",
           field.options.map(option => {
             return this.attach("discourse-survey-field-option", {
               option,
               fieldId: attrs.field.digest,
               isMultiple,
               response: attrs.response[attrs.field.digest]
-            })
+            });
           })
         )
-      )
+      );
     } else if (field.response_type === 2) {
       // number field
-      const values = Array.from(Array(10), (_, i) => i + 1)
+      const values = Array.from(Array(10), (_, i) => i + 1);
 
       contents.push(
-        h("div.field-number",
+        h(
+          "div.field-number",
           values.map(value => {
             return this.attach("discourse-survey-field-number", {
               fieldId: attrs.field.digest,
               value: value,
               response: attrs.response[attrs.field.digest]
-            })
+            });
           })
         )
-      )
+      );
     } else if (field.response_type === 3) {
       // textarea field
       contents.push(
-        h("div.field-textarea",
+        h(
+          "div.field-textarea",
           this.attach("discourse-survey-field-textarea", {
             fieldId: attrs.field.digest
           })
         )
-      )
+      );
     } else if (field.response_type === 4) {
       // star rating field
-      const values = Array.from(Array(6).keys())
+      const values = Array.from(Array(6).keys());
 
       contents.push(
-        h("div.field-star",
+        h(
+          "div.field-star",
           this.attach("discourse-survey-field-star", {
             fieldId: attrs.field.digest,
             postId: attrs.postId,
             values
           })
         )
-      )
+      );
     } else if (field.response_type === 5) {
       // thumbs up/down field
 
       contents.push(
-        h("div.field-thumbs",
+        h(
+          "div.field-thumbs",
           this.attach("discourse-survey-field-thumbs", {
             fieldId: attrs.field.digest,
             postId: attrs.postId
           })
         )
-      )
+      );
     }
 
     return contents;
@@ -133,7 +141,7 @@ createWidget("discourse-survey-field-option", {
     if (attrs.isMultiple) {
       contents.push(iconNode(chosen ? "far-check-square" : "far-square"));
     } else {
-      contents.push(iconNode(chosen ? "circle" : "far-circle"));
+      contents.push(iconNode(chosen ? "far-check-circle" : "far-circle"));
     }
 
     contents.push(" ");
@@ -161,7 +169,10 @@ createWidget("discourse-survey-field-textarea", {
   keyUp(e) {
     // remove zero-width chars
     const value = e.target.value.replace(/[\u200B-\u200D\uFEFF]/, "");
-    this.sendWidgetAction("toggleValue", {value: value, fieldId: this.attrs.fieldId});
+    this.sendWidgetAction("toggleValue", {
+      value: value,
+      fieldId: this.attrs.fieldId
+    });
   }
 });
 
@@ -186,7 +197,10 @@ createWidget("discourse-survey-field-number", {
 
   click(e) {
     if ($(e.target).closest("a").length === 0) {
-      this.sendWidgetAction("toggleValue", {value: this.attrs.value, fieldId: this.attrs.fieldId});
+      this.sendWidgetAction("toggleValue", {
+        value: this.attrs.value,
+        fieldId: this.attrs.fieldId
+      });
     }
   }
 });
@@ -199,14 +213,21 @@ createWidget("discourse-survey-field-dropdown", {
 
     contents.push(new RawHtml({ html: `<option label=" "></option>` }));
     attrs.options.map(option => {
-      contents.push(new RawHtml({ html: `<option value="${option.digest}">${option.html}</option>` }));
-    })
+      contents.push(
+        new RawHtml({
+          html: `<option value="${option.digest}">${option.html}</option>`
+        })
+      );
+    });
 
     return contents;
   },
 
   change(e) {
-    this.sendWidgetAction("toggleValue", {value: e.target.value, fieldId: this.attrs.fieldId});
+    this.sendWidgetAction("toggleValue", {
+      value: e.target.value,
+      fieldId: this.attrs.fieldId
+    });
   }
 });
 
@@ -219,10 +240,24 @@ createWidget("discourse-survey-field-star", {
 
     attrs.values.forEach(value => {
       if (value > 0) {
-        contents.push(new RawHtml({ html: `<label class="star-rating-label" for="star-rating-${postId}-${value}">${iconHTML("star")}</label>` }));
-        contents.push(new RawHtml({ html: `<input id="star-rating-${postId}-${value}" name="star-rating-${postId}" class="star-rating-input" value="${value}" type="radio">` }));
+        contents.push(
+          new RawHtml({
+            html: `<label class="star-rating-label" for="star-rating-${postId}-${value}">${iconHTML(
+              "star"
+            )}</label>`
+          })
+        );
+        contents.push(
+          new RawHtml({
+            html: `<input id="star-rating-${postId}-${value}" name="star-rating-${postId}" class="star-rating-input" value="${value}" type="radio">`
+          })
+        );
       } else {
-        contents.push(new RawHtml({ html: `<input id="star-rating-${postId}-0" name="star-rating-${postId}" disabled checked class="star-rating-input" value="0" type="radio">` }));
+        contents.push(
+          new RawHtml({
+            html: `<input id="star-rating-${postId}-0" name="star-rating-${postId}" disabled checked class="star-rating-input" value="0" type="radio">`
+          })
+        );
       }
     });
 
@@ -231,7 +266,12 @@ createWidget("discourse-survey-field-star", {
 
   click(e) {
     if ($(e.target).closest("a").length === 0) {
-      this.sendWidgetAction("toggleValue", {value: $(`input[name*='star-rating-${this.attrs.postId}']:checked`).val(), fieldId: this.attrs.fieldId});
+      this.sendWidgetAction("toggleValue", {
+        value: $(
+          `input[name*='star-rating-${this.attrs.postId}']:checked`
+        ).val(),
+        fieldId: this.attrs.fieldId
+      });
     }
   }
 });
@@ -244,19 +284,46 @@ createWidget("discourse-survey-field-thumbs", {
     const postId = attrs.postId;
 
     // thumbs up
-    contents.push(new RawHtml({ html: `<input id="thumbs-rating-up-${postId}" name="thumbs-rating-${postId}" class="thumbs-rating-input" value="+1" type="radio">` }));
-    contents.push(new RawHtml({ html: `<label class="thumbs-rating-label thumbs-up" for="thumbs-rating-up-${postId}">${iconHTML("thumbs-up", { class: "thumbs-icon" })}</label>` }));
+    contents.push(
+      new RawHtml({
+        html: `<input id="thumbs-rating-up-${postId}" name="thumbs-rating-${postId}" class="thumbs-rating-input" value="+1" type="radio">`
+      })
+    );
+    contents.push(
+      new RawHtml({
+        html: `<label class="thumbs-rating-label thumbs-up" for="thumbs-rating-up-${postId}">${iconHTML(
+          "thumbs-up",
+          { class: "thumbs-icon" }
+        )}</label>`
+      })
+    );
 
     // thumbs down
-    contents.push(new RawHtml({ html: `<input id="thumbs-rating-down-${postId}" name="thumbs-rating-${postId}" class="thumbs-rating-input" value="-1" type="radio">` }));
-    contents.push(new RawHtml({ html: `<label class="thumbs-rating-label thumbs-down" for="thumbs-rating-down-${postId}">${iconHTML("thumbs-down", { class: "thumbs-icon" })}</label>` }));
+    contents.push(
+      new RawHtml({
+        html: `<input id="thumbs-rating-down-${postId}" name="thumbs-rating-${postId}" class="thumbs-rating-input" value="-1" type="radio">`
+      })
+    );
+    contents.push(
+      new RawHtml({
+        html: `<label class="thumbs-rating-label thumbs-down" for="thumbs-rating-down-${postId}">${iconHTML(
+          "thumbs-down",
+          { class: "thumbs-icon" }
+        )}</label>`
+      })
+    );
 
     return contents;
   },
 
   click(e) {
     if ($(e.target).closest("a").length === 0) {
-      this.sendWidgetAction("toggleValue", {value: $(`input[name*='thumbs-rating-${this.attrs.postId}']:checked`).val(), fieldId: this.attrs.fieldId});
+      this.sendWidgetAction("toggleValue", {
+        value: $(
+          `input[name*='thumbs-rating-${this.attrs.postId}']:checked`
+        ).val(),
+        fieldId: this.attrs.fieldId
+      });
     }
   }
 });
@@ -305,23 +372,47 @@ export default createWidget("discourse-survey", {
 
   html(attrs, state) {
     const contents = [];
+    const submittedIcon = iconHTML("far-check-circle");
 
     // todo: check if response is already submitted and do not show survey if so.
     if (state.submitted) {
-      const $node = $(`<span>${I18n.t("discourse_surveys.survey_submitted")}</span>`);
-      contents.push(new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` }));
+      const $node = $(
+        `<span>${I18n.t("discourse_surveys.survey_submitted")}</span>`
+      );
+
+      contents.push(
+        new RawHtml({
+          html: `<span class="survey-submitted">${submittedIcon}${$node.html()}</span>`
+        })
+      );
     } else if (attrs.survey.user_responded) {
-      const $node = $(`<span>${I18n.t("discourse_surveys.user_responded")}</span>`);
-      contents.push(new RawHtml({ html: `<span class="survey-submitted">${$node.html()}</span>` }));
+      const $node = $(
+        `<span>${I18n.t("discourse_surveys.user_responded")}</span>`
+      );
+
+      contents.push(
+        new RawHtml({
+          html: `<span class="survey-submitted">${submittedIcon}${$node.html()}</span>`
+        })
+      );
     } else {
       contents.push(
-        h("div.survey-fields-container",
+        h(
+          "div.survey-fields-container",
           attrs.survey.fields.map(field => {
-            return this.attach("discourse-survey-field", { field, response: attrs.response, postId: attrs.post.id })
+            return this.attach("discourse-survey-field", {
+              field,
+              response: attrs.response,
+              postId: attrs.post.id
+            });
           })
         )
       );
-      contents.push(this.attach("discourse-survey-buttons", {canSubmitResponse: this.canSubmitResponse()}));
+      contents.push(
+        this.attach("discourse-survey-buttons", {
+          canSubmitResponse: this.canSubmitResponse()
+        })
+      );
     }
 
     return contents;
@@ -347,9 +438,14 @@ export default createWidget("discourse-survey", {
   _toggleOption(optionInfo) {
     const { response } = this.attrs;
 
-    if (typeof response[optionInfo.fieldId] != 'undefined' && response[optionInfo.fieldId] instanceof Array ) {
+    if (
+      typeof response[optionInfo.fieldId] != "undefined" &&
+      response[optionInfo.fieldId] instanceof Array
+    ) {
       if (optionInfo.isMultiple) {
-        const chosenIdx = response[optionInfo.fieldId].indexOf(optionInfo.option.digest);
+        const chosenIdx = response[optionInfo.fieldId].indexOf(
+          optionInfo.option.digest
+        );
         if (chosenIdx !== -1) {
           response[optionInfo.fieldId].splice(chosenIdx, 1);
         } else {

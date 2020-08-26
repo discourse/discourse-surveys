@@ -11,6 +11,8 @@ enabled_site_setting :surveys_enabled
 register_asset "stylesheets/common/survey.scss"
 register_asset "stylesheets/desktop/survey.scss"
 
+register_svg_icon "far-check-circle" if respond_to?(:register_svg_icon)
+
 load File.expand_path('lib/discourse-surveys/engine.rb', __dir__)
 
 after_initialize do
