@@ -372,24 +372,27 @@ export default createWidget("discourse-survey", {
 
   html(attrs, state) {
     const contents = [];
+    const submittedIcon = iconHTML("far-check-circle");
 
     // todo: check if response is already submitted and do not show survey if so.
     if (state.submitted) {
       const $node = $(
         `<span>${I18n.t("discourse_surveys.survey_submitted")}</span>`
       );
+
       contents.push(
         new RawHtml({
-          html: `<span class="survey-submitted">${$node.html()}</span>`
+          html: `<span class="survey-submitted">${submittedIcon}${$node.html()}</span>`
         })
       );
     } else if (attrs.survey.user_responded) {
       const $node = $(
         `<span>${I18n.t("discourse_surveys.user_responded")}</span>`
       );
+
       contents.push(
         new RawHtml({
-          html: `<span class="survey-submitted">${$node.html()}</span>`
+          html: `<span class="survey-submitted">${submittedIcon}${$node.html()}</span>`
         })
       );
     } else {
