@@ -8,3 +8,5 @@ en:
     user_already_responded: "You have already responded to this survey."
     max_one_survey_per_post: "Only one survey is allowed in a post."
     cannot_edit: "Survey cannot be edited because it has a response."
+    survey_must_have_different_questions: "Survey field questions should be different."
+    survey_must_not_have_any_empty_questions: "Survey field questions cannot be blank."
