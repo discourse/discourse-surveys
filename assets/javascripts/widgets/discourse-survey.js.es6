@@ -360,8 +360,7 @@ export default createWidget("discourse-survey", {
     let cssClasses = "survey";
     return {
       class: cssClasses,
-      "data-survey-name": attrs.survey.get("name"),
-      "data-survey-type": attrs.survey.get("type")
+      "data-survey-name": attrs.survey.get("name")
     };
   },
 
@@ -426,8 +425,11 @@ export default createWidget("discourse-survey", {
     }
 
     const respondedFieldCount = Object.keys(attrs.response).length;
-    const totalFieldCount = attrs.survey.fields.length;
+    if (!attrs.fieldsRequired && respondedFieldCount > 0) {
+      return true;
+    }
 
+    const totalFieldCount = attrs.survey.fields.length;
     return totalFieldCount === respondedFieldCount;
   },
 

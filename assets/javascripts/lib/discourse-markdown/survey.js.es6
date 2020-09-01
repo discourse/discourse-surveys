@@ -4,6 +4,7 @@ import I18n from "I18n";
 const DATA_PREFIX = "data-survey-";
 const DEFAULT_SURVEY_NAME = "survey";
 const WHITELISTED_ATTRIBUTES = [
+  "required",
   "max",
   "min",
   "name",
