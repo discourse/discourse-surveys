@@ -71,7 +71,6 @@ function initializeSurveys(api) {
     $surveys.each((idx, surveyElem) => {
       const $survey = $(surveyElem);
       const surveyName = $survey.data("survey-name");
-      const fieldsRequired = $survey.data("survey-required");
       let survey = surveys[surveyName];
 
       if (survey) {
@@ -79,7 +78,6 @@ function initializeSurveys(api) {
           id: `${surveyName}-${post.id}`,
           post,
           survey,
-          fieldsRequired,
           response: {}
         };
         const glue = new WidgetGlue("discourse-survey", register, attrs);
