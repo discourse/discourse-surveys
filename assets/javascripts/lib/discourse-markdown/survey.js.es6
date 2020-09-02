@@ -9,6 +9,7 @@ const WHITELISTED_ATTRIBUTES = [
   "name",
   "public",
   "question",
+  "required",
   "status",
   "type"
 ];

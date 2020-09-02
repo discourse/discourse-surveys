@@ -83,8 +83,9 @@ module DiscourseSurveys
           new_field = new_field.first
           new_field_options = new_field["options"]
 
-          # update field position
+          # update field position and required attribute
           old_field["position"] = new_field["position"]
+          old_field["response_required"] = new_field["required"].presence || true
           old_field.save!
 
           # update field attributes

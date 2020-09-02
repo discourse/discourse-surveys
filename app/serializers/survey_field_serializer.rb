@@ -3,6 +3,7 @@
 class SurveyFieldSerializer < ApplicationSerializer
   attributes :question,
              :response_type,
+             :response_required,
              :digest,
              :options,
              :has_options,

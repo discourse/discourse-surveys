@@ -360,8 +360,7 @@ export default createWidget("discourse-survey", {
     let cssClasses = "survey";
     return {
       class: cssClasses,
-      "data-survey-name": attrs.survey.get("name"),
-      "data-survey-type": attrs.survey.get("type")
+      "data-survey-name": attrs.survey.get("name")
     };
   },
 
@@ -425,10 +424,15 @@ export default createWidget("discourse-survey", {
       return false;
     }
 
-    const respondedFieldCount = Object.keys(attrs.response).length;
-    const totalFieldCount = attrs.survey.fields.length;
+    const requiredFields = [];
+    attrs.survey.fields.map(field => {
+      if (field.response_required) {
+        requiredFields.push(field.digest);
+      }
+    })
 
-    return totalFieldCount === respondedFieldCount;
+    const respondedFields = Object.keys(attrs.response)
+    return requiredFields.every(i => respondedFields.includes(i));
   },
 
   showLogin() {
@@ -451,6 +455,10 @@ export default createWidget("discourse-survey", {
         } else {
           response[optionInfo.fieldId].push(optionInfo.option.digest);
         }
+        // delete empty array
+        if (response[optionInfo.fieldId].length === 0) {
+          delete response[optionInfo.fieldId];
+        }
       } else {
         response[optionInfo.fieldId] = [optionInfo.option.digest];
       }
@@ -467,7 +475,12 @@ export default createWidget("discourse-survey", {
   toggleValue(fieldInfo) {
     if (!this.currentUser) return this.showLogin();
     const { response } = this.attrs;
-    response[fieldInfo.fieldId] = fieldInfo.value;
+    // delete empty string
+    if (fieldInfo.value === "") {
+      delete response[fieldInfo.fieldId];
+    } else {
+      response[fieldInfo.fieldId] = fieldInfo.value;
+    }
   },
 
   submitResponse() {

@@ -23,7 +23,8 @@ module DiscourseSurveys
               digest:  field["field-id"].presence,
               question: field["question"],
               position: position,
-              response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
+              response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio],
+              response_required: field["required"].presence || true
             )
 
             if field["options"].present?
@@ -36,44 +37,6 @@ module DiscourseSurveys
               end
             end
           end
-        end
-      end
-
-      def extract(raw, topic_id, user_id = nil)
-        cooked = PrettyText.cook(raw, topic_id: topic_id, user_id: user_id)
-
-        Nokogiri::HTML5(cooked).css("div.survey").map do |s|
-          survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => Set.new }
-
-          s.attributes.values.each do |attribute|
-            if attribute.name.start_with?(DATA_PREFIX)
-              survey[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
-            end
-          end
-
-          type_attribute = "#{DATA_PREFIX}type"
-          s.css("div[#{type_attribute}]").each.with_index do |field, position|
-            attribute = field.attributes[type_attribute].value.to_s
-
-            case attribute
-            when 'radio'
-              survey['fields'] << extract_radio(field, position)
-            when 'checkbox'
-              survey['fields'] << extract_checkbox(field, position)
-            when 'dropdown'
-              survey['fields'] << extract_dropdown(field, position)
-            when 'textarea'
-              survey['fields'] << extract_textarea(field, position)
-            when 'number'
-              survey['fields'] << extract_number(field, position)
-            when 'star'
-              survey['fields'] << extract_star(field, position)
-            when 'thumbs'
-              survey['fields'] << extract_thumbs(field, position)
-            end
-          end
-
-          survey
         end
       end
 
@@ -127,6 +90,44 @@ module DiscourseSurveys
               SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, value: response[:value])
             end
           end
+        end
+      end
+
+      def extract(raw, topic_id, user_id = nil)
+        cooked = PrettyText.cook(raw, topic_id: topic_id, user_id: user_id)
+
+        Nokogiri::HTML5(cooked).css("div.survey").map do |s|
+          survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => Set.new }
+
+          s.attributes.values.each do |attribute|
+            if attribute.name.start_with?(DATA_PREFIX)
+              survey[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            end
+          end
+
+          type_attribute = "#{DATA_PREFIX}type"
+          s.css("div[#{type_attribute}]").each.with_index do |field, position|
+            attribute = field.attributes[type_attribute].value.to_s
+
+            case attribute
+            when 'radio'
+              survey['fields'] << extract_radio(field, position)
+            when 'checkbox'
+              survey['fields'] << extract_checkbox(field, position)
+            when 'dropdown'
+              survey['fields'] << extract_dropdown(field, position)
+            when 'textarea'
+              survey['fields'] << extract_textarea(field, position)
+            when 'number'
+              survey['fields'] << extract_number(field, position)
+            when 'star'
+              survey['fields'] << extract_star(field, position)
+            when 'thumbs'
+              survey['fields'] << extract_thumbs(field, position)
+            end
+          end
+
+          survey
         end
       end
 
