@@ -11,6 +11,7 @@ const WHITELISTED_ATTRIBUTES = [
   "question",
   "required",
   "status",
+  "title",
   "type"
 ];
 

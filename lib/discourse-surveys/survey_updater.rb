@@ -26,6 +26,7 @@ module DiscourseSurveys
         survey_record.name = survey["name"].presence || "survey"
         survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
         survey_record.active = survey["active"].presence || true
+        survey_record.title = survey["title"].presence || nil
         survey_record.save!
 
         response = ::SurveyResponse

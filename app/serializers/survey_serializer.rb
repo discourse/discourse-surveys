@@ -2,6 +2,7 @@
 
 class SurveySerializer < ApplicationSerializer
   attributes :name,
+             :title,
              :active,
              :visibility,
              :fields,

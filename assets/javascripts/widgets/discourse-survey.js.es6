@@ -6,6 +6,14 @@ import RawHtml from "discourse/widgets/raw-html";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 
+createWidget("discourse-survey-title", {
+  tagName: "div.survey-title",
+
+  html(attrs) {
+    return new RawHtml({ html: `<p>${attrs.title}</p>` });
+  }
+});
+
 function fieldHtml(field) {
   const $node = $(`<span>${field.question}</span>`);
   return new RawHtml({
@@ -395,6 +403,14 @@ export default createWidget("discourse-survey", {
         })
       );
     } else {
+
+      if (attrs.survey.title) {
+        contents.push(
+          this.attach("discourse-survey-title", {
+            title: attrs.survey.title
+          })
+        );
+      }
       contents.push(
         h(
           "div.survey-fields-container",

@@ -13,6 +13,7 @@ module DiscourseSurveys
             post_id: post_id,
             survey_number: survey["survey_number"].presence || 1,
             name: survey["name"].presence || "survey",
+            title: survey["title"].presence || nil,
             active: survey["active"].presence || true,
             visibility: survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
           )
