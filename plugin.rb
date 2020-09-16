@@ -127,4 +127,9 @@ after_initialize do
     SiteSetting.surveys_enabled && preloaded_surveys.present?
   end
 
+  # Remove surveys from topic excerpts
+  on(:reduce_excerpt) do |doc, post|
+    doc.css(".survey").remove
+  end
+
 end
