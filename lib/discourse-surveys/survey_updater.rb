@@ -2,7 +2,6 @@
 
 module DiscourseSurveys
   class SurveyUpdater
-
     SURVEY_ATTRIBUTES ||= %w{name active visibility}
 
     def self.update(post, surveys)
@@ -60,7 +59,7 @@ module DiscourseSurveys
             if created_field_digests.include?(field["field-id"])
               created_survey_field = SurveyField.create!(
                 survey_id: survey_id,
-                digest:  field["field-id"],
+                digest: field["field-id"],
                 question: field["question"],
                 response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
               )
@@ -99,7 +98,7 @@ module DiscourseSurveys
             # create new field
             created_survey_field = SurveyField.create!(
               survey_id: survey_id,
-              digest:  new_field["field-id"].presence,
+              digest: new_field["field-id"].presence,
               question: new_field["question"],
               response_type: SurveyField.response_type[new_field["type"].to_sym] || SurveyField.response_type[:radio]
             )
@@ -145,6 +144,5 @@ module DiscourseSurveys
       # it's the same!
       false
     end
-
   end
 end

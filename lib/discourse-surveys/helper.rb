@@ -21,7 +21,7 @@ module DiscourseSurveys
           survey["fields"].each.with_index do |field, position|
             created_survey_field = SurveyField.create!(
               survey_id: created_survey.id,
-              digest:  field["field-id"].presence,
+              digest: field["field-id"].presence,
               question: field["question"],
               position: position,
               response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio],
@@ -82,13 +82,13 @@ module DiscourseSurveys
           end
 
           # save response
-          fields.each do |field_id, response|
-            if response[:has_options]
-              response[:option_ids].each do |option_id|
+          fields.each do |field_id, field_response|
+            if field_response[:has_options]
+              field_response[:option_ids].each do |option_id|
                 SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, survey_field_option_id: option_id)
               end
             else
-              SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, value: response[:value])
+              SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, value: field_response[:value])
             end
           end
         end

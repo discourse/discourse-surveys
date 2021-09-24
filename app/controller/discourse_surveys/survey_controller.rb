@@ -7,7 +7,7 @@ module DiscourseSurveys
     before_action :ensure_logged_in
 
     def submit_response
-      post_id   = params.require(:post_id)
+      post_id = params.require(:post_id)
       survey_name = params.require(:survey_name)
       response = params.require(:response)
       begin

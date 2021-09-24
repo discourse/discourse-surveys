@@ -131,5 +131,4 @@ after_initialize do
   on(:reduce_excerpt) do |doc, post|
     doc.css(".survey").remove
   end
-
 end

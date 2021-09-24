@@ -2,7 +2,6 @@
 
 module DiscourseSurveys
   class SurveyValidator
-
     MAX_VALUE = 2_147_483_647
 
     def initialize(post)
