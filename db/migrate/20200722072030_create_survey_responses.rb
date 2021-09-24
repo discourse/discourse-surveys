@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Discourse/NoAddReferenceOrAliasesActiveRecordMigration
 
 class CreateSurveyResponses < ActiveRecord::Migration[6.0]
   def change

@@ -10,7 +10,7 @@ function initializeSurveys(api) {
   api.modifyClass("controller:topic", {
     subscribe() {
       this._super(...arguments);
-      this.messageBus.subscribe("/surveys/" + this.get("model.id"), msg => {
+      this.messageBus.subscribe("/surveys/" + this.get("model.id"), (msg) => {
         const post = this.get("model.postStream").findLoadedPost(msg.post_id);
         if (post) {
           post.set("surveys", msg.surveys);
@@ -20,14 +20,14 @@ function initializeSurveys(api) {
     unsubscribe() {
       this.messageBus.unsubscribe("/surveys/*");
       this._super(...arguments);
-    }
+    },
   });
 
   let _glued = [];
   let _interval = null;
 
   function rerender() {
-    _glued.forEach(g => g.queueRerender());
+    _glued.forEach((g) => g.queueRerender());
   }
 
   api.modifyClass("model:post", {
@@ -40,7 +40,7 @@ function initializeSurveys(api) {
       const surveys = this.surveys;
       if (surveys) {
         this._surveys = this._surveys || {};
-        surveys.forEach(p => {
+        surveys.forEach((p) => {
           const existing = this._surveys[p.name];
           if (existing) {
             this._surveys[p.name].setProperties(p);
@@ -51,7 +51,7 @@ function initializeSurveys(api) {
         this.set("surveysObject", this._surveys);
         rerender();
       }
-    }
+    },
   });
 
   function attachSurveys($elem, helper) {
@@ -78,7 +78,7 @@ function initializeSurveys(api) {
           id: `${surveyName}-${post.id}`,
           post,
           survey,
-          response: {}
+          response: {},
         };
         const glue = new WidgetGlue("discourse-survey", register, attrs);
         glue.appendTo(surveyElem);
@@ -93,11 +93,14 @@ function initializeSurveys(api) {
       _interval = null;
     }
 
-    _glued.forEach(g => g.cleanUp());
+    _glued.forEach((g) => g.cleanUp());
     _glued = [];
   }
 
-  api.decorateCooked(attachSurveys, { onlyStream: true, id: "discourse-survey" });
+  api.decorateCooked(attachSurveys, {
+    onlyStream: true,
+    id: "discourse-survey",
+  });
   api.cleanupStream(cleanUpSurveys);
 }
 
@@ -106,5 +109,5 @@ export default {
 
   initialize() {
     withPluginApi("0.8.7", initializeSurveys);
-  }
+  },
 };

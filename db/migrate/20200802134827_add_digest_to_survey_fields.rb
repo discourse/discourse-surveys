@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDigestToSurveyFields < ActiveRecord::Migration[6.0]
   def change
     add_column :survey_fields, :digest, :string, null: false

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UpdateSurveyResponseIndex < ActiveRecord::Migration[6.0]
   def change
     remove_index :survey_responses, [:survey_field_id, :user_id]
