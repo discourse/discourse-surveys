@@ -11,7 +11,7 @@ const WHITELISTED_ATTRIBUTES = [
   "required",
   "status",
   "title",
-  "type"
+  "type",
 ];
 
 function replaceToken(tokens, target, list) {
@@ -60,22 +60,22 @@ function getListItems(tokens, startToken) {
 }
 
 const surveyRule = {
-  tag: 'survey',
+  tag: "survey",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "survey_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const attrs = openToken.bbcode_attrs;
 
     // default survey attributes
     const attributes = [["class", "survey"]];
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -98,22 +98,22 @@ const surveyRule = {
 
     replaceToken(state.tokens, openToken, header);
 
-    state.push('survey_close', 'div', -1);
+    state.push("survey_close", "div", -1);
     state.push("div_survey_wrap", "div", -1);
-  }
+  },
 };
 
 const surveyRadioRule = {
   tag: "radio",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "radio_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const items = getListItems(state.tokens, openToken);
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-radio"]];
@@ -125,7 +125,7 @@ const surveyRadioRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -149,20 +149,20 @@ const surveyRadioRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("radio_close", "div", -1);
-  }
+  },
 };
 
 const surveyCheckboxRule = {
   tag: "checkbox",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "checkbox_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const items = getListItems(state.tokens, openToken);
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-checkbox"]];
@@ -174,7 +174,7 @@ const surveyCheckboxRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -198,20 +198,20 @@ const surveyCheckboxRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("checkbox_close", "div", -1);
-  }
+  },
 };
 
 const surveyDropdownRule = {
   tag: "dropdown",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "dropdown_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const items = getListItems(state.tokens, openToken);
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-dropdown"]];
@@ -223,7 +223,7 @@ const surveyDropdownRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -247,20 +247,20 @@ const surveyDropdownRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("dropdown_close", "div", -1);
-  }
+  },
 };
 
 const surveyTextareaRule = {
   tag: "textarea",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("textarea", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "textarea_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-textarea"]];
     attributes.push([DATA_PREFIX + "type", "textarea"]);
@@ -271,7 +271,7 @@ const surveyTextareaRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -286,20 +286,20 @@ const surveyTextareaRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("textarea_close", "div", -1);
-  }
+  },
 };
 
 const surveyNumberRule = {
   tag: "number",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("number", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "number_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-number"]];
     attributes.push([DATA_PREFIX + "type", "number"]);
@@ -310,7 +310,7 @@ const surveyNumberRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -325,20 +325,20 @@ const surveyNumberRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("number_close", "div", -1);
-  }
+  },
 };
 
 const surveyStarRule = {
   tag: "star",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("star", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "star_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-star"]];
     attributes.push([DATA_PREFIX + "type", "star"]);
@@ -349,7 +349,7 @@ const surveyStarRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -364,20 +364,20 @@ const surveyStarRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("star_close", "div", -1);
-  }
+  },
 };
 
 const surveyThumbsRule = {
   tag: "thumbs",
 
-  before: function(state, tagInfo) {
+  before: function (state, tagInfo) {
     let token = state.push("thumbs", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
     token.bbcode_type = "thumbs_open";
   },
 
-  after: function(state, openToken) {
+  after: function (state, openToken) {
     const attrs = openToken.bbcode_attrs;
     const attributes = [["class", "survey-thumbs"]];
     attributes.push([DATA_PREFIX + "type", "thumbs"]);
@@ -388,7 +388,7 @@ const surveyThumbsRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach(name => {
+    WHITELISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -403,7 +403,7 @@ const surveyThumbsRule = {
     replaceToken(state.tokens, openToken, header);
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("thumbs_close", "div", -1);
-  }
+  },
 };
 
 function newApiInit(helper) {
@@ -411,7 +411,7 @@ function newApiInit(helper) {
     opts.features.survey = !!siteSettings.surveys_enabled;
     opts.surveyMaximumOptions = siteSettings.survey_maximum_options;
   });
-  helper.registerPlugin(md => {
+  helper.registerPlugin((md) => {
     md.block.bbcode.ruler.push("survey", surveyRule);
     md.block.bbcode.ruler.push("radio", surveyRadioRule);
     md.block.bbcode.ruler.push("checkbox", surveyCheckboxRule);
@@ -442,7 +442,7 @@ export function setup(helper) {
     "span.info-label",
     "a.button.cast-votes",
     "a.button.toggle-results",
-    "li[data-*]"
+    "li[data-*]",
   ]);
 
   newApiInit(helper);
@@ -573,12 +573,15 @@ function md51(s) {
   }
   s = s.substring(i - 64);
   let tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  for (i = 0; i < s.length; i++)
-    {tail[i >> 2] |= s.charCodeAt(i) << (i % 4 << 3);}
+  for (i = 0; i < s.length; i++) {
+    tail[i >> 2] |= s.charCodeAt(i) << (i % 4 << 3);
+  }
   tail[i >> 2] |= 0x80 << (i % 4 << 3);
   if (i > 55) {
     md5cycle(state, tail);
-    for (i = 0; i < 16; i++) {tail[i] = 0;}
+    for (i = 0; i < 16; i++) {
+      tail[i] = 0;
+    }
   }
   tail[14] = n * 8;
   md5cycle(state, tail);
@@ -604,13 +607,16 @@ let hex_chr = "0123456789abcdef".split("");
 function rhex(n) {
   let s = "",
     j = 0;
-  for (; j < 4; j++)
-    {s += hex_chr[(n >> (j * 8 + 4)) & 0x0f] + hex_chr[(n >> (j * 8)) & 0x0f];}
+  for (; j < 4; j++) {
+    s += hex_chr[(n >> (j * 8 + 4)) & 0x0f] + hex_chr[(n >> (j * 8)) & 0x0f];
+  }
   return s;
 }
 
 function hex(x) {
-  for (let i = 0; i < x.length; i++) {x[i] = rhex(x[i]);}
+  for (let i = 0; i < x.length; i++) {
+    x[i] = rhex(x[i]);
+  }
   return x.join("");
 }
 
