@@ -1,5 +1,4 @@
 /*eslint no-bitwise:0 */
-import I18n from "I18n";
 
 const DATA_PREFIX = "data-survey-";
 const DEFAULT_SURVEY_NAME = "survey";
@@ -102,12 +101,12 @@ const surveyRule = {
     state.push('survey_close', 'div', -1);
     state.push("div_survey_wrap", "div", -1);
   }
-}
+};
 
 const surveyRadioRule = {
   tag: "radio",
 
-  before: function(state, tagInfo, raw) {
+  before: function(state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
@@ -156,7 +155,7 @@ const surveyRadioRule = {
 const surveyCheckboxRule = {
   tag: "checkbox",
 
-  before: function(state, tagInfo, raw) {
+  before: function(state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
@@ -205,7 +204,7 @@ const surveyCheckboxRule = {
 const surveyDropdownRule = {
   tag: "dropdown",
 
-  before: function(state, tagInfo, raw) {
+  before: function(state, tagInfo) {
     let token = state.push("text", "", 0);
     token.attrs = [];
     token.bbcode_attrs = tagInfo.attrs;
@@ -288,7 +287,7 @@ const surveyTextareaRule = {
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("textarea_close", "div", -1);
   }
-}
+};
 
 const surveyNumberRule = {
   tag: "number",
@@ -327,7 +326,7 @@ const surveyNumberRule = {
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("number_close", "div", -1);
   }
-}
+};
 
 const surveyStarRule = {
   tag: "star",
@@ -366,7 +365,7 @@ const surveyStarRule = {
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("star_close", "div", -1);
   }
-}
+};
 
 const surveyThumbsRule = {
   tag: "thumbs",
@@ -405,7 +404,7 @@ const surveyThumbsRule = {
     state.level = state.tokens[state.tokens.length - 1].level;
     state.push("thumbs_close", "div", -1);
   }
-}
+};
 
 function newApiInit(helper) {
   helper.registerOptions((opts, siteSettings) => {
@@ -461,7 +460,7 @@ export function setup(helper) {
  * http://www.opensource.org/licenses/bsd-license
  */
 function md5cycle(x, k) {
-  var a = x[0],
+  let a = x[0],
     b = x[1],
     c = x[2],
     d = x[3];
@@ -566,20 +565,20 @@ function md51(s) {
   if (/[\x80-\xFF]/.test(s)) {
     s = unescape(encodeURI(s));
   }
-  var n = s.length,
+  let n = s.length,
     state = [1732584193, -271733879, -1732584194, 271733878],
     i;
   for (i = 64; i <= s.length; i += 64) {
     md5cycle(state, md5blk(s.substring(i - 64, i)));
   }
   s = s.substring(i - 64);
-  var tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  let tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
   for (i = 0; i < s.length; i++)
-    tail[i >> 2] |= s.charCodeAt(i) << (i % 4 << 3);
+    {tail[i >> 2] |= s.charCodeAt(i) << (i % 4 << 3);}
   tail[i >> 2] |= 0x80 << (i % 4 << 3);
   if (i > 55) {
     md5cycle(state, tail);
-    for (i = 0; i < 16; i++) tail[i] = 0;
+    for (i = 0; i < 16; i++) {tail[i] = 0;}
   }
   tail[14] = n * 8;
   md5cycle(state, tail);
@@ -588,7 +587,7 @@ function md51(s) {
 
 function md5blk(s) {
   /* I figured global was faster.   */
-  var md5blks = [],
+  let md5blks = [],
     i; /* Andy King said do it this way. */
   for (i = 0; i < 64; i += 4) {
     md5blks[i >> 2] =
@@ -600,18 +599,18 @@ function md5blk(s) {
   return md5blks;
 }
 
-var hex_chr = "0123456789abcdef".split("");
+let hex_chr = "0123456789abcdef".split("");
 
 function rhex(n) {
-  var s = "",
+  let s = "",
     j = 0;
   for (; j < 4; j++)
-    s += hex_chr[(n >> (j * 8 + 4)) & 0x0f] + hex_chr[(n >> (j * 8)) & 0x0f];
+    {s += hex_chr[(n >> (j * 8 + 4)) & 0x0f] + hex_chr[(n >> (j * 8)) & 0x0f];}
   return s;
 }
 
 function hex(x) {
-  for (var i = 0; i < x.length; i++) x[i] = rhex(x[i]);
+  for (let i = 0; i < x.length; i++) {x[i] = rhex(x[i]);}
   return x.join("");
 }
 

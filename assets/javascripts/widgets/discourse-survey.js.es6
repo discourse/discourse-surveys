@@ -1,7 +1,7 @@
 import I18n from "I18n";
 import { createWidget } from "discourse/widgets/widget";
 import { h } from "virtual-dom";
-import { iconNode, iconHTML } from "discourse-common/lib/icon-library";
+import { iconHTML, iconNode } from "discourse-common/lib/icon-library";
 import RawHtml from "discourse/widgets/raw-html";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
@@ -168,7 +168,7 @@ createWidget("discourse-survey-field-option", {
 createWidget("discourse-survey-field-textarea", {
   tagName: "span",
 
-  html(attrs) {
+  html() {
     const contents = [];
     contents.push(new RawHtml({ html: `<textarea></textarea>` }));
     return contents;
@@ -372,8 +372,7 @@ export default createWidget("discourse-survey", {
     };
   },
 
-  defaultState(attrs) {
-    const { post, survey } = attrs;
+  defaultState() {
     return { loading: false, submitted: false };
   },
 
@@ -445,9 +444,9 @@ export default createWidget("discourse-survey", {
       if (field.response_required) {
         requiredFields.push(field.digest);
       }
-    })
+    });
 
-    const respondedFields = Object.keys(attrs.response)
+    const respondedFields = Object.keys(attrs.response);
     return requiredFields.every(i => respondedFields.includes(i));
   },
 
@@ -459,7 +458,7 @@ export default createWidget("discourse-survey", {
     const { response } = this.attrs;
 
     if (
-      typeof response[optionInfo.fieldId] != "undefined" &&
+      typeof response[optionInfo.fieldId] !== "undefined" &&
       response[optionInfo.fieldId] instanceof Array
     ) {
       if (optionInfo.isMultiple) {
@@ -484,12 +483,12 @@ export default createWidget("discourse-survey", {
   },
 
   toggleOption(optionInfo) {
-    if (!this.currentUser) return this.showLogin();
+    if (!this.currentUser) {return this.showLogin();}
     this._toggleOption(optionInfo);
   },
 
   toggleValue(fieldInfo) {
-    if (!this.currentUser) return this.showLogin();
+    if (!this.currentUser) {return this.showLogin();}
     const { response } = this.attrs;
     // delete empty string
     if (fieldInfo.value === "") {
@@ -500,8 +499,8 @@ export default createWidget("discourse-survey", {
   },
 
   submitResponse() {
-    if (!this.canSubmitResponse()) return;
-    if (!this.currentUser) return this.showLogin();
+    if (!this.canSubmitResponse()) {return;}
+    if (!this.currentUser) {return this.showLogin();}
 
     const { attrs, state } = this;
 
