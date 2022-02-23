@@ -2,7 +2,7 @@
 
 const DATA_PREFIX = "data-survey-";
 const DEFAULT_SURVEY_NAME = "survey";
-const WHITELISTED_ATTRIBUTES = [
+const ALLOWLISTED_ATTRIBUTES = [
   "max",
   "min",
   "name",
@@ -75,7 +75,7 @@ const surveyRule = {
     // default survey attributes
     const attributes = [["class", "survey"]];
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -125,7 +125,7 @@ const surveyRadioRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -174,7 +174,7 @@ const surveyCheckboxRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -223,7 +223,7 @@ const surveyDropdownRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -271,7 +271,7 @@ const surveyTextareaRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -310,7 +310,7 @@ const surveyNumberRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -349,7 +349,7 @@ const surveyStarRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -388,7 +388,7 @@ const surveyThumbsRule = {
       attributes.push([DATA_PREFIX + "field-id", md5HashField]);
     }
 
-    WHITELISTED_ATTRIBUTES.forEach((name) => {
+    ALLOWLISTED_ATTRIBUTES.forEach((name) => {
       if (attrs[name]) {
         attributes.push([DATA_PREFIX + name, attrs[name]]);
       }
@@ -424,7 +424,7 @@ function newApiInit(helper) {
 }
 
 export function setup(helper) {
-  helper.whiteList([
+  helper.allowList([
     "div.survey",
     "div.survey-radio",
     "div.survey-checkbox",
