@@ -125,7 +125,7 @@ function listHtml(option, siteSettings) {
   const el = document.createElement("span");
   el.innerHTML = option.html;
   applyLocalDates(el.querySelectorAll(".discourse-local-date"), siteSettings);
-  return new RawHtml({ html: `<span>${el.innerHTML}</span>` });
+  return new RawHtml({ html: el.outerHTML });
 }
 
 createWidget("discourse-survey-field-option", {
