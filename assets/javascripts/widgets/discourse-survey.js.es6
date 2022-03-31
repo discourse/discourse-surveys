@@ -5,6 +5,7 @@ import { iconHTML, iconNode } from "discourse-common/lib/icon-library";
 import RawHtml from "discourse/widgets/raw-html";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import { applyLocalDates } from "discourse/lib/local-dates";
 
 createWidget("discourse-survey-title", {
   tagName: "div.survey-title",
@@ -120,14 +121,11 @@ createWidget("discourse-survey-field", {
   },
 });
 
-function listHtml(option) {
-  const $node = $(`<span>${option.html}</span>`);
-
-  $node.find(".discourse-local-date").each((_index, elem) => {
-    $(elem).applyLocalDates();
-  });
-
-  return new RawHtml({ html: `<span>${$node.html()}</span>` });
+function listHtml(option, siteSettings) {
+  const el = document.createElement("span");
+  el.innerHTML = option.html;
+  applyLocalDates(el.querySelectorAll(".discourse-local-date"), siteSettings);
+  return new RawHtml({ html: `<span>${el.innerHTML}</span>` });
 }
 
 createWidget("discourse-survey-field-option", {
@@ -153,7 +151,7 @@ createWidget("discourse-survey-field-option", {
     }
 
     contents.push(" ");
-    contents.push(listHtml(attrs.option));
+    contents.push(listHtml(attrs.option, this.siteSettings));
 
     return contents;
   },
