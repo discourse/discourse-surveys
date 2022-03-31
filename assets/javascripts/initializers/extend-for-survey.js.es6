@@ -8,6 +8,7 @@ function initializeSurveys(api) {
   const register = getRegister(api);
 
   api.modifyClass("controller:topic", {
+    pluginId: "discourse-surveys",
     subscribe() {
       this._super(...arguments);
       this.messageBus.subscribe("/surveys/" + this.get("model.id"), (msg) => {
@@ -31,6 +32,7 @@ function initializeSurveys(api) {
   }
 
   api.modifyClass("model:post", {
+    pluginId: "discourse-surveys",
     _surveys: null,
     surveysObject: null,
 
