@@ -8,7 +8,7 @@ describe PrettyText do
     html.strip
   end
 
-  context 'markdown it' do
+  context 'with surveys enabled' do
     before do
       SiteSetting.surveys_enabled = true
     end
