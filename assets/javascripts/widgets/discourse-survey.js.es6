@@ -522,13 +522,7 @@ export default createWidget("discourse-survey", {
       .then(() => {
         state.submitted = true;
       })
-      .catch((error) => {
-        if (error) {
-          popupAjaxError(error);
-        } else {
-          bootbox.alert(I18n.t("survey.error_while_casting_votes"));
-        }
-      })
+      .catch(popupAjaxError)
       .finally(() => {
         state.loading = false;
       });
