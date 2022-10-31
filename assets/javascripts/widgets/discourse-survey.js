@@ -73,7 +73,7 @@ createWidget("discourse-survey-field", {
           values.map((value) => {
             return this.attach("discourse-survey-field-number", {
               fieldId: attrs.field.digest,
-              value: value,
+              value,
               response: attrs.response[attrs.field.digest],
             });
           })
@@ -176,7 +176,7 @@ createWidget("discourse-survey-field-textarea", {
     // remove zero-width chars
     const value = e.target.value.replace(/[\u200B-\u200D\uFEFF]/, "");
     this.sendWidgetAction("toggleValue", {
-      value: value,
+      value,
       fieldId: this.attrs.fieldId,
     });
   },
