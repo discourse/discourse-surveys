@@ -2,7 +2,7 @@
 
 module DiscourseSurveys
   class SurveyUpdater
-    SURVEY_ATTRIBUTES ||= %w{name active visibility}
+    SURVEY_ATTRIBUTES ||= %w[name active visibility]
 
     def self.update(post, surveys)
       return false unless post.present?
@@ -10,7 +10,7 @@ module DiscourseSurveys
       ActiveRecord::Base.transaction do
         has_changed = false
 
-        survey = surveys['survey']
+        survey = surveys["survey"]
         survey_record = ::Survey.where(post_id: post.id).first
         survey_id = survey_record.id
 
@@ -23,23 +23,23 @@ module DiscourseSurveys
 
         # update survey
         survey_record.name = survey["name"].presence || "survey"
-        survey_record.visibility = survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
+        survey_record.visibility =
+          survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
         survey_record.active = survey["active"].presence || true
         survey_record.title = survey["title"].presence || nil
         survey_record.save!
 
-        response = ::SurveyResponse
-          .includes(:survey_field)
-          .where("survey_fields.survey_id = ?", survey_id)
-          .references(:survey_field)
-          .first
+        response =
+          ::SurveyResponse
+            .includes(:survey_field)
+            .where("survey_fields.survey_id = ?", survey_id)
+            .references(:survey_field)
+            .first
         has_response = response.present?
 
         old_field_digests = SurveyField.where(survey_id: survey_id).pluck(:digest)
         new_field_digests = []
-        survey["fields"].each do |field|
-          new_field_digests << field["field-id"]
-        end
+        survey["fields"].each { |field| new_field_digests << field["field-id"] }
 
         deleted_field_digests = old_field_digests - new_field_digests
         created_field_digests = new_field_digests - old_field_digests
@@ -57,19 +57,22 @@ module DiscourseSurveys
           has_changed = true
           survey["fields"].each do |field|
             if created_field_digests.include?(field["field-id"])
-              created_survey_field = SurveyField.create!(
-                survey_id: survey_id,
-                digest: field["field-id"],
-                question: field["question"],
-                response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio]
-              )
+              created_survey_field =
+                SurveyField.create!(
+                  survey_id: survey_id,
+                  digest: field["field-id"],
+                  question: field["question"],
+                  response_type:
+                    SurveyField.response_type[field["type"].to_sym] ||
+                      SurveyField.response_type[:radio],
+                )
 
               if field["options"].present?
                 field["options"].each do |option|
                   SurveyFieldOption.create!(
                     survey_field_id: created_survey_field.id,
                     digest: option["id"].presence,
-                    html: option["html"].presence&.strip
+                    html: option["html"].presence&.strip,
                   )
                 end
               end
@@ -78,48 +81,52 @@ module DiscourseSurveys
         end
 
         # update survey fields
-        ::SurveyField.includes(:survey_field_options).where(survey_id: survey_id).find_each do |old_field|
-          new_field = survey["fields"].select { |key| key.values.include?(old_field.digest) }
-          new_field = new_field.first
-          new_field_options = new_field["options"]
+        ::SurveyField
+          .includes(:survey_field_options)
+          .where(survey_id: survey_id)
+          .find_each do |old_field|
+            new_field = survey["fields"].select { |key| key.values.include?(old_field.digest) }
+            new_field = new_field.first
+            new_field_options = new_field["options"]
 
-          # update field position and required attribute
-          old_field["position"] = new_field["position"]
-          old_field["response_required"] = new_field["required"].presence || true
-          old_field.save!
+            # update field position and required attribute
+            old_field["position"] = new_field["position"]
+            old_field["response_required"] = new_field["required"].presence || true
+            old_field.save!
 
-          # update field attributes
-          if is_different?(old_field, new_field, new_field_options)
-            raise StandardError.new I18n.t("survey.cannot_edit") if has_response
+            # update field attributes
+            if is_different?(old_field, new_field, new_field_options)
+              raise StandardError.new I18n.t("survey.cannot_edit") if has_response
 
-            # destroy existing field and options
-            ::SurveyField.where(survey_id: survey_id, digest: old_field.digest).destroy_all
+              # destroy existing field and options
+              ::SurveyField.where(survey_id: survey_id, digest: old_field.digest).destroy_all
 
-            # create new field
-            created_survey_field = SurveyField.create!(
-              survey_id: survey_id,
-              digest: new_field["field-id"].presence,
-              question: new_field["question"],
-              response_type: SurveyField.response_type[new_field["type"].to_sym] || SurveyField.response_type[:radio]
-            )
-
-            if new_field["options"].present?
-              new_field["options"].each do |option|
-                SurveyFieldOption.create!(
-                  survey_field_id: created_survey_field.id,
-                  digest: option["id"].presence,
-                  html: option["html"].presence&.strip
+              # create new field
+              created_survey_field =
+                SurveyField.create!(
+                  survey_id: survey_id,
+                  digest: new_field["field-id"].presence,
+                  question: new_field["question"],
+                  response_type:
+                    SurveyField.response_type[new_field["type"].to_sym] ||
+                      SurveyField.response_type[:radio],
                 )
+
+              if new_field["options"].present?
+                new_field["options"].each do |option|
+                  SurveyFieldOption.create!(
+                    survey_field_id: created_survey_field.id,
+                    digest: option["id"].presence,
+                    html: option["html"].presence&.strip,
+                  )
+                end
               end
+
+              has_changed = true
             end
-
-            has_changed = true
           end
-        end
 
-        if has_changed && has_response
-          raise StandardError.new I18n.t("survey.cannot_edit")
-        end
+        raise StandardError.new I18n.t("survey.cannot_edit") if has_changed && has_response
 
         if ::Survey.exists?(post_id: post.id)
           post.custom_fields[HAS_SURVEYS] = true
@@ -139,7 +146,10 @@ module DiscourseSurveys
       # field has no options
       return false if old_field.survey_field_options.blank? && new_field_options.blank?
       # an option was changed?
-      return true if old_field.survey_field_options.map { |o| o.digest }.sort != new_field_options.map { |o| o["id"] }.sort
+      if old_field.survey_field_options.map { |o| o.digest }.sort !=
+           new_field_options.map { |o| o["id"] }.sort
+        return true
+      end
 
       # it's the same!
       false

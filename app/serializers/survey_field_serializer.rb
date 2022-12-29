@@ -20,5 +20,4 @@ class SurveyFieldSerializer < ApplicationSerializer
   def is_multiple_choice
     object.is_multiple_choice?
   end
-
 end

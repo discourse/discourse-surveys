@@ -12,6 +12,6 @@ class CreateSurveyResponses < ActiveRecord::Migration[6.0]
       t.timestamps
     end
 
-    add_index :survey_responses, [:survey_field_id, :user_id], unique: true
+    add_index :survey_responses, %i[survey_field_id user_id], unique: true
   end
 end

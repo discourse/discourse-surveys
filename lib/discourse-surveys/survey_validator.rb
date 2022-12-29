@@ -12,12 +12,14 @@ module DiscourseSurveys
       surveys = {}
       survey_count = 0
 
-      DiscourseSurveys::Helper::extract(@post.raw, @post.topic_id, @post.user_id).each do |survey|
-        return false unless unique_questions?(survey)
-        return false unless any_blank_questions?(survey)
-        surveys["survey"] = survey
-        survey_count += 1
-      end
+      DiscourseSurveys::Helper
+        .extract(@post.raw, @post.topic_id, @post.user_id)
+        .each do |survey|
+          return false unless unique_questions?(survey)
+          return false unless any_blank_questions?(survey)
+          surveys["survey"] = survey
+          survey_count += 1
+        end
 
       if survey_count > 1
         @post.errors.add(:base, I18n.t("survey.max_one_survey_per_post"))

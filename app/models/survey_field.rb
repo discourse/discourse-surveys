@@ -5,16 +5,17 @@ class SurveyField < ActiveRecord::Base
   has_many :survey_responses, dependent: :destroy
   belongs_to :survey
 
-  default_scope { order('position ASC') }
+  default_scope { order("position ASC") }
 
   def self.response_type
-    @response_type ||= Enum.new(:radio, :checkbox, :number, :textarea, :star, :thumbs, :dropdown, start: 0)
+    @response_type ||=
+      Enum.new(:radio, :checkbox, :number, :textarea, :star, :thumbs, :dropdown, start: 0)
   end
 
   def has_options?
     response_type == SurveyField.response_type[:radio] ||
-    response_type == SurveyField.response_type[:checkbox] ||
-    response_type == SurveyField.response_type[:dropdown]
+      response_type == SurveyField.response_type[:checkbox] ||
+      response_type == SurveyField.response_type[:dropdown]
   end
 
   def is_multiple_choice?

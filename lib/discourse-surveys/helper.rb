@@ -9,31 +9,42 @@ module DiscourseSurveys
         end
 
         Survey.transaction do
-          created_survey = Survey.create!(
-            post_id: post_id,
-            survey_number: survey["survey_number"].presence || 1,
-            name: survey["name"].presence || "survey",
-            title: survey["title"].presence || nil,
-            active: survey["active"].presence || true,
-            visibility: survey["public"] == "true" ? Survey.visibility[:everyone] : Survey.visibility[:secret]
-          )
+          created_survey =
+            Survey.create!(
+              post_id: post_id,
+              survey_number: survey["survey_number"].presence || 1,
+              name: survey["name"].presence || "survey",
+              title: survey["title"].presence || nil,
+              active: survey["active"].presence || true,
+              visibility:
+                (
+                  if survey["public"] == "true"
+                    Survey.visibility[:everyone]
+                  else
+                    Survey.visibility[:secret]
+                  end
+                ),
+            )
 
           survey["fields"].each.with_index do |field, position|
-            created_survey_field = SurveyField.create!(
-              survey_id: created_survey.id,
-              digest: field["field-id"].presence,
-              question: field["question"],
-              position: position,
-              response_type: SurveyField.response_type[field["type"].to_sym] || SurveyField.response_type[:radio],
-              response_required: field["required"].presence || true
-            )
+            created_survey_field =
+              SurveyField.create!(
+                survey_id: created_survey.id,
+                digest: field["field-id"].presence,
+                question: field["question"],
+                position: position,
+                response_type:
+                  SurveyField.response_type[field["type"].to_sym] ||
+                    SurveyField.response_type[:radio],
+                response_required: field["required"].presence || true,
+              )
 
             if field["options"].present?
               field["options"].each do |option|
                 SurveyFieldOption.create!(
                   survey_field_id: created_survey_field.id,
                   digest: option["id"].presence,
-                  html: option["html"].presence&.strip
+                  html: option["html"].presence&.strip,
                 )
               end
             end
@@ -46,9 +57,7 @@ module DiscourseSurveys
           post = Post.find_by(id: post_id)
 
           # post must not be deleted
-          if post.nil? || post.trashed?
-            raise StandardError.new I18n.t("survey.post_is_deleted")
-          end
+          raise StandardError.new I18n.t("survey.post_is_deleted") if post.nil? || post.trashed?
 
           # topic must not be archived
           if post.topic&.archived
@@ -61,34 +70,59 @@ module DiscourseSurveys
             raise StandardError.new I18n.t("survey.user_cant_post_in_topic")
           end
 
-          survey = Survey.includes(survey_fields: :survey_field_options).find_by(post_id: post_id, name: survey_name)
-          raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name) unless survey
-          raise StandardError.new I18n.t("survey.user_already_responded") if survey.has_responded?(user)
+          survey =
+            Survey.includes(survey_fields: :survey_field_options).find_by(
+              post_id: post_id,
+              name: survey_name,
+            )
+          unless survey
+            raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name)
+          end
+          if survey.has_responded?(user)
+            raise StandardError.new I18n.t("survey.user_already_responded")
+          end
 
           # remove fields that aren't available in the survey
           available_fields = survey.survey_fields.map { |o| o.digest }.to_set
           response.select! { |k| available_fields.include?(k) }
-          raise StandardError.new I18n.t("survey.requires_at_least_1_valid_field") if response.empty?
-
-          fields = survey.survey_fields.each_with_object({}) do |field, obj|
-            if response.include?(field.digest)
-              if field.has_options?
-                option_ids = SurveyFieldOption.where(survey_field_id: field.id, digest: response[field.digest]).pluck(:id)
-                obj[field.id] = { option_ids: option_ids, has_options: true }
-              else
-                obj[field.id] = { value: response[field.digest], has_options: false }
-              end
-            end
+          if response.empty?
+            raise StandardError.new I18n.t("survey.requires_at_least_1_valid_field")
           end
+
+          fields =
+            survey
+              .survey_fields
+              .each_with_object({}) do |field, obj|
+                if response.include?(field.digest)
+                  if field.has_options?
+                    option_ids =
+                      SurveyFieldOption.where(
+                        survey_field_id: field.id,
+                        digest: response[field.digest],
+                      ).pluck(:id)
+                    obj[field.id] = { option_ids: option_ids, has_options: true }
+                  else
+                    obj[field.id] = { value: response[field.digest], has_options: false }
+                  end
+                end
+              end
 
           # save response
           fields.each do |field_id, field_response|
             if field_response[:has_options]
               field_response[:option_ids].each do |option_id|
-                SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, survey_field_option_id: option_id)
+                SurveyResponse.create!(
+                  survey_field_id: field_id,
+                  user_id: user.id,
+                  survey_field_option_id: option_id,
+                )
               end
             else
-              SurveyResponse.create!(survey_field_id: field_id, user_id: user.id, value: field_response[:value])
+              SurveyResponse.create!(
+                survey_field_id: field_id,
+                user_id: user.id,
+                value: field_response[:value],
+              )
             end
           end
         end
@@ -97,39 +131,47 @@ module DiscourseSurveys
       def extract(raw, topic_id, user_id = nil)
         cooked = PrettyText.cook(raw, topic_id: topic_id, user_id: user_id)
 
-        Nokogiri::HTML5(cooked).css("div.survey").map do |s|
-          survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => Set.new }
+        Nokogiri
+          .HTML5(cooked)
+          .css("div.survey")
+          .map do |s|
+            survey = { "name" => DiscourseSurveys::DEFAULT_SURVEY_NAME, "fields" => Set.new }
 
-          s.attributes.values.each do |attribute|
-            if attribute.name.start_with?(DATA_PREFIX)
-              survey[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            s.attributes.values.each do |attribute|
+              if attribute.name.start_with?(DATA_PREFIX)
+                survey[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+                  attribute.value || "",
+                )
+              end
             end
+
+            type_attribute = "#{DATA_PREFIX}type"
+            s
+              .css("div[#{type_attribute}]")
+              .each
+              .with_index do |field, position|
+                attribute = field.attributes[type_attribute].value.to_s
+
+                case attribute
+                when "radio"
+                  survey["fields"] << extract_radio(field, position)
+                when "checkbox"
+                  survey["fields"] << extract_checkbox(field, position)
+                when "dropdown"
+                  survey["fields"] << extract_dropdown(field, position)
+                when "textarea"
+                  survey["fields"] << extract_textarea(field, position)
+                when "number"
+                  survey["fields"] << extract_number(field, position)
+                when "star"
+                  survey["fields"] << extract_star(field, position)
+                when "thumbs"
+                  survey["fields"] << extract_thumbs(field, position)
+                end
+              end
+
+            survey
           end
-
-          type_attribute = "#{DATA_PREFIX}type"
-          s.css("div[#{type_attribute}]").each.with_index do |field, position|
-            attribute = field.attributes[type_attribute].value.to_s
-
-            case attribute
-            when 'radio'
-              survey['fields'] << extract_radio(field, position)
-            when 'checkbox'
-              survey['fields'] << extract_checkbox(field, position)
-            when 'dropdown'
-              survey['fields'] << extract_dropdown(field, position)
-            when 'textarea'
-              survey['fields'] << extract_textarea(field, position)
-            when 'number'
-              survey['fields'] << extract_number(field, position)
-            when 'star'
-              survey['fields'] << extract_star(field, position)
-            when 'thumbs'
-              survey['fields'] << extract_thumbs(field, position)
-            end
-          end
-
-          survey
-        end
       end
 
       private
@@ -140,15 +182,19 @@ module DiscourseSurveys
         # attributes
         checkbox.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            checkbox_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            checkbox_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 
         # options
-        checkbox.css("li[#{DATA_PREFIX}option-id]").each do |o|
-          option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
-          checkbox_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
-        end
+        checkbox
+          .css("li[#{DATA_PREFIX}option-id]")
+          .each do |o|
+            option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+            checkbox_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+          end
 
         checkbox_hash
       end
@@ -159,15 +205,19 @@ module DiscourseSurveys
         # attributes
         radio.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            radio_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            radio_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 
         # options
-        radio.css("li[#{DATA_PREFIX}option-id]").each do |o|
-          option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
-          radio_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
-        end
+        radio
+          .css("li[#{DATA_PREFIX}option-id]")
+          .each do |o|
+            option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+            radio_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+          end
 
         radio_hash
       end
@@ -178,15 +228,19 @@ module DiscourseSurveys
         # attributes
         dropdown.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            dropdown_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            dropdown_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 
         # options
-        dropdown.css("li[#{DATA_PREFIX}option-id]").each do |o|
-          option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
-          dropdown_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
-        end
+        dropdown
+          .css("li[#{DATA_PREFIX}option-id]")
+          .each do |o|
+            option_id = o.attributes[DATA_PREFIX + "option-id"].value.to_s
+            dropdown_hash["options"] << { "id" => option_id, "html" => o.inner_html.strip }
+          end
 
         dropdown_hash
       end
@@ -197,7 +251,9 @@ module DiscourseSurveys
         # attributes
         textarea.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            textarea_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            textarea_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 
@@ -210,7 +266,9 @@ module DiscourseSurveys
         # attributes
         number.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            number_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            number_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 
@@ -223,7 +281,9 @@ module DiscourseSurveys
         # attributes
         star.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            star_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            star_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 
@@ -236,7 +296,9 @@ module DiscourseSurveys
         # attributes
         thumbs.attributes.values.each do |attribute|
           if attribute.name.start_with?(DATA_PREFIX)
-            thumbs_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(attribute.value || "")
+            thumbs_hash[attribute.name[DATA_PREFIX.length..-1]] = CGI.escapeHTML(
+              attribute.value || "",
+            )
           end
         end
 

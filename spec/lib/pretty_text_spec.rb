@@ -1,19 +1,16 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 describe PrettyText do
-
   def n(html)
     html.strip
   end
 
-  context 'with surveys enabled' do
-    before do
-      SiteSetting.surveys_enabled = true
-    end
+  context "with surveys enabled" do
+    before { SiteSetting.surveys_enabled = true }
 
-    it 'can correctly cook surveys' do
+    it "can correctly cook surveys" do
       md = <<~MD
         [survey name="awesome-survey"]
         [radio question="Choose any one option:"]
