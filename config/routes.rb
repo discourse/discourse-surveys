@@ -1,5 +1,3 @@
 # frozen_string_literal: true
 
-DiscourseSurveys::Engine.routes.draw do
-  put "surveys/submit-response" => "survey#submit_response"
-end
+DiscourseSurveys::Engine.routes.draw { put "surveys/submit-response" => "survey#submit_response" }

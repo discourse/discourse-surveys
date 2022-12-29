@@ -13,10 +13,10 @@ register_asset "stylesheets/desktop/survey.scss"
 
 register_svg_icon "far-check-circle" if respond_to?(:register_svg_icon)
 
-load File.expand_path('lib/discourse-surveys/engine.rb', __dir__)
+load File.expand_path("lib/discourse-surveys/engine.rb", __dir__)
 
 after_initialize do
-  %w{
+  %w[
     ../app/controller/discourse_surveys/survey_controller.rb
     ../app/models/survey.rb
     ../app/models/survey_field.rb
@@ -26,9 +26,7 @@ after_initialize do
     ../lib/discourse-surveys/helper.rb
     ../lib/discourse-surveys/survey_updater.rb
     ../lib/discourse-surveys/survey_validator.rb
-  }.each do |path|
-    load File.expand_path(path, __FILE__)
-  end
+  ].each { |path| load File.expand_path(path, __FILE__) }
 
   reloadable_patch do
     Post.class_eval do
@@ -42,18 +40,14 @@ after_initialize do
         post = self
 
         Survey.transaction do
-          surveys.values.each do |survey|
-            DiscourseSurveys::Helper.create!(post.id, survey)
-          end
+          surveys.values.each { |survey| DiscourseSurveys::Helper.create!(post.id, survey) }
           post.custom_fields[DiscourseSurveys::HAS_SURVEYS] = true
           post.save_custom_fields(true)
         end
       end
     end
 
-    User.class_eval do
-      has_many :survey_response, dependent: :delete_all
-    end
+    User.class_eval { has_many :survey_response, dependent: :delete_all }
   end
 
   validate(:post, :validate_surveys) do |force = nil|
@@ -86,38 +80,39 @@ after_initialize do
   topic_view_post_custom_fields_allowlister { [DiscourseSurveys::HAS_SURVEYS] }
 
   add_to_class(:topic_view, :surveys) do
-    @surveys ||= begin
-      surveys = {}
+    @surveys ||=
+      begin
+        surveys = {}
 
-      post_with_surveys = @post_custom_fields.each_with_object([]) do |fields, obj|
-        obj << fields[0] if fields[1][DiscourseSurveys::HAS_SURVEYS]
-      end
-
-      if post_with_surveys.present?
-        Survey
-          .includes(survey_fields: :survey_field_options)
-          .where(post_id: post_with_surveys)
-          .each do |p|
-            surveys[p.post_id] ||= []
-            surveys[p.post_id] << p
+        post_with_surveys =
+          @post_custom_fields.each_with_object([]) do |fields, obj|
+            obj << fields[0] if fields[1][DiscourseSurveys::HAS_SURVEYS]
           end
-      end
 
-      surveys
-    end
+        if post_with_surveys.present?
+          Survey
+            .includes(survey_fields: :survey_field_options)
+            .where(post_id: post_with_surveys)
+            .each do |p|
+              surveys[p.post_id] ||= []
+              surveys[p.post_id] << p
+            end
+        end
+
+        surveys
+      end
   end
 
   add_to_serializer(:post, :preloaded_surveys, false) do
-    @preloaded_surveys ||= if @topic_view.present?
-      @topic_view.surveys[object.id]
-    else
-      Survey.includes(survey_fields: :survey_field_options).where(post: object)
-    end
+    @preloaded_surveys ||=
+      if @topic_view.present?
+        @topic_view.surveys[object.id]
+      else
+        Survey.includes(survey_fields: :survey_field_options).where(post: object)
+      end
   end
 
-  add_to_serializer(:post, :include_preloaded_surveys?) do
-    false
-  end
+  add_to_serializer(:post, :include_preloaded_surveys?) { false }
 
   add_to_serializer(:post, :surveys, false) do
     preloaded_surveys.map { |s| SurveySerializer.new(s, root: false, scope: self.scope) }
@@ -128,7 +123,5 @@ after_initialize do
   end
 
   # Remove surveys from topic excerpts
-  on(:reduce_excerpt) do |doc, post|
-    doc.css(".survey").remove
-  end
+  on(:reduce_excerpt) { |doc, post| doc.css(".survey").remove }
 end
