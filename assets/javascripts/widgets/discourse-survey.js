@@ -1,11 +1,12 @@
-import I18n from "I18n";
-import { createWidget } from "discourse/widgets/widget";
+import $ from "jquery";
 import { h } from "virtual-dom";
-import { iconHTML, iconNode } from "discourse-common/lib/icon-library";
-import RawHtml from "discourse/widgets/raw-html";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { applyLocalDates } from "discourse/lib/local-dates";
+import RawHtml from "discourse/widgets/raw-html";
+import { createWidget } from "discourse/widgets/widget";
+import { iconHTML, iconNode } from "discourse-common/lib/icon-library";
+import I18n from "I18n";
 
 createWidget("discourse-survey-title", {
   tagName: "div.survey-title",
