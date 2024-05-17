@@ -13,41 +13,24 @@ register_asset "stylesheets/desktop/survey.scss"
 
 register_svg_icon "far-check-circle" if respond_to?(:register_svg_icon)
 
-load File.expand_path("lib/discourse-surveys/engine.rb", __dir__)
+require_relative "lib/discourse_surveys/engine"
 
 after_initialize do
-  %w[
-    ../app/controller/discourse_surveys/survey_controller.rb
-    ../app/models/survey.rb
-    ../app/models/survey_field.rb
-    ../app/models/survey_field_option.rb
-    ../app/models/survey_response.rb
-    ../lib/discourse-surveys/post_validator.rb
-    ../lib/discourse-surveys/helper.rb
-    ../lib/discourse-surveys/survey_updater.rb
-    ../lib/discourse-surveys/survey_validator.rb
-  ].each { |path| load File.expand_path(path, __FILE__) }
+  require_relative "app/controller/discourse_surveys/survey_controller"
+  require_relative "app/models/survey"
+  require_relative "app/models/survey_field"
+  require_relative "app/models/survey_field_option"
+  require_relative "app/models/survey_response"
+  require_relative "lib/discourse_surveys/post_validator"
+  require_relative "lib/discourse_surveys/helper"
+  require_relative "lib/discourse_surveys/survey_updater"
+  require_relative "lib/discourse_surveys/survey_validator"
+  require_relative "lib/discourse_surveys/post_extension"
+  require_relative "lib/discourse_surveys/user_extension"
 
   reloadable_patch do
-    Post.class_eval do
-      attr_accessor :extracted_surveys
-
-      has_many :surveys
-
-      after_save do
-        surveys = self.extracted_surveys
-        next if surveys.blank? || !surveys.is_a?(Hash)
-        post = self
-
-        Survey.transaction do
-          surveys.values.each { |survey| DiscourseSurveys::Helper.create!(post.id, survey) }
-          post.custom_fields[DiscourseSurveys::HAS_SURVEYS] = true
-          post.save_custom_fields(true)
-        end
-      end
-    end
-
-    User.class_eval { has_many :survey_response, dependent: :delete_all }
+    Post.prepend(DiscourseSurveys::PostExtension)
+    User.prepend(DiscourseSurveys::UserExtension)
   end
 
   validate(:post, :validate_surveys) do |force = nil|
