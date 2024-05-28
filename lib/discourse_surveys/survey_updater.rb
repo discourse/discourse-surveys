@@ -5,7 +5,7 @@ module DiscourseSurveys
     SURVEY_ATTRIBUTES ||= %w[name active visibility]
 
     def self.update(post, surveys)
-      return false unless post.present?
+      return false if post.blank?
 
       ActiveRecord::Base.transaction do
         has_changed = false
@@ -14,7 +14,7 @@ module DiscourseSurveys
         survey_record = ::Survey.where(post_id: post.id).first
         survey_id = survey_record.id
 
-        unless survey.present?
+        if survey.blank?
           # disassociate survey with post
           survey_record.post_id = nil
           survey_record.save!
