@@ -10,3 +10,4 @@ en:
     cannot_edit: "Survey cannot be edited because it has a response."
     survey_must_have_different_questions: "Survey field questions should be different."
     survey_must_not_have_any_empty_questions: "Survey field questions cannot be blank."
+    topic_must_be_open_to_vote: "Topic must be open to vote."
