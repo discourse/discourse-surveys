@@ -86,7 +86,12 @@ after_initialize do
       end
   end
 
-  add_to_serializer(:post, :preloaded_surveys, respect_plugin_enabled: false) do
+  add_to_serializer(
+    :post,
+    :preloaded_surveys,
+    respect_plugin_enabled: false,
+    include_condition: -> { false },
+  ) do
     @preloaded_surveys ||=
       if @topic_view.present?
         @topic_view.surveys[object.id]
@@ -95,15 +100,12 @@ after_initialize do
       end
   end
 
-  add_to_serializer(:post, :include_preloaded_surveys?) { false }
-
-  add_to_serializer(:post, :surveys, respect_plugin_enabled: false) do
-    preloaded_surveys.map { |s| SurveySerializer.new(s, root: false, scope: self.scope) }
-  end
-
-  add_to_serializer(:post, :include_surveys?) do
-    SiteSetting.surveys_enabled && preloaded_surveys.present?
-  end
+  add_to_serializer(
+    :post,
+    :surveys,
+    respect_plugin_enabled: true,
+    include_condition: -> { preloaded_surveys.present? },
+  ) { preloaded_surveys.map { |s| SurveySerializer.new(s, root: false, scope: self.scope) } }
 
   # Remove surveys from topic excerpts
   on(:reduce_excerpt) { |doc, post| doc.css(".survey").remove }
