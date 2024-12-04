@@ -11,7 +11,7 @@ enabled_site_setting :surveys_enabled
 register_asset "stylesheets/common/survey.scss"
 register_asset "stylesheets/desktop/survey.scss"
 
-register_svg_icon "far-check-circle" if respond_to?(:register_svg_icon)
+register_svg_icon "far-circle-check" if respond_to?(:register_svg_icon)
 
 require_relative "lib/discourse_surveys/engine"
 
