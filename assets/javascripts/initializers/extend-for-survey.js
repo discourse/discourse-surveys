@@ -1,9 +1,9 @@
 import EmberObject from "@ember/object";
 import $ from "jquery";
+import { observes } from "discourse/lib/decorators";
+import { getRegister } from "discourse/lib/get-owner";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import WidgetGlue from "discourse/widgets/glue";
-import { getRegister } from "discourse-common/lib/get-owner";
-import { observes } from "discourse-common/utils/decorators";
 
 function initializeSurveys(api) {
   const register = getRegister(api);

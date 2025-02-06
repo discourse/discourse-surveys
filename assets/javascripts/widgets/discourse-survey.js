@@ -2,11 +2,11 @@ import $ from "jquery";
 import { h } from "virtual-dom";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import { iconHTML, iconNode } from "discourse/lib/icon-library";
 import { applyLocalDates } from "discourse/lib/local-dates";
 import RawHtml from "discourse/widgets/raw-html";
 import { createWidget } from "discourse/widgets/widget";
-import { iconHTML, iconNode } from "discourse-common/lib/icon-library";
-import I18n from "I18n";
+import { i18n } from "discourse-i18n";
 
 createWidget("discourse-survey-title", {
   tagName: "div.survey-title",
@@ -382,7 +382,7 @@ export default createWidget("discourse-survey", {
     // todo: check if response is already submitted and do not show survey if so.
     if (state.submitted) {
       const $node = $(
-        `<span>${I18n.t("discourse_surveys.survey_submitted")}</span>`
+        `<span>${i18n("discourse_surveys.survey_submitted")}</span>`
       );
 
       contents.push(
@@ -392,7 +392,7 @@ export default createWidget("discourse-survey", {
       );
     } else if (attrs.survey.user_responded) {
       const $node = $(
-        `<span>${I18n.t("discourse_surveys.user_responded")}</span>`
+        `<span>${i18n("discourse_surveys.user_responded")}</span>`
       );
 
       contents.push(
