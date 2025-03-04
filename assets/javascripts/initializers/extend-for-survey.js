@@ -1,6 +1,5 @@
-import EmberObject from "@ember/object";
+import EmberObject, { observer } from "@ember/object";
 import $ from "jquery";
-import { observes } from "discourse/lib/decorators";
 import { getRegister } from "discourse/lib/get-owner";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import WidgetGlue from "discourse/widgets/glue";
@@ -38,8 +37,7 @@ function initializeSurveys(api) {
     surveysObject: null,
 
     // we need a proper ember object so it is bindable
-    @observes("surveys")
-    surveysChanged() {
+    surveysChanged: observer("surveys", function () {
       const surveys = this.surveys;
       if (surveys) {
         this._surveys = this._surveys || {};
@@ -54,7 +52,7 @@ function initializeSurveys(api) {
         this.set("surveysObject", this._surveys);
         rerender();
       }
-    },
+    }),
   });
 
   function attachSurveys($elem, helper) {
