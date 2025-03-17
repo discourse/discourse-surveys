@@ -9,7 +9,6 @@
 enabled_site_setting :surveys_enabled
 
 register_asset "stylesheets/common/survey.scss"
-register_asset "stylesheets/desktop/survey.scss"
 
 register_svg_icon "far-circle-check" if respond_to?(:register_svg_icon)
 

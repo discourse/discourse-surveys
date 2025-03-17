@@ -1,16 +1,10 @@
 # frozen_string_literal: true
 
-require "rails_helper"
-
 describe PrettyText do
-  def n(html)
-    html.strip
-  end
-
   context "with surveys enabled" do
     before { SiteSetting.surveys_enabled = true }
 
-    it "can correctly cook surveys" do
+    it "correctly cooks surveys" do
       md = <<~MD
         [survey name="awesome-survey"]
         [radio question="Choose any one option:"]
@@ -43,7 +37,7 @@ describe PrettyText do
         [/survey]
       MD
 
-      cooked = PrettyText.cook md
+      cooked = PrettyText.cook(md)
 
       expected = <<~MD
         <div data-survey-wrapper="true">
@@ -75,7 +69,7 @@ describe PrettyText do
         </div>
       MD
 
-      expect(n cooked).to eq(n expected)
+      expect(cooked.strip).to eq(expected.strip)
     end
   end
 end

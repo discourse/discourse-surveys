@@ -2,7 +2,7 @@
 
 module DiscourseSurveys
   class SurveyUpdater
-    SURVEY_ATTRIBUTES ||= %w[name active visibility]
+    SURVEY_ATTRIBUTES = %w[name active visibility]
 
     def self.update(post, surveys)
       return false if post.blank?
