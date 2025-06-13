@@ -2,6 +2,7 @@
 
 class SurveyResponse < ActiveRecord::Base
   belongs_to :survey_field
+  belongs_to :survey_field_option
 end
 
 # == Schema Information
