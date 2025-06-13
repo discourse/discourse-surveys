@@ -1,7 +1,6 @@
 import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import { gt } from "truth-helpers";
 import icon from "discourse/helpers/d-icon";
 
 export default class SurveyThumbs extends Component {
