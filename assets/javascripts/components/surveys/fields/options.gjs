@@ -3,6 +3,7 @@ import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
+import { htmlSafe } from "@ember/template";
 import { modifier } from "ember-modifier";
 import icon from "discourse/helpers/d-icon";
 import { bind } from "discourse/lib/decorators";
@@ -45,7 +46,7 @@ export default class SurveyOptions extends Component {
     {{#each @field.options as |option|}}
       <li class="survey-field-option" {{on "click" (fn this.toggle option)}}>
         {{icon (this.iconFor option)}}
-        <span {{this.applyLocalDatesModifier}}>{{option.html}}</span>
+        <span {{this.applyLocalDatesModifier}}>{{htmlSafe option.html}}</span>
       </li>
     {{/each}}
   </template>
