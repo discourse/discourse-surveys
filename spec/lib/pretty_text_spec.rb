@@ -23,7 +23,7 @@ describe PrettyText do
         - Female
         [/dropdown]
 
-        [number question="Rate this survey from 1 to 10:"]
+        [number question="Rate survey's quality from 1 to 10:"]
         [/number]
 
         [textarea question="What is your feedback about xyz?"]
@@ -61,7 +61,7 @@ describe PrettyText do
         <li data-survey-option-id="914b29f3a73e40df4690feecc4f76bf1">Female</li>
         </ul>
         </div>
-        <div class="survey-number" data-survey-type="number" data-survey-field-id="e640c1203c008b7c9b99fac817589833" data-survey-question="Rate this survey from 1 to 10:"></div>
+        <div class="survey-number" data-survey-type="number" data-survey-field-id="988b42fac30d07ccf0120685a48f5c71" data-survey-question="Rate survey's quality from 1 to 10:"></div>
         <div class="survey-textarea" data-survey-type="textarea" data-survey-field-id="686b736392ac9422acbe59bd0531493e" data-survey-question="What is your feedback about xyz?"></div>
         <div class="survey-star" data-survey-type="star" data-survey-field-id="bef56ba188d28c5c17b848de4bf8cc8d" data-survey-question="How would you rate overall experience?"></div>
         <div class="survey-thumbs" data-survey-type="thumbs" data-survey-field-id="ed252319cfaf2124c23bc0e2b9c7c5fe" data-survey-question="Were you satisfied with our services?"></div>
