@@ -1,3 +1,4 @@
+import { htmlSafe } from "@ember/template";
 import SurveyDropdown from "./fields/dropdown";
 import SurveyNumber from "./fields/number";
 import SurveyOptions from "./fields/options";
@@ -47,7 +48,7 @@ function configFor(field) {
 <template>
   <div class="survey-field" data-survey-field-id={{@field.digest}}>
     <span class="field-question">
-      <span>{{@field.question}}</span>
+      <span>{{htmlSafe @field.question}}</span>
     </span>
 
     {{#let (configFor @field) as |fieldConfig|}}

@@ -9,8 +9,8 @@ RSpec.describe "Survey plugin UI", type: :system do
       [survey name="awesome-survey-thumbs" title="Awesome Survey"]
 
       [radio question="Best pet:"]
-      - cat
-      - dog
+      - 🐈 cat
+      - 🐕 dog
       [/radio]
 
       [checkbox question="Preferred colours:"]
@@ -24,7 +24,7 @@ RSpec.describe "Survey plugin UI", type: :system do
       - Female
       [/dropdown]
 
-      [number question="Rate this survey from 1 to 10:"]
+      [number question="Rate survey's quality from 1 to 10:"]
       [/number]
 
       [textarea question="What is your feedback about xyz?" required="false"]
@@ -47,6 +47,11 @@ RSpec.describe "Survey plugin UI", type: :system do
     expect(page).to have_css(".survey-title", text: "Awesome Survey")
     expect(page).to have_css("button.submit-response[disabled]")
 
+    expect(page).to have_css(
+      ".field-question:has(+ .field-number)",
+      text: "Rate survey's quality from 1 to 10:",
+    )
+
     find(".field-radio li:nth-of-type(2)").click
     find(".field-checkbox li:first-of-type").click
     find(".field-checkbox li:nth-of-type(2)").click
@@ -57,7 +62,7 @@ RSpec.describe "Survey plugin UI", type: :system do
     find(".field-thumbs label:nth-of-type(1)").click
 
     expect(page).to have_css("button.submit-response:not([disabled])")
-    find("button.submit-response:not([disabled])").click
+    find("button.submit-response").click
 
     try_until_success { expect(SurveyResponse.count).to eq(8) }
 
@@ -68,11 +73,13 @@ RSpec.describe "Survey plugin UI", type: :system do
         .transform_values { |answers| answers.map { |a| a.value || a.survey_field_option&.html } }
 
     expect(assembled_response).to eq(
-      "Best pet:" => ["dog"],
+      "Best pet:" => [
+        "<img src=\"/images/emoji/twitter/dog.png?v=14\" title=\":dog:\" class=\"emoji\" alt=\":dog:\" loading=\"lazy\" width=\"20\" height=\"20\"> dog",
+      ],
       "Preferred colours:" => %w[red blue],
       "Gender:" => ["Male"],
       "How would you rate overall experience?" => ["4"],
-      "Rate this survey from 1 to 10:" => ["3"],
+      "Rate survey&#39;s quality from 1 to 10:" => ["3"],
       "What is your feedback about xyz?" => ["This is my answer"],
       "Were you satisfied with our services?" => ["+1"],
     )
