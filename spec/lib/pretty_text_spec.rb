@@ -44,8 +44,8 @@ describe PrettyText do
         <div class="survey" data-survey-name="awesome-survey">
         <div class="survey-radio" data-survey-type="radio" data-survey-field-id="45de436cbdb15bbd9a11cb0301733189" data-survey-question="Choose any one option:">
         <ul>
-        <li data-survey-option-id="0081803fadf8c67971a671882640b3be"><img src="/images/emoji/twitter/cat.png?v=14" title=":cat:" class="emoji" alt=":cat:" loading="lazy" width="20" height="20"> cat</li>
-        <li data-survey-option-id="469b4f3d4617f34a816751fd918135d9"><img src="/images/emoji/twitter/dog.png?v=14" title=":dog:" class="emoji" alt=":dog:" loading="lazy" width="20" height="20"> dog</li>
+        <li data-survey-option-id="0081803fadf8c67971a671882640b3be"><img src="/images/emoji/twitter/cat.png?v=15" title=":cat:" class="emoji" alt=":cat:" loading="lazy" width="20" height="20"> cat</li>
+        <li data-survey-option-id="469b4f3d4617f34a816751fd918135d9"><img src="/images/emoji/twitter/dog.png?v=15" title=":dog:" class="emoji" alt=":dog:" loading="lazy" width="20" height="20"> dog</li>
         </ul>
         </div>
         <div class="survey-checkbox" data-survey-type="checkbox" data-survey-field-id="481e5197af6b16a4d1e12e12a3addc6e" data-survey-question="Choose multiple options:">

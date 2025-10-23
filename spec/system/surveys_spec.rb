@@ -74,7 +74,7 @@ RSpec.describe "Survey plugin UI", type: :system do
 
     expect(assembled_response).to eq(
       "Best pet:" => [
-        "<img src=\"/images/emoji/twitter/dog.png?v=14\" title=\":dog:\" class=\"emoji\" alt=\":dog:\" loading=\"lazy\" width=\"20\" height=\"20\"> dog",
+        "<img src=\"/images/emoji/twitter/dog.png?v=15\" title=\":dog:\" class=\"emoji\" alt=\":dog:\" loading=\"lazy\" width=\"20\" height=\"20\"> dog",
       ],
       "Preferred colours:" => %w[red blue],
       "Gender:" => ["Male"],
