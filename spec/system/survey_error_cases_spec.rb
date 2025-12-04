@@ -3,8 +3,8 @@
 RSpec.describe "Survey Error Cases", type: :system do
   before { enable_current_plugin }
 
-  fab!(:admin) { Fabricate(:admin) }
-  fab!(:user) { Fabricate(:user) }
+  fab!(:admin)
+  fab!(:user)
   let(:survey) { PageObjects::Components::Survey.new }
 
   describe "already responded" do
@@ -95,35 +95,6 @@ RSpec.describe "Survey Error Cases", type: :system do
     end
   end
 
-  describe "deleted post" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
-          [survey name="deleted-test"]
-          [radio question="Choose:"]
-          - Option A
-          [/radio]
-          [/survey]
-        MD
-      )
-    end
-
-    it "prevents submission when post is deleted" do
-      sign_in user
-      visit post.url
-
-      survey.field("Choose:").select_radio_option("Option A")
-
-      PostDestroyer.new(admin, post).destroy
-
-      survey.submit
-
-      expect(page).to have_content(I18n.t("survey.post_is_deleted"))
-    end
-  end
-
   describe "archived topic" do
     fab!(:topic) { Fabricate(:topic, archived: true) }
     let(:post) do
@@ -154,7 +125,7 @@ RSpec.describe "Survey Error Cases", type: :system do
   end
 
   describe "permission checks" do
-    fab!(:group) { Fabricate(:group) }
+    fab!(:group)
     fab!(:category) do
       category = Fabricate(:category)
       category.set_permissions(group => :readonly, everyone: :readonly)

@@ -3,7 +3,7 @@
 RSpec.describe "Survey Validation", type: :system do
   before { enable_current_plugin }
 
-  fab!(:admin) { Fabricate(:admin) }
+  fab!(:admin)
   let(:survey) { PageObjects::Components::Survey.new }
 
   before { sign_in admin }
