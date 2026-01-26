@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Survey Edge Cases", type: :system do
+RSpec.describe "Survey Edge Cases" do
   before { enable_current_plugin }
 
   fab!(:admin)
@@ -9,19 +9,13 @@ RSpec.describe "Survey Edge Cases", type: :system do
   before { sign_in admin }
 
   describe "survey without title" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="no-title-survey"]
           [radio question="Choose:"]
           - Option A
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "displays survey without title section" do
       visit post.url
@@ -32,19 +26,13 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "survey with title" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="titled-survey" title="My Survey Title"]
           [radio question="Choose:"]
           - Option A
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "displays survey title" do
       visit post.url
@@ -54,11 +42,7 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "survey with emoji in options" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="emoji-survey"]
           [radio question="Choose:"]
           - 🐈 Cat
@@ -67,8 +51,6 @@ RSpec.describe "Survey Edge Cases", type: :system do
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "handles emoji in option text" do
       visit post.url
@@ -84,11 +66,7 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "survey with HTML in options" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="html-survey"]
           [radio question="Choose:"]
           - <strong>Bold</strong> option
@@ -96,8 +74,6 @@ RSpec.describe "Survey Edge Cases", type: :system do
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "renders HTML in options safely" do
       visit post.url
@@ -108,11 +84,7 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "survey with many options" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="many-options-survey"]
           [checkbox question="Select many:"]
           - Option 1
@@ -128,15 +100,11 @@ RSpec.describe "Survey Edge Cases", type: :system do
           [/checkbox]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting many options" do
       visit post.url
 
-      (1..10).each do |i|
-        survey.field("Select many:").select_checkbox_option("Option #{i}")
-      end
+      (1..10).each { |i| survey.field("Select many:").select_checkbox_option("Option #{i}") }
 
       survey.submit
 
@@ -145,18 +113,12 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "survey with long textarea" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="long-text-survey"]
           [textarea question="Enter long text:" required="false"]
           [/textarea]
           [/survey]
         MD
-      )
-    end
 
     it "handles long text input" do
       visit post.url
@@ -173,33 +135,21 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "multiple surveys in different posts" do
-    let(:post1) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post1) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="survey-1"]
           [radio question="Question 1:"]
           - A
           [/radio]
           [/survey]
         MD
-      )
-    end
 
-    let(:post2) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post2) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="survey-2"]
           [radio question="Question 2:"]
           - B
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "allows responding to multiple surveys independently" do
       visit post1.url
@@ -219,11 +169,7 @@ RSpec.describe "Survey Edge Cases", type: :system do
   end
 
   describe "survey with all field types" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="all-types-survey" title="Complete Survey"]
           [radio question="Radio question:"]
           - Radio A
@@ -247,8 +193,6 @@ RSpec.describe "Survey Edge Cases", type: :system do
           [/thumbs]
           [/survey]
         MD
-      )
-    end
 
     it "allows completing all field types in one survey" do
       visit post.url
@@ -270,4 +214,3 @@ RSpec.describe "Survey Edge Cases", type: :system do
     end
   end
 end
-

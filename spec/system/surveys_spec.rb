@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Survey plugin UI", type: :system do
+RSpec.describe "Survey plugin UI" do
   before { enable_current_plugin }
 
   let(:admin) { Fabricate(:admin) }

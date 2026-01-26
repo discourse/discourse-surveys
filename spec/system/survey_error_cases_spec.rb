@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Survey Error Cases", type: :system do
+RSpec.describe "Survey Error Cases" do
   before { enable_current_plugin }
 
   fab!(:admin)
@@ -8,11 +8,7 @@ RSpec.describe "Survey Error Cases", type: :system do
   let(:survey) { PageObjects::Components::Survey.new }
 
   describe "already responded" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="response-test"]
           [radio question="Choose:"]
           - Option A
@@ -20,8 +16,6 @@ RSpec.describe "Survey Error Cases", type: :system do
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "shows submitted message after responding" do
       sign_in user
@@ -51,19 +45,13 @@ RSpec.describe "Survey Error Cases", type: :system do
   end
 
   describe "login requirement" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="login-test"]
           [radio question="Choose:"]
           - Option A
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "shows login prompt when not logged in" do
       visit post.url
@@ -97,20 +85,13 @@ RSpec.describe "Survey Error Cases", type: :system do
 
   describe "archived topic" do
     fab!(:topic) { Fabricate(:topic, archived: true) }
-    let(:post) do
-      Fabricate(
-        :post,
-        topic: topic,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, topic: topic, user: admin, raw: <<~MD) }
           [survey name="archived-test"]
           [radio question="Choose:"]
           - Option A
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "prevents submission when topic is archived" do
       sign_in user
@@ -128,23 +109,18 @@ RSpec.describe "Survey Error Cases", type: :system do
     fab!(:group)
     fab!(:category) do
       category = Fabricate(:category)
-      category.set_permissions(group => :readonly, everyone: :readonly)
+      category.set_permissions(group => :readonly, :everyone => :readonly)
       category.save!
       category
     end
     let(:post) do
-      Fabricate(
-        :post,
-        topic: Fabricate(:topic, category: category),
-        user: admin,
-        raw: <<~MD,
+      Fabricate(:post, topic: Fabricate(:topic, category: category), user: admin, raw: <<~MD)
           [survey name="permission-test"]
           [radio question="Choose:"]
           - Option A
           [/radio]
           [/survey]
         MD
-      )
     end
 
     it "prevents submission when user cannot post in topic" do
@@ -159,4 +135,3 @@ RSpec.describe "Survey Error Cases", type: :system do
     end
   end
 end
-

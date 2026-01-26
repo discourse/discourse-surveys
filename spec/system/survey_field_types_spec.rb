@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Survey Field Types", type: :system do
+RSpec.describe "Survey Field Types" do
   before { enable_current_plugin }
 
   fab!(:admin)
@@ -9,11 +9,7 @@ RSpec.describe "Survey Field Types", type: :system do
   before { sign_in admin }
 
   describe "radio field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="radio-survey"]
           [radio question="Choose an option:"]
           - Option A
@@ -22,8 +18,6 @@ RSpec.describe "Survey Field Types", type: :system do
           [/radio]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting a single option" do
       visit post.url
@@ -59,11 +53,7 @@ RSpec.describe "Survey Field Types", type: :system do
   end
 
   describe "checkbox field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="checkbox-survey"]
           [checkbox question="Select multiple:"]
           - Item_1
@@ -72,8 +62,6 @@ RSpec.describe "Survey Field Types", type: :system do
           [/checkbox]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting multiple options" do
       visit post.url
@@ -108,11 +96,7 @@ RSpec.describe "Survey Field Types", type: :system do
   end
 
   describe "dropdown field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="dropdown-survey"]
           [dropdown question="Select one:"]
           - First
@@ -121,8 +105,6 @@ RSpec.describe "Survey Field Types", type: :system do
           [/dropdown]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting from dropdown" do
       visit post.url
@@ -141,18 +123,12 @@ RSpec.describe "Survey Field Types", type: :system do
   end
 
   describe "number field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="number-survey"]
           [number question="Rate from 1 to 10:"]
           [/number]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting a number" do
       visit post.url
@@ -185,18 +161,12 @@ RSpec.describe "Survey Field Types", type: :system do
   end
 
   describe "textarea field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="textarea-survey"]
           [textarea question="Enter your feedback:" required="false"]
           [/textarea]
           [/survey]
         MD
-      )
-    end
 
     it "allows entering text" do
       visit post.url
@@ -226,18 +196,12 @@ RSpec.describe "Survey Field Types", type: :system do
   end
 
   describe "star rating field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="star-survey"]
           [star question="Rate your experience:"]
           [/star]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting a star rating" do
       visit post.url
@@ -270,18 +234,12 @@ RSpec.describe "Survey Field Types", type: :system do
   end
 
   describe "thumbs field" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="thumbs-survey"]
           [thumbs question="Do you like this?"]
           [/thumbs]
           [/survey]
         MD
-      )
-    end
 
     it "allows selecting thumbs up" do
       visit post.url
@@ -328,4 +286,3 @@ RSpec.describe "Survey Field Types", type: :system do
     end
   end
 end
-
