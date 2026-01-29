@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Survey Validation", type: :system do
+RSpec.describe "Survey Validation" do
   before { enable_current_plugin }
 
   fab!(:admin)
@@ -9,11 +9,7 @@ RSpec.describe "Survey Validation", type: :system do
   before { sign_in admin }
 
   describe "required fields" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="required-survey"]
           [radio question="Required question:"]
           - Option 1
@@ -23,8 +19,6 @@ RSpec.describe "Survey Validation", type: :system do
           [/textarea]
           [/survey]
         MD
-      )
-    end
 
     it "disables submit button when required fields are not filled" do
       visit post.url
@@ -61,11 +55,7 @@ RSpec.describe "Survey Validation", type: :system do
   end
 
   describe "multiple required fields" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="multi-required-survey"]
           [radio question="First required:"]
           - A
@@ -79,8 +69,6 @@ RSpec.describe "Survey Validation", type: :system do
           [/number]
           [/survey]
         MD
-      )
-    end
 
     it "requires all required fields to be filled" do
       visit post.url
@@ -110,11 +98,7 @@ RSpec.describe "Survey Validation", type: :system do
   end
 
   describe "all optional fields" do
-    let(:post) do
-      Fabricate(
-        :post,
-        user: admin,
-        raw: <<~MD,
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="all-optional-survey"]
           [textarea question="Optional 1:" required="false"]
           [/textarea]
@@ -122,8 +106,6 @@ RSpec.describe "Survey Validation", type: :system do
           [/textarea]
           [/survey]
         MD
-      )
-    end
 
     it "allows submission with no fields filled" do
       visit post.url
@@ -145,4 +127,3 @@ RSpec.describe "Survey Validation", type: :system do
     end
   end
 end
-

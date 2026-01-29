@@ -70,7 +70,11 @@ module PageObjects
       end
 
       def select_checkbox_option(option_text)
-        component.find(".field-checkbox .survey-field-option", text: option_text, match: :first).click
+        component.find(
+          ".field-checkbox .survey-field-option",
+          text: option_text,
+          match: :first,
+        ).click
         self
       end
 
@@ -110,4 +114,3 @@ module PageObjects
     end
   end
 end
-
