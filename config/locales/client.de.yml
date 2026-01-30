@@ -5,3 +5,10 @@
 # https://translate.discourse.org/
 
 de:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Sende deine Antwort ab"
+        label: "Absenden"
+      survey_submitted: "Die Antwort wurde erfolgreich übermittelt!"
+      user_responded: "Du hast bereits an dieser Umfrage teilgenommen."

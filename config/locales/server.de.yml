@@ -5,3 +5,16 @@
 # https://translate.discourse.org/
 
 de:
+  site_settings:
+    surveys_enabled: "Umfragen-Plug-in aktivieren"
+  survey:
+    survey: "Umfrage"
+    post_survey_exists: "Mit diesem Beitrag ist bereits eine Umfrage verknüpft."
+    user_already_responded: "Du hast bereits an dieser Umfrage teilgenommen."
+    max_one_survey_per_post: "Pro Beitrag ist nur eine Umfrage erlaubt."
+    cannot_edit: "Die Umfrage kann nicht bearbeitet werden, weil bereits eine Antwort vorliegt."
+    survey_must_have_different_questions: "Die Fragen der Umfrage müssen unterschiedlich sein."
+    survey_must_not_have_any_empty_questions: "Die Fragen der Umfrage dürfen nicht leer sein."
+    topic_must_be_open_to_vote: "Das Thema muss geöffnet sein, damit abgestimmt werden kann."
+    post_is_deleted: "Der Beitrag wurde gelöscht."
+    user_cant_post_in_topic: "Du darfst in diesem Thema keine Beiträge erstellen."
