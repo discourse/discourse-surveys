@@ -22,21 +22,21 @@ export default class SurveyStar extends Component {
         {{#if (gt value 0)}}
           <label
             class="star-rating-label"
-            for="star-rating-{{@postId}}-{{value}}"
+            for="star-rating-{{@postId}}-{{@field.digest}}-{{value}}"
           >
             {{icon "star"}}
           </label>
           <input
-            id="star-rating-{{@postId}}-{{value}}"
-            name="star-rating-{{@postId}}"
+            id="star-rating-{{@postId}}-{{@field.digest}}-{{value}}"
+            name="star-rating-{{@postId}}-{{@field.digest}}"
             class="star-rating-input"
             value={{value}}
             type="radio"
           />
         {{else}}
           <input
-            id="star-rating-{{@postId}}-0"
-            name="star-rating-{{@postId}}"
+            id="star-rating-{{@postId}}-{{@field.digest}}-0"
+            name="star-rating-{{@postId}}-{{@field.digest}}"
             disabled
             checked
             class="star-rating-input"

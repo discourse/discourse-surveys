@@ -16,29 +16,29 @@ export default class SurveyThumbs extends Component {
   <template>
     <div class="survey-field-thumbs" {{on "input" this.changed}}>
       <input
-        id="thumbs-rating-up-{{@postId}}"
-        name="thumbs-rating-{{@postId}}"
+        id="thumbs-rating-up-{{@postId}}-{{@field.digest}}"
+        name="thumbs-rating-{{@postId}}-{{@field.digest}}"
         class="thumbs-rating-input"
         value="+1"
         type="radio"
       />
       <label
         class="thumbs-rating-label thumbs-up"
-        for="thumbs-rating-up-{{@postId}}"
+        for="thumbs-rating-up-{{@postId}}-{{@field.digest}}"
       >
         {{icon "thumbs-up" class="thumbs-icon"}}
       </label>
 
       <input
-        id="thumbs-rating-down-{{@postId}}"
-        name="thumbs-rating-{{@postId}}"
+        id="thumbs-rating-down-{{@postId}}-{{@field.digest}}"
+        name="thumbs-rating-{{@postId}}-{{@field.digest}}"
         class="thumbs-rating-input"
         value="-1"
         type="radio"
       />
       <label
         class="thumbs-rating-label thumbs-down"
-        for="thumbs-rating-down-{{@postId}}"
+        for="thumbs-rating-down-{{@postId}}-{{@field.digest}}"
       >
         {{icon "thumbs-down" class="thumbs-icon"}}
       </label>

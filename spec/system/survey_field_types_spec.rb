@@ -233,6 +233,37 @@ RSpec.describe "Survey Field Types" do
     end
   end
 
+  describe "multiple star rating fields" do
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
+          [survey name="multi-star-survey"]
+          [star question="Rate the product:"]
+          [/star]
+          [star question="Rate the service:"]
+          [/star]
+          [/survey]
+        MD
+
+    it "allows selecting different ratings for each star field independently" do
+      visit post.url
+
+      survey.field("Rate the product:").select_star_rating(3)
+      survey.field("Rate the service:").select_star_rating(5)
+
+      survey.submit
+
+      try_until_success { expect(SurveyResponse.count).to eq(2) }
+
+      product_field = Survey.last.survey_fields.find { |f| f.question == "Rate the product:" }
+      service_field = Survey.last.survey_fields.find { |f| f.question == "Rate the service:" }
+
+      product_response = SurveyResponse.find_by(survey_field: product_field)
+      service_response = SurveyResponse.find_by(survey_field: service_field)
+
+      expect(product_response.value).to eq("3")
+      expect(service_response.value).to eq("5")
+    end
+  end
+
   describe "thumbs field" do
     let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
           [survey name="thumbs-survey"]
@@ -283,6 +314,39 @@ RSpec.describe "Survey Field Types" do
 
       response = SurveyResponse.first
       expect(response.value).to eq("-1")
+    end
+  end
+
+  describe "multiple thumbs fields" do
+    let(:post) { Fabricate(:post, user: admin, raw: <<~MD) }
+          [survey name="multi-thumbs-survey"]
+          [thumbs question="Do you like the product?"]
+          [/thumbs]
+          [thumbs question="Do you like the service?"]
+          [/thumbs]
+          [/survey]
+        MD
+
+    it "allows selecting different values for each thumbs field independently" do
+      visit post.url
+
+      survey.field("Do you like the product?").select_thumbs_up
+      survey.field("Do you like the service?").select_thumbs_down
+
+      survey.submit
+
+      try_until_success { expect(SurveyResponse.count).to eq(2) }
+
+      product_field =
+        Survey.last.survey_fields.find { |f| f.question == "Do you like the product?" }
+      service_field =
+        Survey.last.survey_fields.find { |f| f.question == "Do you like the service?" }
+
+      product_response = SurveyResponse.find_by(survey_field: product_field)
+      service_response = SurveyResponse.find_by(survey_field: service_field)
+
+      expect(product_response.value).to eq("+1")
+      expect(service_response.value).to eq("-1")
     end
   end
 end
