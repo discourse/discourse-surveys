@@ -47,10 +47,7 @@ RSpec.describe "Survey plugin UI" do
     expect(page).to have_css(".survey-title", text: "Awesome Survey")
     expect(page).to have_css("button.submit-response[disabled]")
 
-    expect(page).to have_css(
-      ".field-question:has(+ .field-number)",
-      text: "Rate survey's quality from 1 to 10:",
-    )
+    expect(page).to have_css(".field-question", text: "Rate survey\u2019s quality from 1 to 10:")
 
     find(".field-radio li:nth-of-type(2)").click
     find(".field-checkbox li:first-of-type").click
@@ -79,7 +76,7 @@ RSpec.describe "Survey plugin UI" do
       "Preferred colours:" => %w[red blue],
       "Gender:" => ["Male"],
       "How would you rate overall experience?" => ["4"],
-      "Rate survey&#39;s quality from 1 to 10:" => ["3"],
+      "Rate survey\u2019s quality from 1 to 10:" => ["3"],
       "What is your feedback about xyz?" => ["This is my answer"],
       "Were you satisfied with our services?" => ["+1"],
     )
