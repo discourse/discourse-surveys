@@ -7,7 +7,7 @@ A comprehensive Discourse plugin for creating interactive surveys with multiple 
 - **7 Different Field Types**: Radio buttons, checkboxes, dropdowns, text areas, number selection, star ratings, and thumbs up/down
 - **Required/Optional Fields**: Mark fields as required to ensure completion
 - **Emoji Support**: Use emojis in your survey options
-- **HTML Support**: Rich text formatting in questions and options
+- **Markdown Support**: Rich text formatting in questions and options
 - **User Authentication**: Automatic login prompts for anonymous users
 - **Response Tracking**: Prevents duplicate submissions from the same user
 - **Permission Aware**: Respects topic and category permissions
@@ -175,16 +175,34 @@ All field types support these attributes:
 [/radio]
 ```
 
-### HTML Formatting in Questions
+### Markdown Formatting in Questions
+
+You can use standard Markdown formatting in your survey questions:
 
 ```markdown
-[radio question="Which <strong>programming language</strong> do you prefer?"]
+[radio question="Which **programming language** do you prefer?"]
 - JavaScript
 - Python
 - Ruby
 - Go
 [/radio]
+
+[checkbox question="Select your *favorite* features:"]
+- Speed
+- Security
+- Ease of use
+[/checkbox]
+
+[textarea question="Please read our [guidelines](https://example.com) and provide feedback:"]
+[/textarea]
 ```
+
+Supported formatting:
+- **Bold**: `**text**` or `__text__`
+- *Italic*: `*text*` or `_text_`
+- ~~Strikethrough~~: `~~text~~`
+- `Inline code`: `` `code` ``
+- [Links](https://example.com): `[text](url)`
 
 ### Mixed Required and Optional Fields
 
