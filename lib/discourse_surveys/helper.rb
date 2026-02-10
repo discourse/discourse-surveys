@@ -118,10 +118,28 @@ module DiscourseSurveys
                         survey_field_id: field.id,
                         digest: response[field.digest],
                       ).pluck(:id)
+                    if option_ids.empty?
+                      raise StandardError.new I18n.t(
+                                                "survey.invalid_option",
+                                                question: field.question,
+                                              )
+                    end
                     obj[field.id] = { option_ids: option_ids, has_options: true }
                   else
-                    obj[field.id] = { value: response[field.digest], has_options: false }
+                    value = response[field.digest]
+                    if field.response_required && value.blank?
+                      raise StandardError.new I18n.t(
+                                                "survey.field_is_required",
+                                                question: field.question,
+                                              )
+                    end
+                    obj[field.id] = { value: value, has_options: false }
                   end
+                elsif field.response_required
+                  raise StandardError.new I18n.t(
+                                            "survey.field_is_required",
+                                            question: field.question,
+                                          )
                 end
               end
 
