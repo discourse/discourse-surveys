@@ -13,3 +13,5 @@ en:
     topic_must_be_open_to_vote: "Topic must be open to vote."
     post_is_deleted: "Post is deleted."
     user_cant_post_in_topic: "You don't have permission to post in this topic."
+    field_is_required: "The field '%{question}' is required."
+    invalid_option: "Invalid option for field '%{question}'."
