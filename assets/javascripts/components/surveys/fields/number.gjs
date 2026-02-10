@@ -28,7 +28,7 @@ export default class SurveyNumber extends Component {
     {{#each NUMBERS as |value|}}
       <li class="survey-field-number" {{on "click" (fn this.toggle value)}}>
         {{icon (this.iconFor value)}}
-        <span {{this.applyLocalDatesModifier}}>{{value}}</span>
+        <span>{{value}}</span>
       </li>
     {{/each}}
   </template>
