@@ -18,3 +18,5 @@ de:
     topic_must_be_open_to_vote: "Das Thema muss geöffnet sein, damit abgestimmt werden kann."
     post_is_deleted: "Der Beitrag wurde gelöscht."
     user_cant_post_in_topic: "Du darfst in diesem Thema keine Beiträge erstellen."
+    field_is_required: "Das Feld '%{question}' ist erforderlich."
+    invalid_option: "Ungültige Option für das Feld '%{question}'."
