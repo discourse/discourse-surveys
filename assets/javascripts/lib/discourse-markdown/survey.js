@@ -3,6 +3,7 @@
 const DATA_PREFIX = "data-survey-";
 const DEFAULT_SURVEY_NAME = "survey";
 const ALLOWLISTED_ATTRIBUTES = [
+  "class",
   "max",
   "min",
   "name",

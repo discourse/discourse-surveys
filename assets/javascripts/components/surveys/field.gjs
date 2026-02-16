@@ -1,4 +1,5 @@
 import { htmlSafe } from "@ember/template";
+import concatClass from "discourse/helpers/concat-class";
 import SurveyDropdown from "./fields/dropdown";
 import SurveyNumber from "./fields/number";
 import SurveyOptions from "./fields/options";
@@ -46,7 +47,10 @@ function configFor(field) {
 }
 
 <template>
-  <div class="survey-field" data-survey-field-id={{@field.digest}}>
+  <div
+    class={{concatClass "survey-field" @field.field_class}}
+    data-survey-field-id={{@field.digest}}
+  >
     <span class="field-question">
       <span>{{htmlSafe @field.question}}</span>
     </span>

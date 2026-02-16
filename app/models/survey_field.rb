@@ -36,6 +36,7 @@ end
 #  digest            :string           not null
 #  position          :integer          default(0)
 #  response_required :boolean          default(TRUE), not null
+#  field_class       :string
 #
 # Indexes
 #

@@ -71,5 +71,18 @@ describe PrettyText do
 
       expect(cooked.strip).to eq(expected.strip)
     end
+
+    it "includes data-survey-class when class attribute is specified" do
+      md = <<~MD
+        [survey]
+        [textarea question="Your name:" class="small-textarea"]
+        [/textarea]
+        [/survey]
+      MD
+
+      cooked = PrettyText.cook(md)
+
+      expect(cooked).to include('data-survey-class="small-textarea"')
+    end
   end
 end

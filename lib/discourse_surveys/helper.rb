@@ -55,6 +55,7 @@ module DiscourseSurveys
                   SurveyField.response_type[field["type"].to_sym] ||
                     SurveyField.response_type[:radio],
                 response_required: field["required"].presence || true,
+                field_class: field["class"].presence,
               )
 
             if field["options"].present?
