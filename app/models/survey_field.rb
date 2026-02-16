@@ -28,14 +28,15 @@ end
 # Table name: survey_fields
 #
 #  id                :bigint           not null, primary key
-#  survey_id         :bigint
+#  digest            :string           not null
+#  field_class       :string(100)
+#  position          :integer          default(0)
 #  question          :text             not null
+#  response_required :boolean          default(TRUE), not null
 #  response_type     :integer          default(0), not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
-#  digest            :string           not null
-#  position          :integer          default(0)
-#  response_required :boolean          default(TRUE), not null
+#  survey_id         :bigint
 #
 # Indexes
 #

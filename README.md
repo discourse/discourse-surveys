@@ -116,6 +116,7 @@ All field types support these attributes:
 
 - `question`: The question text (required)
 - `required`: Whether the field must be filled (`true`/`false`, defaults to `true`)
+- `class`: Custom CSS class applied to the field wrapper
 - `min`: Minimum value for number fields
 - `max`: Maximum value for number fields
 
@@ -203,6 +204,45 @@ Supported formatting:
 - ~~Strikethrough~~: `~~text~~`
 - `Inline code`: `` `code` ``
 - [Links](https://example.com): `[text](url)`
+
+### Custom Styling with Classes
+
+You can add a custom CSS class to any survey field using the `class` attribute. This is useful for controlling the appearance of individual fields via custom CSS in your Discourse theme.
+
+```markdown
+[survey name="styled-survey"]
+
+[textarea question="Your name:" class="small-textarea"]
+[/textarea]
+
+[textarea question="Detailed feedback:" class="large-textarea"]
+[/textarea]
+
+[/survey]
+```
+
+Then add custom CSS to style those fields:
+
+```css
+/* Compact single-line textarea */
+.survey-field.small-textarea textarea {
+  min-height: 2.5em;
+}
+
+/* Larger textarea for detailed responses */
+.survey-field.large-textarea textarea {
+  min-height: 200px;
+}
+```
+
+The `class` attribute works on all field types, so you can style any field:
+
+```markdown
+[radio question="Pick one:" class="highlighted-field"]
+- Option A
+- Option B
+[/radio]
+```
 
 ### Mixed Required and Optional Fields
 

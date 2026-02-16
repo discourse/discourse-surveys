@@ -65,6 +65,7 @@ module DiscourseSurveys
                   response_type:
                     SurveyField.response_type[field["type"].to_sym] ||
                       SurveyField.response_type[:radio],
+                  field_class: field["class"].presence,
                 )
 
               if field["options"].present?
@@ -92,6 +93,7 @@ module DiscourseSurveys
             # update field position and required attribute
             old_field["position"] = new_field["position"]
             old_field["response_required"] = new_field["required"].presence || true
+            old_field["field_class"] = new_field["class"].presence
             old_field.save!
 
             # update field attributes
@@ -110,6 +112,7 @@ module DiscourseSurveys
                   response_type:
                     SurveyField.response_type[new_field["type"].to_sym] ||
                       SurveyField.response_type[:radio],
+                  field_class: new_field["class"].presence,
                 )
 
               if new_field["options"].present?

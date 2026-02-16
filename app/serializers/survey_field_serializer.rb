@@ -5,6 +5,7 @@ class SurveyFieldSerializer < ApplicationSerializer
              :response_type,
              :response_required,
              :digest,
+             :field_class,
              :options,
              :has_options,
              :is_multiple_choice
