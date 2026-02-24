@@ -5,3 +5,10 @@
 # https://translate.discourse.org/
 
 ar:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "إرسال ردك"
+        label: "إرسال"
+      survey_submitted: "تم إرسال الرد بنجاح!"
+      user_responded: "لقد شاركت في هذا الاستطلاع بالفعل."

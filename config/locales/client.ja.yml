@@ -5,3 +5,10 @@
 # https://translate.discourse.org/
 
 ja:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "回答を送信する"
+        label: "送信"
+      survey_submitted: "回答は送信されました！"
+      user_responded: "このアンケートに回答済みです。"
