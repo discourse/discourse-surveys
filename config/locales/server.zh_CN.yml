@@ -5,3 +5,18 @@
 # https://translate.discourse.org/
 
 zh_CN:
+  site_settings:
+    surveys_enabled: "启用 Surveys 插件"
+  survey:
+    survey: "调查"
+    post_survey_exists: "此帖子已关联一项调查。"
+    user_already_responded: "您已回复此调查。"
+    max_one_survey_per_post: "一个帖子中只允许一项调查。"
+    cannot_edit: "由于调查已有回复，无法对其进行编辑。"
+    survey_must_have_different_questions: "调查中的问题应不同。"
+    survey_must_not_have_any_empty_questions: "调查中的问题不能为空。"
+    topic_must_be_open_to_vote: "话题必须开放投票。"
+    post_is_deleted: "帖子已被删除。"
+    user_cant_post_in_topic: "您无权在此话题下发帖。"
+    field_is_required: "字段“%{question}”为必填项。"
+    invalid_option: "字段“%{question}”的选项无效。"

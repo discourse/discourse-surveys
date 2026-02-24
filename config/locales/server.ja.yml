@@ -5,3 +5,18 @@
 # https://translate.discourse.org/
 
 ja:
+  site_settings:
+    surveys_enabled: "Surveys プラグインを有効にする"
+  survey:
+    survey: "アンケート"
+    post_survey_exists: "この投稿にはアンケートがすでに関連付けられています。"
+    user_already_responded: "このアンケートに回答済みです。"
+    max_one_survey_per_post: "投稿あたり 1 つのアンケートのみ許可されます。"
+    cannot_edit: "回答があるため、アンケートを編集できません。"
+    survey_must_have_different_questions: "アンケートフィールドの質問は異なる必要があります。"
+    survey_must_not_have_any_empty_questions: "アンケートフィールドの質問を空白にできません。"
+    topic_must_be_open_to_vote: "投票するには、トピックがオープンである必要があります。"
+    post_is_deleted: "投稿は削除されました。"
+    user_cant_post_in_topic: "このトピックに投稿する権限がありません。"
+    field_is_required: "フィールド '%{question}' は必須です。"
+    invalid_option: "フィールド '%{question}' のオプションは無効です。"

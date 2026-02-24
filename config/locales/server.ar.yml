@@ -5,3 +5,18 @@
 # https://translate.discourse.org/
 
 ar:
+  site_settings:
+    surveys_enabled: "تمكين المكون الإضافي \"الاستطلاعات\""
+  survey:
+    survey: "استطلاع"
+    post_survey_exists: "هناك استطلاع مرتبط بالفعل بهذا المنشور."
+    user_already_responded: "لقد أجبت بالفعل على هذا الاستطلاع."
+    max_one_survey_per_post: "يُسمح بإجراء استطلاع واحد فقط في كل منشور."
+    cannot_edit: "لا يمكن تعديل الاستطلاع لأنه يحتوي على رد."
+    survey_must_have_different_questions: "يجب أن تكون أسئلة حقول الاستطلاع مختلفة."
+    survey_must_not_have_any_empty_questions: "لا يمكن أن تكون أسئلة حقول الاستطلاع فارغة."
+    topic_must_be_open_to_vote: "يجب أن يكون الموضوع مفتوحًا للتصويت."
+    post_is_deleted: "تم حذف المنشور."
+    user_cant_post_in_topic: "ليس لديك إذن بالنشر في هذا الموضوع."
+    field_is_required: "الحقل '%{question}' مطلوب."
+    invalid_option: "خيار غير صالح للحقل '%{question}'."

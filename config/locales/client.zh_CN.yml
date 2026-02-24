@@ -5,3 +5,10 @@
 # https://translate.discourse.org/
 
 zh_CN:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "提交您的回复"
+        label: "提交"
+      survey_submitted: "回复已成功提交！"
+      user_responded: "您已经完成此调查。"
