@@ -5,3 +5,10 @@
 # https://translate.discourse.org/
 
 tr_TR:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Yanıtınızı gönderin"
+        label: "Gönder"
+      survey_submitted: "Yanıt başarıyla gönderildi!"
+      user_responded: "Bu anketi daha önce doldurdunuz."

@@ -5,3 +5,18 @@
 # https://translate.discourse.org/
 
 tr_TR:
+  site_settings:
+    surveys_enabled: "Anketler eklentisini etkinleştir"
+  survey:
+    survey: "anket"
+    post_survey_exists: "Bu gönderiyle ilgili bir anket zaten bulunmaktadır."
+    user_already_responded: "Bu ankete zaten cevap verdiniz."
+    max_one_survey_per_post: "Bir gönderide yalnızca bir anket yapılabilir."
+    cannot_edit: "Ankete yanıt verildiği için düzenlenemez."
+    survey_must_have_different_questions: "Anket alanındaki sorular farklı olmalıdır."
+    survey_must_not_have_any_empty_questions: "Anket alanındaki sorular boş bırakılamaz."
+    topic_must_be_open_to_vote: "Konu oylamaya açık olmalıdır."
+    post_is_deleted: "Gönderi silindi."
+    user_cant_post_in_topic: "Bu konuya yazma izniniz yok."
+    field_is_required: "'%{question}' alanı zorunludur."
+    invalid_option: "'%{question}' alanı için geçersiz seçenek."
