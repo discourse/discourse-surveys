@@ -6,3 +6,13 @@ en:
         label: "Submit"
       survey_submitted: "Response has been submitted successfully!"
       user_responded: "You have already taken this survey."
+      admin:
+        title: "Surveys"
+        description: "Manage surveys and export response data."
+        survey_name: "Survey"
+        topic: "Topic"
+        fields: "Fields"
+        responses: "Responses"
+        export_tab: "Export"
+        export_csv: "Export CSV"
+        no_surveys: "No surveys have been created yet."
