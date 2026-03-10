@@ -5,3 +5,18 @@
 # https://translate.discourse.org/
 
 pt_BR:
+  site_settings:
+    surveys_enabled: "Ativar plug-in de enquetes"
+  survey:
+    survey: "enquete"
+    post_survey_exists: "Já existe uma enquete associada a esta postagem."
+    user_already_responded: "Você já respondeu a esta enquete."
+    max_one_survey_per_post: "É permitida apenas uma enquete por postagem."
+    cannot_edit: "A enquete não pode ser editada porque já tem uma resposta."
+    survey_must_have_different_questions: "As perguntas nos campos da enquete devem ser diferentes."
+    survey_must_not_have_any_empty_questions: "Os campos de perguntas da enquete não podem ficar em branco."
+    topic_must_be_open_to_vote: "O tópico deve estar aberto à votação."
+    post_is_deleted: "A postagem foi excluída."
+    user_cant_post_in_topic: "Você não tem permissão para postar neste tópico."
+    field_is_required: "O campo '%{question}' é obrigatório."
+    invalid_option: "Opção inválida para o campo '%{question}'."
