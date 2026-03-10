@@ -5,3 +5,10 @@
 # https://translate.discourse.org/
 
 pt_BR:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Envie sua resposta"
+        label: "Enviar"
+      survey_submitted: "A resposta foi enviada com sucesso!"
+      user_responded: "Você já respondeu a esta enquete."
