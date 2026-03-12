@@ -86,6 +86,33 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
         expect(response.parsed_body["surveys"][0]["response_count"]).to eq(1)
       end
 
+      it "paginates results and includes load_more_surveys URL" do
+        (DiscourseSurveys::AdminSurveysController::PAGE_SIZE + 1).times do |i|
+          post_record = Fabricate(:post, user: admin)
+
+          create_survey.call(post_record, <<~MD)
+            [survey name="s#{i}"]
+            [radio question="Q:"]
+            - A
+            [/radio]
+            [/survey]
+          MD
+        end
+
+        get "/admin/plugins/discourse-surveys/surveys.json"
+        body = response.parsed_body
+        expect(body["surveys"].length).to eq(DiscourseSurveys::AdminSurveysController::PAGE_SIZE)
+        expect(body["total_rows_surveys"]).to eq(
+          DiscourseSurveys::AdminSurveysController::PAGE_SIZE + 1,
+        )
+        expect(body["load_more_surveys"]).to include("page=1")
+
+        get "/admin/plugins/discourse-surveys/surveys.json?page=1"
+        body = response.parsed_body
+        expect(body["surveys"].length).to eq(1)
+        expect(body["load_more_surveys"]).to be_nil
+      end
+
       it "excludes surveys on deleted posts" do
         post_record = Fabricate(:post, user: admin)
         create_survey.call(post_record, <<~MD)
