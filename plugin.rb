@@ -9,6 +9,7 @@
 enabled_site_setting :surveys_enabled
 
 register_asset "stylesheets/common/survey.scss"
+register_asset "stylesheets/common/survey-admin.scss"
 
 register_svg_icon "far-circle-check"
 register_svg_icon "far-circle"
@@ -17,12 +18,16 @@ register_svg_icon "far-square"
 
 require_relative "lib/discourse_surveys/engine"
 
+add_admin_route("discourse_surveys.admin.title", "discourse-surveys", { use_new_show_route: true })
+
 after_initialize do
   require_relative "app/controller/discourse_surveys/survey_controller"
+  require_relative "app/controller/discourse_surveys/admin_surveys_controller"
   require_relative "app/models/survey"
   require_relative "app/models/survey_field"
   require_relative "app/models/survey_field_option"
   require_relative "app/models/survey_response"
+  require_relative "lib/discourse_surveys/csv_exporter"
   require_relative "lib/discourse_surveys/post_validator"
   require_relative "lib/discourse_surveys/helper"
   require_relative "lib/discourse_surveys/survey_updater"
@@ -46,7 +51,7 @@ after_initialize do
       return unless validator.validate_post
     end
 
-    if self.id && Survey.where(post_id: self.id).exists?
+    if self.id && ::Survey.where(post_id: self.id).exists?
       begin
         DiscourseSurveys::SurveyUpdater.update(self, surveys)
       rescue StandardError => e
@@ -75,7 +80,7 @@ after_initialize do
           end
 
         if post_with_surveys.present?
-          Survey
+          ::Survey
             .includes(survey_fields: :survey_field_options)
             .where(post_id: post_with_surveys)
             .each do |p|
@@ -98,7 +103,7 @@ after_initialize do
       if @topic_view.present?
         @topic_view.surveys[object.id]
       else
-        Survey.includes(survey_fields: :survey_field_options).where(post: object)
+        ::Survey.includes(survey_fields: :survey_field_options).where(post: object)
       end
   end
 

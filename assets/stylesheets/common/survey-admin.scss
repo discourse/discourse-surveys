@@ -1,0 +1,24 @@
+.discourse-surveys-admin {
+  .surveys-admin-table {
+    table-layout: fixed;
+
+    .d-table__header-cell,
+    .d-table__cell {
+      &.--overview {
+        width: 25%;
+      }
+
+      &.--detail {
+        width: 8%;
+      }
+
+      &.--topic {
+        width: auto;
+      }
+
+      &.--controls {
+        width: 12%;
+      }
+    }
+  }
+}
