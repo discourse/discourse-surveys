@@ -277,6 +277,19 @@ The `class` attribute works on all field types, so you can style any field:
 4. Click "Submit" to save your response
 5. Once submitted, you'll see a confirmation message and cannot submit again
 
+## Admin Dashboard
+
+Administrators can manage surveys from the admin panel at **Admin → Plugins → Discourse Surveys**.
+
+### Survey Management
+- View all surveys across the site with their name, topic, field count, and response count
+- Results are paginated (50 per page) with automatic loading as you scroll
+
+### CSV Export
+- Export survey responses as a CSV file for any survey that has received responses
+- The CSV includes each respondent's username, email, and their answers to all fields
+- Click the **Export CSV** button next to any survey with responses to download
+
 ## Permissions and Security
 
 - **Login Required**: Anonymous users must log in before submitting responses
