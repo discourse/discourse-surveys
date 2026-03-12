@@ -1,9 +1,9 @@
+import Component from "@glimmer/component";
 import { concat, fn } from "@ember/helper";
 import { action } from "@ember/object";
-import Component from "@glimmer/component";
 import DButton from "discourse/components/d-button";
-import getURL from "discourse/lib/get-url";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import getURL from "discourse/lib/get-url";
 import { i18n } from "discourse-i18n";
 
 export default class AdminSurveyList extends Component {
