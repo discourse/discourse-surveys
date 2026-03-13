@@ -5,3 +5,22 @@
 # https://translate.discourse.org/
 
 ro:
+  site_settings:
+    surveys_enabled: "Activează modulul de sondaje"
+  survey:
+    survey: "sondaj"
+    csv:
+      no_responses: "Încă nu există răspunsuri"
+      username: "Nume de utilizator"
+      email: "Email"
+    post_survey_exists: "Există deja un sondaj asociat cu această postare."
+    user_already_responded: "Ai răspuns deja la acest sondaj."
+    max_one_survey_per_post: "Doar un singur sondaj este permis într-o postare."
+    cannot_edit: "Sondajul nu poate fi editat deoarece conține un răspuns."
+    survey_must_have_different_questions: "Câmpurile întrebărilor din sondaj ar trebui să fie diferite."
+    survey_must_not_have_any_empty_questions: "Câmpurile întrebărilor din sondaj nu pot fi goale."
+    topic_must_be_open_to_vote: "Subiectul trebuie să fie deschis pentru vot."
+    post_is_deleted: "Postarea este ștearsă."
+    user_cant_post_in_topic: "Nu ai permisiunea să postezi în acest subiect."
+    field_is_required: "Câmpul „%{question}” este obligatoriu."
+    invalid_option: "Opțiune nevalidă pentru câmpul „%{question}”."

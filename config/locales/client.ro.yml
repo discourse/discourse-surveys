@@ -5,3 +5,20 @@
 # https://translate.discourse.org/
 
 ro:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Trimite răspunsul"
+        label: "Trimite"
+      survey_submitted: "Răspunsul a fost trimis cu succes!"
+      user_responded: "Ai completat deja acest sondaj."
+      admin:
+        title: "Sondaje"
+        description: "Gestionează sondajele și exportă datele de răspuns."
+        survey_name: "Sondaj"
+        topic: "Subiect"
+        fields: "Câmpuri"
+        responses: "Răspunsuri"
+        export_tab: "Export"
+        export_csv: "Exportă CSV"
+        no_surveys: "Încă nu au fost create sondaje."
