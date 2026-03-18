@@ -5,3 +5,20 @@
 # https://translate.discourse.org/
 
 ru:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Отправьте свой ответ"
+        label: "Отправить"
+      survey_submitted: "Ответ успешно отправлен!"
+      user_responded: "Вы уже прошли этот опрос."
+      admin:
+        title: "Опросы"
+        description: "Управление опросами и экспорт данных ответов."
+        survey_name: "Опрос"
+        topic: "Тема"
+        fields: "Поля"
+        responses: "Ответы"
+        export_tab: "Экспорт"
+        export_csv: "Экспорт CSV"
+        no_surveys: "Опросы пока не созданы."
