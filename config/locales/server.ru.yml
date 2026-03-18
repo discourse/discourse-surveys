@@ -5,3 +5,22 @@
 # https://translate.discourse.org/
 
 ru:
+  site_settings:
+    surveys_enabled: "Включить плагин опросов"
+  survey:
+    survey: "опрос"
+    csv:
+      no_responses: "Ответов пока нет."
+      username: "Имя пользователя"
+      email: "Электронная почта"
+    post_survey_exists: "К этому посту уже прилагается опрос."
+    user_already_responded: "Вы уже ответили на этот опрос."
+    max_one_survey_per_post: "В одном посте разрешается проводить только один опрос."
+    cannot_edit: "Опрос нельзя редактировать, поскольку на него уже есть ответ."
+    survey_must_have_different_questions: "Вопросы, задаваемые в ходе опроса, должны быть другими."
+    survey_must_not_have_any_empty_questions: "В анкете нельзя оставлять пустые поля для вопросов."
+    topic_must_be_open_to_vote: "Тема должна быть открыта для голосования."
+    post_is_deleted: "Сообщение удалено."
+    user_cant_post_in_topic: "У вас нет разрешения публиковать сообщения в этой теме."
+    field_is_required: "Поле '%{question}' обязательно для заполнения."
+    invalid_option: "Недопустимый параметр для поля '%{question}'."
