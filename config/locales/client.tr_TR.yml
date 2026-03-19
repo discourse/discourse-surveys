@@ -12,3 +12,13 @@ tr_TR:
         label: "Gönder"
       survey_submitted: "Yanıt başarıyla gönderildi!"
       user_responded: "Bu anketi daha önce doldurdunuz."
+      admin:
+        title: "Anketler"
+        description: "Anketleri yönetin ve yanıt verilerini dışa aktarın."
+        survey_name: "Anket"
+        topic: "Konu"
+        fields: "Alanlar"
+        responses: "Yanıtlar"
+        export_tab: "Dışa aktar"
+        export_csv: "CSV'yi Dışa Aktar"
+        no_surveys: "Henüz hiçbir anket oluşturulmadı."
