@@ -9,6 +9,10 @@ de:
     surveys_enabled: "Umfragen-Plug-in aktivieren"
   survey:
     survey: "Umfrage"
+    csv:
+      no_responses: "Noch keine Antworten"
+      username: "Benutzername"
+      email: "E-Mail-Adresse"
     post_survey_exists: "Mit diesem Beitrag ist bereits eine Umfrage verknüpft."
     user_already_responded: "Du hast bereits an dieser Umfrage teilgenommen."
     max_one_survey_per_post: "Pro Beitrag ist nur eine Umfrage erlaubt."
