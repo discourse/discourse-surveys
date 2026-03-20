@@ -12,3 +12,13 @@ de:
         label: "Absenden"
       survey_submitted: "Die Antwort wurde erfolgreich übermittelt!"
       user_responded: "Du hast bereits an dieser Umfrage teilgenommen."
+      admin:
+        title: "Umfragen"
+        description: "Umfragen verwalten und Antwortdaten exportieren."
+        survey_name: "Umfrage"
+        topic: "Thema"
+        fields: "Felder"
+        responses: "Antworten"
+        export_tab: "Export"
+        export_csv: "CSV exportieren"
+        no_surveys: "Es wurden noch keine Umfragen erstellt."
