@@ -1,8 +1,8 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
+import { trackedObject } from "@ember/reactive/collections";
 import { service } from "@ember/service";
-import { TrackedObject } from "@ember-compat/tracked-built-ins";
 import DButton from "discourse/components/d-button";
 import concatClass from "discourse/helpers/concat-class";
 import icon from "discourse/helpers/d-icon";
@@ -18,7 +18,7 @@ export default class Survey extends Component {
   @tracked loading = false;
   @tracked submitted = false;
 
-  response = new TrackedObject();
+  response = trackedObject();
 
   get survey() {
     return this.args.post.surveys?.find((s) => s.name === this.args.surveyName);

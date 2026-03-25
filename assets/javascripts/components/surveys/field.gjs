@@ -1,4 +1,4 @@
-import { htmlSafe } from "@ember/template";
+import { trustHTML } from "@ember/template";
 import concatClass from "discourse/helpers/concat-class";
 import SurveyDropdown from "./fields/dropdown";
 import SurveyNumber from "./fields/number";
@@ -52,7 +52,7 @@ function configFor(field) {
     data-survey-field-id={{@field.digest}}
   >
     <span class="field-question">
-      <span>{{htmlSafe @field.question}}</span>
+      <span>{{trustHTML @field.question}}</span>
     </span>
 
     {{#let (configFor @field) as |fieldConfig|}}
