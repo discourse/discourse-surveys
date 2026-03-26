@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import { htmlSafe } from "@ember/template";
+import { trustHTML } from "@ember/template";
 
 export default class SurveyDropdown extends Component {
   @action
@@ -16,7 +16,7 @@ export default class SurveyDropdown extends Component {
     <select class="survey-field-dropdown" {{on "change" this.changed}}>
       <option label=" "></option>
       {{#each @field.options as |optionInfo|}}
-        <option value={{optionInfo.digest}}>{{htmlSafe
+        <option value={{optionInfo.digest}}>{{trustHTML
             optionInfo.html
           }}</option>
       {{/each}}
