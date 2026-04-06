@@ -12,3 +12,7 @@ ar:
         label: "إرسال"
       survey_submitted: "تم إرسال الرد بنجاح!"
       user_responded: "لقد شاركت في هذا الاستطلاع بالفعل."
+      admin:
+        title: "الاستطلاعات"
+        description: "إدارة الاستطلاعات وتصدير بيانات الاستجابات."
+        survey_name: "استطلاع"
