@@ -12,3 +12,13 @@ zh_CN:
         label: "提交"
       survey_submitted: "回复已成功提交！"
       user_responded: "您已经完成此调查。"
+      admin:
+        title: "调查"
+        description: "管理调查并导出回复数据。"
+        survey_name: "调查"
+        topic: "话题"
+        fields: "字段"
+        responses: "回复"
+        export_tab: "导出"
+        export_csv: "导出 CSV"
+        no_surveys: "目前还没有创建任何调查。"

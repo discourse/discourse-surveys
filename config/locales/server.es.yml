@@ -5,3 +5,22 @@
 # https://translate.discourse.org/
 
 es:
+  site_settings:
+    surveys_enabled: "Habilitar el plugin de encuestas"
+  survey:
+    survey: "encuesta"
+    csv:
+      no_responses: "Aún no hay respuestas"
+      username: "Nombre de usuario"
+      email: "Correo electrónico"
+    post_survey_exists: "Ya existe una encuesta asociada a esta publicación."
+    user_already_responded: "Ya has respondido a esta encuesta."
+    max_one_survey_per_post: "Solo se permite una encuesta por publicación."
+    cannot_edit: "La encuesta no se puede editar porque ya tiene una respuesta."
+    survey_must_have_different_questions: "Las preguntas de campo de la encuesta deberían ser diferentes."
+    survey_must_not_have_any_empty_questions: "Las preguntas de campo de la encuesta no pueden estar en blanco."
+    topic_must_be_open_to_vote: "El tema debe estar abierto a votación."
+    post_is_deleted: "La publicación se ha eliminado."
+    user_cant_post_in_topic: "No tienes permiso para publicar en este tema."
+    field_is_required: "El campo «%{question}» es obligatorio."
+    invalid_option: "Opción no válida para el campo «%{question}»."
