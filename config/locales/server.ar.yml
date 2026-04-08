@@ -9,6 +9,10 @@ ar:
     surveys_enabled: "تمكين المكون الإضافي \"الاستطلاعات\""
   survey:
     survey: "استطلاع"
+    csv:
+      no_responses: "لم يتم تلقي أي ردود حتى الآن"
+      username: "اسم المستخدم"
+      email: "البريد الإلكتروني"
     post_survey_exists: "هناك استطلاع مرتبط بالفعل بهذا المنشور."
     user_already_responded: "لقد أجبت بالفعل على هذا الاستطلاع."
     max_one_survey_per_post: "يُسمح بإجراء استطلاع واحد فقط في كل منشور."

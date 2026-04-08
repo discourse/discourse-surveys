@@ -9,6 +9,10 @@ zh_CN:
     surveys_enabled: "启用 Surveys 插件"
   survey:
     survey: "调查"
+    csv:
+      no_responses: "暂无回复"
+      username: "用户名"
+      email: "电子邮件地址"
     post_survey_exists: "此帖子已关联一项调查。"
     user_already_responded: "您已回复此调查。"
     max_one_survey_per_post: "一个帖子中只允许一项调查。"
