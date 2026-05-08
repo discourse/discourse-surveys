@@ -8,7 +8,11 @@ module DiscourseSurveys
 
     def validate_post
       acting_user = @post&.acting_user || @post&.user
-      if acting_user&.staff? || @post&.topic&.pm_with_non_human_user?
+      allowed =
+        acting_user.present? &&
+          (acting_user.admin? || acting_user.in_any_groups?(SiteSetting.surveys_allowed_groups_map))
+
+      if allowed
         true
       else
         @post.errors.add(:base, I18n.t("survey.insufficient_rights_to_create"))

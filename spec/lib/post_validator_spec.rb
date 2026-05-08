@@ -4,6 +4,7 @@ describe DiscourseSurveys::PostValidator do
   before { SiteSetting.surveys_enabled = true }
 
   fab!(:staff, :admin)
+  fab!(:moderator)
   fab!(:user)
   fab!(:topic)
   fab!(:post) { Fabricate(:post, topic: topic, user: user) }
@@ -19,6 +20,29 @@ describe DiscourseSurveys::PostValidator do
       post.acting_user = user
       expect(described_class.new(post).validate_post).to eq(false)
       expect(post.errors[:base]).to include(I18n.t("survey.insufficient_rights_to_create"))
+    end
+
+    it "passes when the acting user belongs to one of the allowed groups" do
+      group = Fabricate(:group)
+      group.add(user)
+      SiteSetting.surveys_allowed_groups = "#{Group::AUTO_GROUPS[:staff]}|#{group.id}"
+      post.acting_user = user
+      expect(described_class.new(post).validate_post).to eq(true)
+      expect(post.errors[:base]).to be_empty
+    end
+
+    it "fails when a non-admin staff member is not in any allowed group" do
+      SiteSetting.surveys_allowed_groups = ""
+      post.acting_user = moderator
+      expect(described_class.new(post).validate_post).to eq(false)
+      expect(post.errors[:base]).to include(I18n.t("survey.insufficient_rights_to_create"))
+    end
+
+    it "always allows admin users regardless of the allowed groups setting" do
+      SiteSetting.surveys_allowed_groups = ""
+      post.acting_user = staff
+      expect(described_class.new(post).validate_post).to eq(true)
+      expect(post.errors[:base]).to be_empty
     end
 
     it "renders a real translation (no missing-translation fallback)" do
@@ -37,22 +61,6 @@ describe DiscourseSurveys::PostValidator do
       staff_post = Fabricate(:post, user: staff)
       staff_post.acting_user = nil
       expect(described_class.new(staff_post).validate_post).to eq(true)
-    end
-
-    it "passes for posts in PMs with a non-human user even without staff" do
-      bot = Discourse.system_user
-      pm_topic =
-        Fabricate(
-          :private_message_topic,
-          topic_allowed_users: [
-            Fabricate.build(:topic_allowed_user, user: user),
-            Fabricate.build(:topic_allowed_user, user: bot),
-          ],
-        )
-      pm_post = Fabricate(:post, topic: pm_topic, user: user)
-      pm_post.acting_user = user
-
-      expect(described_class.new(pm_post).validate_post).to eq(true)
     end
   end
 end
