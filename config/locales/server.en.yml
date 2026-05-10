@@ -1,6 +1,7 @@
 en:
   site_settings:
     surveys_enabled: "Enable Surveys plugin"
+    surveys_allowed_groups: "Groups whose members are allowed to create surveys."
 
   survey:
     survey: "survey"

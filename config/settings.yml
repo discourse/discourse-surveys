@@ -2,3 +2,8 @@ plugins:
   surveys_enabled:
     default: false
     client: true
+  surveys_allowed_groups:
+    default: "3" # auto group staff
+    type: group_list
+    allow_any: false
+    refresh: true
