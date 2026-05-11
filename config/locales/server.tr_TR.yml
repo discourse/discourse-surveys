@@ -13,6 +13,7 @@ tr_TR:
       no_responses: "Henüz yanıt yok"
       username: "Kullanıcı adı"
       email: "E-posta"
+    insufficient_rights_to_create: "Anket oluşturma veya düzenleme izniniz yok."
     post_survey_exists: "Bu gönderiyle ilgili bir anket zaten bulunmaktadır."
     user_already_responded: "Bu ankete zaten cevap verdiniz."
     max_one_survey_per_post: "Bir gönderide yalnızca bir anket yapılabilir."
