@@ -5,3 +5,5 @@
 # https://translate.discourse.org/
 
 he:
+  survey:
+    insufficient_rights_to_create: "אין לך הרשאה ליצור או לערוך סקר."
