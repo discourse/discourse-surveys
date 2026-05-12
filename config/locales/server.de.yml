@@ -7,12 +7,14 @@
 de:
   site_settings:
     surveys_enabled: "Umfragen-Plug-in aktivieren"
+    surveys_allowed_groups: "Gruppen, deren Mitglieder Umfragen erstellen dürfen."
   survey:
     survey: "Umfrage"
     csv:
       no_responses: "Noch keine Antworten"
       username: "Benutzername"
       email: "E-Mail-Adresse"
+    insufficient_rights_to_create: "Hast nicht die Berechtigung, eine Umfrage zu erstellen oder zu bearbeiten."
     post_survey_exists: "Mit diesem Beitrag ist bereits eine Umfrage verknüpft."
     user_already_responded: "Du hast bereits an dieser Umfrage teilgenommen."
     max_one_survey_per_post: "Pro Beitrag ist nur eine Umfrage erlaubt."
