@@ -5,5 +5,7 @@
 # https://translate.discourse.org/
 
 he:
+  site_settings:
+    surveys_allowed_groups: "קבוצות שחבריהן רשאים ליצור סקרים."
   survey:
     insufficient_rights_to_create: "אין לך הרשאה ליצור או לערוך סקר."
