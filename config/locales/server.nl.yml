@@ -5,3 +5,24 @@
 # https://translate.discourse.org/
 
 nl:
+  site_settings:
+    surveys_enabled: "Enquêteplug-in inschakelen"
+    surveys_allowed_groups: "Groepen waarvan de leden enquêtes mogen maken."
+  survey:
+    survey: "enquête"
+    csv:
+      no_responses: "Nog geen reacties"
+      username: "Gebruikersnaam"
+      email: "E-mailadres"
+    insufficient_rights_to_create: "Je hebt geen toestemming om een enquête te maken of te bewerken."
+    post_survey_exists: "Er is al een enquête aan dit bericht gekoppeld."
+    user_already_responded: "Je hebt al gereageerd op deze enquête."
+    max_one_survey_per_post: "Er is maar één enquête toegestaan in een bericht."
+    cannot_edit: "De enquête kan niet worden bewerkt omdat het een reactie heeft."
+    survey_must_have_different_questions: "Enquêteveldvragen moeten anders zijn."
+    survey_must_not_have_any_empty_questions: "Enquêteveldvragen mogen niet leeg zijn."
+    topic_must_be_open_to_vote: "Het topic moet open zijn om te kunnen stemmen."
+    post_is_deleted: "Bericht is verwijderd."
+    user_cant_post_in_topic: "Je hebt geen toestemming om in dit topic te reageren."
+    field_is_required: "Het veld '%{question}' is verplicht."
+    invalid_option: "Ongeldige optie voor het veld '%{question}'."

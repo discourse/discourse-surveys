@@ -5,3 +5,20 @@
 # https://translate.discourse.org/
 
 nl:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Verzend je reactie"
+        label: "Verzenden"
+      survey_submitted: "Je reactie is verzonden!"
+      user_responded: "Je hebt deze enquête al voltooid."
+      admin:
+        title: "Enquêtes"
+        description: "Beheer enquêtes en exporteer reactiegegevens."
+        survey_name: "Enquête"
+        topic: "Topic"
+        fields: "Velden"
+        responses: "Reacties"
+        export_tab: "Exporteren"
+        export_csv: "CSV exporteren"
+        no_surveys: "Er zijn nog geen enquêtes gemaakt."
