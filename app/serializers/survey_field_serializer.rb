@@ -8,10 +8,28 @@ class SurveyFieldSerializer < ApplicationSerializer
              :field_class,
              :options,
              :has_options,
-             :is_multiple_choice
+             :is_multiple_choice,
+             :min,
+             :max
 
   def options
     object.survey_field_options.map { |o| SurveyFieldOptionSerializer.new(o, root: false).as_json }
+  end
+
+  def min
+    object.number_min
+  end
+
+  def include_min?
+    object.is_number?
+  end
+
+  def max
+    object.number_max
+  end
+
+  def include_max?
+    object.is_number?
   end
 
   def has_options

@@ -56,6 +56,8 @@ module DiscourseSurveys
                     SurveyField.response_type[:radio],
                 response_required: field["required"].presence || true,
                 field_class: field["class"].presence,
+                min: field["min"].presence,
+                max: field["max"].presence,
               )
 
             if field["options"].present?
@@ -134,6 +136,20 @@ module DiscourseSurveys
                                                 question: field.question,
                                               )
                     end
+
+                    if value.present? && field.is_number?
+                      number = Integer(value.to_s, 10, exception: false)
+                      if number.nil? || number < field.number_min || number > field.number_max
+                        raise StandardError.new I18n.t(
+                                                  "survey.invalid_number",
+                                                  question: field.question,
+                                                  min: field.number_min,
+                                                  max: field.number_max,
+                                                )
+                      end
+                      value = number.to_s
+                    end
+
                     obj[field.id] = { value: value, has_options: false }
                   end
                 elsif field.response_required
