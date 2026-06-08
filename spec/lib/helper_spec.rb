@@ -138,6 +138,82 @@ describe DiscourseSurveys::Helper do
       end
     end
 
+    describe "number field validation" do
+      it "rejects a value outside the configured min/max range" do
+        survey = create_survey_from_raw(<<~MD)
+          [survey name="test"]
+          [number question="Pick a number:" min="1" max="5"]
+          [/number]
+          [/survey]
+        MD
+
+        number_field = survey.survey_fields.first
+        response = { number_field.digest => "999" }
+
+        expect {
+          DiscourseSurveys::Helper.submit_response(post.id, "test", response, user)
+        }.to raise_error(StandardError, /Pick a number:/)
+
+        expect(SurveyResponse.count).to eq(0)
+      end
+
+      it "rejects a non-numeric value" do
+        survey = create_survey_from_raw(<<~MD)
+          [survey name="test"]
+          [number question="Pick a number:" min="1" max="5"]
+          [/number]
+          [/survey]
+        MD
+
+        number_field = survey.survey_fields.first
+        response = { number_field.digest => "abc" }
+
+        expect {
+          DiscourseSurveys::Helper.submit_response(post.id, "test", response, user)
+        }.to raise_error(StandardError, /Pick a number:/)
+
+        expect(SurveyResponse.count).to eq(0)
+      end
+
+      it "accepts a value within the configured range" do
+        survey = create_survey_from_raw(<<~MD)
+          [survey name="test"]
+          [number question="Pick a number:" min="1" max="5"]
+          [/number]
+          [/survey]
+        MD
+
+        number_field = survey.survey_fields.first
+        response = { number_field.digest => "3" }
+
+        expect {
+          DiscourseSurveys::Helper.submit_response(post.id, "test", response, user)
+        }.not_to raise_error
+
+        expect(SurveyResponse.where(survey_field_id: number_field.id).first.value).to eq("3")
+      end
+
+      it "defaults to a 1-10 range when min/max are omitted" do
+        survey = create_survey_from_raw(<<~MD)
+          [survey name="test"]
+          [number question="Pick a number:"]
+          [/number]
+          [/survey]
+        MD
+
+        number_field = survey.survey_fields.first
+
+        expect {
+          DiscourseSurveys::Helper.submit_response(
+            post.id,
+            "test",
+            { number_field.digest => "11" },
+            user,
+          )
+        }.to raise_error(StandardError, /Pick a number:/)
+      end
+    end
+
     describe "valid submission" do
       it "persists responses for all fields" do
         survey = create_survey_from_raw(<<~MD)

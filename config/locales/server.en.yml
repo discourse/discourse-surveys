@@ -21,3 +21,5 @@ en:
     user_cant_post_in_topic: "You don't have permission to post in this topic."
     field_is_required: "The field '%{question}' is required."
     invalid_option: "Invalid option for field '%{question}'."
+    invalid_number: "The value for field '%{question}' must be a number between %{min} and %{max}."
+    number_field_invalid_range: "Number fields must use whole number values with a maximum range of %{count} options."

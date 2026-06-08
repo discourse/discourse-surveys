@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class SurveyField < ActiveRecord::Base
+  DEFAULT_NUMBER_MIN = 1
+  DEFAULT_NUMBER_MAX = 10
+
   has_many :survey_field_options, -> { order(:id) }, dependent: :destroy
   has_many :survey_responses, dependent: :destroy
   belongs_to :survey
@@ -21,6 +24,18 @@ class SurveyField < ActiveRecord::Base
   def is_multiple_choice?
     response_type == SurveyField.response_type[:checkbox]
   end
+
+  def is_number?
+    response_type == SurveyField.response_type[:number]
+  end
+
+  def number_min
+    min || DEFAULT_NUMBER_MIN
+  end
+
+  def number_max
+    max || DEFAULT_NUMBER_MAX
+  end
 end
 
 # == Schema Information
@@ -37,6 +52,8 @@ end
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  survey_id         :bigint
+#  min               :integer
+#  max               :integer
 #
 # Indexes
 #
