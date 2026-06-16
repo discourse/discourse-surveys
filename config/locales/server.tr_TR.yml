@@ -7,6 +7,7 @@
 tr_TR:
   site_settings:
     surveys_enabled: "Anketler eklentisini etkinleştir"
+    surveys_allowed_groups: "Üyelerinin anket oluşturmasına izin verilen gruplar."
   survey:
     survey: "anket"
     csv:
@@ -25,3 +26,5 @@ tr_TR:
     user_cant_post_in_topic: "Bu konuya yazma izniniz yok."
     field_is_required: "'%{question}' alanı zorunludur."
     invalid_option: "'%{question}' alanı için geçersiz seçenek."
+    invalid_number: "'%{question}' alanının değeri, %{min} ile %{max} arasında bir sayı olmalıdır."
+    number_field_invalid_range: "Sayı alanlarında, en fazla %{count} seçenek içeren tam sayı değerleri kullanılmalıdır."
