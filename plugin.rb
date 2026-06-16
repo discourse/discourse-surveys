@@ -111,7 +111,7 @@ after_initialize do
     :post,
     :surveys,
     respect_plugin_enabled: true,
-    include_condition: -> { preloaded_surveys.present? },
+    include_condition: -> { scope.can_see_post?(object) && preloaded_surveys.present? },
   ) { preloaded_surveys.map { |s| SurveySerializer.new(s, root: false, scope: self.scope) } }
 
   # Remove surveys from topic excerpts
