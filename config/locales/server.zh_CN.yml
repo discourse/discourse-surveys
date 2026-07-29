@@ -7,12 +7,14 @@
 zh_CN:
   site_settings:
     surveys_enabled: "启用 Surveys 插件"
+    surveys_allowed_groups: "允许成员创建调查的群组。"
   survey:
     survey: "调查"
     csv:
       no_responses: "暂无回复"
       username: "用户名"
       email: "电子邮件地址"
+    insufficient_rights_to_create: "您无权创建或编辑调查。"
     post_survey_exists: "此帖子已关联一项调查。"
     user_already_responded: "您已回复此调查。"
     max_one_survey_per_post: "一个帖子中只允许一项调查。"
@@ -24,3 +26,5 @@ zh_CN:
     user_cant_post_in_topic: "您无权在此话题下发帖。"
     field_is_required: "字段“%{question}”为必填项。"
     invalid_option: "字段“%{question}”的选项无效。"
+    invalid_number: "字段 '%{question}' 的值必须是介于 %{min} 和 %{max} 之间的数字。"
+    number_field_invalid_range: "数字字段必须使用整数值，最大范围为 %{count} 个选项。"
