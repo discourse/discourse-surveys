@@ -7,12 +7,14 @@
 ar:
   site_settings:
     surveys_enabled: "تمكين المكون الإضافي \"الاستطلاعات\""
+    surveys_allowed_groups: "المجموعات المسموح لأعضائها بإنشاء الاستطلاعات."
   survey:
     survey: "استطلاع"
     csv:
       no_responses: "لم يتم تلقي أي ردود حتى الآن"
       username: "اسم المستخدم"
       email: "البريد الإلكتروني"
+    insufficient_rights_to_create: "ليس لديك الإذن لإنشاء استطلاع أو تعديله."
     post_survey_exists: "هناك استطلاع مرتبط بالفعل بهذا المنشور."
     user_already_responded: "لقد أجبت بالفعل على هذا الاستطلاع."
     max_one_survey_per_post: "يُسمح بإجراء استطلاع واحد فقط في كل منشور."
@@ -24,3 +26,5 @@ ar:
     user_cant_post_in_topic: "ليس لديك إذن بالنشر في هذا الموضوع."
     field_is_required: "الحقل '%{question}' مطلوب."
     invalid_option: "خيار غير صالح للحقل '%{question}'."
+    invalid_number: "يجب أن تكون قيمة الحقل \"%{question}\" عددًا بين %{min} و%{max}."
+    number_field_invalid_range: "يجب أن تستخدم الحقول الرقمية قيمًا من الأعداد الصحيحة، وبحد أقصى %{count} من الخيارات."
