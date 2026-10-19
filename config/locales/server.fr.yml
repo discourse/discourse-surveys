@@ -5,3 +5,26 @@
 # https://translate.discourse.org/
 
 fr:
+  site_settings:
+    surveys_enabled: "Activer l'extension Surveys"
+    surveys_allowed_groups: "Groupes dont les membres peuvent créer des enquêtes."
+  survey:
+    survey: "survey"
+    csv:
+      no_responses: "Aucune réponse pour le moment"
+      username: "Nom d'utilisateur"
+      email: "Adresse e-mail"
+    insufficient_rights_to_create: "Vous n'avez pas l'autorisation de créer ou de modifier une enquête."
+    post_survey_exists: "Une enquête est déjà associée à cette publication."
+    user_already_responded: "Vous avez déjà répondu à cette enquête."
+    max_one_survey_per_post: "Une seule enquête est autorisée par publication."
+    cannot_edit: "Impossible de modifier l'enquête, car elle a déjà reçu une réponse."
+    survey_must_have_different_questions: "Chaque champ de l'enquête doit avoir une question différente."
+    survey_must_not_have_any_empty_questions: "Les questions des champs de l'enquête ne peuvent pas être vides."
+    topic_must_be_open_to_vote: "Le sujet doit être ouvert aux votes."
+    post_is_deleted: "La publication a été supprimée."
+    user_cant_post_in_topic: "Vous n'avez pas l'autorisation de publier dans ce sujet."
+    field_is_required: "Le champ « %{question} » est obligatoire."
+    invalid_option: "Option non valide pour le champ « %{question} »."
+    invalid_number: "La valeur du champ « %{question} » doit être un nombre entier compris entre %{min} et %{max}."
+    number_field_invalid_range: "Les champs numériques doivent contenir des nombres entiers, avec un intervalle maximal de %{count} valeurs possibles."

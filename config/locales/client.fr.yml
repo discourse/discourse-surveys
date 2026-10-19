@@ -5,3 +5,20 @@
 # https://translate.discourse.org/
 
 fr:
+  js:
+    discourse_surveys:
+      submit_response:
+        title: "Envoyer votre réponse"
+        label: "Envoyer"
+      survey_submitted: "Votre réponse a bien été envoyée !"
+      user_responded: "Vous avez déjà participé à cette enquête."
+      admin:
+        title: "Enquêtes"
+        description: "Gérer les enquêtes et exporter les réponses."
+        survey_name: "Enquête"
+        topic: "Sujet"
+        fields: "Champs"
+        responses: "Réponses"
+        export_tab: "Export"
+        export_csv: "Exporter au format CSV"
+        no_surveys: "Aucune enquête n'a encore été créée."
