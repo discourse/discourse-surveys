@@ -47,6 +47,31 @@ describe DiscourseSurveys::Helper do
       Survey.find_by(post_id: target_post.id)
     end
 
+    it "rejects responses to posts the user cannot see" do
+      survey = create_survey_from_raw(<<~MD)
+        [survey name="test"]
+        [radio question="Pick one:"]
+        - A
+        - B
+        [/radio]
+        [/survey]
+      MD
+      field = survey.survey_fields.first
+      option = field.survey_field_options.first
+      post.update!(hidden: true)
+
+      expect(user.guardian.can_create_post?(post.topic)).to be(true)
+      expect(user.guardian.can_see_post?(post)).to be(false)
+      expect {
+        DiscourseSurveys::Helper.submit_response(
+          post.id,
+          survey.name,
+          { field.digest => option.digest },
+          user,
+        )
+      }.to raise_error(Discourse::InvalidAccess).and not_change(SurveyResponse, :count)
+    end
+
     describe "required field validation" do
       it "rejects submission when a required field is omitted" do
         survey = create_survey_from_raw(<<~MD)

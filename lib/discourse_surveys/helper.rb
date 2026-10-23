@@ -76,9 +76,11 @@ module DiscourseSurveys
       def submit_response(post_id, survey_name, response, user)
         Survey.transaction do
           post = Post.find_by(id: post_id)
+          guardian = user.guardian
+          raise Discourse::InvalidAccess if !guardian.can_see_post?(post)
 
           # post must not be deleted
-          raise StandardError.new I18n.t("survey.post_is_deleted") if post.nil? || post.trashed?
+          raise StandardError.new I18n.t("survey.post_is_deleted") if post.trashed?
 
           # topic must not be archived
           if post.topic&.archived
@@ -86,7 +88,6 @@ module DiscourseSurveys
           end
 
           # user must be allowed to post in topic
-          guardian = Guardian.new(user)
           if !guardian.can_create_post?(post.topic)
             raise StandardError.new I18n.t("survey.user_cant_post_in_topic")
           end
