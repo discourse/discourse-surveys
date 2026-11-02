@@ -19,14 +19,14 @@ end
 # Table name: surveys
 #
 #  id            :bigint           not null, primary key
-#  post_id       :bigint
-#  survey_number :integer          default(1), not null
-#  name          :string           default("survey"), not null
 #  active        :boolean          default(TRUE), not null
+#  name          :string           default("survey"), not null
+#  survey_number :integer          default(1), not null
+#  title         :text
 #  visibility    :integer          default(0), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  title         :text
+#  post_id       :bigint
 #
 # Indexes
 #
