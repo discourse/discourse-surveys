@@ -9,11 +9,11 @@ end
 # Table name: survey_field_options
 #
 #  id              :bigint           not null, primary key
-#  survey_field_id :bigint
 #  digest          :string           not null
 #  html            :text             not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  survey_field_id :bigint
 #
 # Indexes
 #

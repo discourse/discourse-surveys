@@ -10,12 +10,12 @@ end
 # Table name: survey_responses
 #
 #  id                     :bigint           not null, primary key
-#  survey_field_id        :bigint
-#  user_id                :bigint           not null
-#  survey_field_option_id :bigint
 #  value                  :text
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  survey_field_id        :bigint
+#  survey_field_option_id :bigint
+#  user_id                :bigint           not null
 #
 # Indexes
 #
