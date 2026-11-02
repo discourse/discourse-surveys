@@ -45,6 +45,8 @@ end
 #  id                :bigint           not null, primary key
 #  digest            :string           not null
 #  field_class       :string(100)
+#  max               :integer
+#  min               :integer
 #  position          :integer          default(0)
 #  question          :text             not null
 #  response_required :boolean          default(TRUE), not null
@@ -52,8 +54,6 @@ end
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  survey_id         :bigint
-#  min               :integer
-#  max               :integer
 #
 # Indexes
 #
