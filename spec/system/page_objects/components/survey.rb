@@ -111,6 +111,14 @@ module PageObjects
       def has_selected_option?(option_text)
         component.has_css?(".d-icon-far-circle-check, .d-icon-far-square-check", visible: true)
       end
+
+      def has_required_indicator?
+        component.has_css?(".field-question__required", text: "*")
+      end
+
+      def has_no_required_indicator?
+        component.has_no_css?(".field-question__required")
+      end
     end
   end
 end

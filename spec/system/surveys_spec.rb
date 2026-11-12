@@ -81,4 +81,15 @@ RSpec.describe "Survey plugin UI" do
       "Were you satisfied with our services?" => ["+1"],
     )
   end
+
+  it "shows the user which questions are required" do
+    sign_in admin
+
+    visit post.url
+
+    survey = PageObjects::Components::Survey.new
+
+    expect(survey.field("Best pet:")).to have_required_indicator
+    expect(survey.field("What is your feedback about xyz?")).to have_no_required_indicator
+  end
 end
