@@ -1,5 +1,6 @@
 import { trustHTML } from "@ember/template";
 import concatClass from "discourse/helpers/concat-class";
+import { i18n } from "discourse-i18n";
 import SurveyDropdown from "./fields/dropdown";
 import SurveyNumber from "./fields/number";
 import SurveyOptions from "./fields/options";
@@ -53,6 +54,12 @@ function configFor(field) {
   >
     <span class="field-question">
       <span>{{trustHTML @field.question}}</span>
+      {{#if @field.response_required}}
+        <span class="field-question__required" aria-hidden="true">*</span>
+        <span class="sr-only">
+          {{i18n "discourse_surveys.field_required"}}
+        </span>
+      {{/if}}
     </span>
 
     {{#let (configFor @field) as |fieldConfig|}}

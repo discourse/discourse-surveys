@@ -32,6 +32,11 @@
     font-size: $font-up-1;
     color: var(--primary);
     margin-bottom: 0.25em;
+
+    &__required {
+      color: var(--danger);
+      margin-inline-start: 0.25em;
+    }
   }
 
   // single / multi select radios

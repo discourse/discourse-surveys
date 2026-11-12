@@ -6,6 +6,7 @@ en:
         label: "Submit"
       survey_submitted: "Response has been submitted successfully!"
       user_responded: "You have already taken this survey."
+      field_required: "Required"
       admin:
         title: "Surveys"
         description: "Manage surveys and export response data."
