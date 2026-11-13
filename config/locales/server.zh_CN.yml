@@ -8,14 +8,17 @@ zh_CN:
   site_settings:
     surveys_enabled: "启用 Surveys 插件"
     surveys_allowed_groups: "允许成员创建调查的群组。"
+    surveys_allow_anonymous_submissions: "允许未登录的用户提交调查回复。匿名回复按浏览器去重，因此清除站点数据后同一个人仍可再次回复。"
   survey:
     survey: "调查"
     csv:
       no_responses: "暂无回复"
       username: "用户名"
       email: "电子邮件地址"
+      anonymous: "匿名"
     insufficient_rights_to_create: "您无权创建或编辑调查。"
     post_survey_exists: "此帖子已关联一项调查。"
+    no_survey_with_this_name: "不存在名为“%{name}”的调查。"
     user_already_responded: "您已回复此调查。"
     max_one_survey_per_post: "一个帖子中只允许一项调查。"
     cannot_edit: "由于调查已有回复，无法对其进行编辑。"
@@ -24,6 +27,9 @@ zh_CN:
     topic_must_be_open_to_vote: "话题必须开放投票。"
     post_is_deleted: "帖子已被删除。"
     user_cant_post_in_topic: "您无权在此话题下发帖。"
+    anonymous_submissions_disabled: "不允许匿名提交调查。"
+    invalid_anonymous_token: "无法记录您的回复。请重新加载页面后重试。"
+    response_requires_respondent: "调查回复必须归属于某个用户或某个匿名回复者。"
     field_is_required: "字段“%{question}”为必填项。"
     invalid_option: "字段“%{question}”的选项无效。"
     invalid_number: "字段 '%{question}' 的值必须是介于 %{min} 和 %{max} 之间的数字。"

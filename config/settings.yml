@@ -7,3 +7,6 @@ plugins:
     type: group_list
     allow_any: false
     refresh: true
+  surveys_allow_anonymous_submissions:
+    default: false
+    client: true

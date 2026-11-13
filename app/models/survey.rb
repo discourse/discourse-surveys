@@ -9,8 +9,11 @@ class Survey < ActiveRecord::Base
     @visibility ||= Enum.new(:secret, :everyone, start: 0)
   end
 
-  def has_responded?(user)
-    user&.id && survey_responses.where(user_id: user.id).exists?
+  def has_responded?(user, anon_token = nil)
+    return survey_responses.where(user_id: user.id).exists? if user&.id
+    return survey_responses.where(anon_token: anon_token).exists? if anon_token.present?
+
+    false
   end
 end
 

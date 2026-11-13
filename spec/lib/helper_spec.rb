@@ -72,6 +72,17 @@ describe DiscourseSurveys::Helper do
       }.to raise_error(Discourse::InvalidAccess).and not_change(SurveyResponse, :count)
     end
 
+    it "rejects responses to a survey name that does not exist" do
+      # literal text, not I18n.t: comparing against I18n.t would also pass when the
+      # translation key is missing, which is the regression this guards against
+      expect {
+        DiscourseSurveys::Helper.submit_response(post.id, "nonexistent", {}, user)
+      }.to raise_error(
+        StandardError,
+        "There is no survey with the name 'nonexistent'.",
+      ).and not_change(SurveyResponse, :count)
+    end
+
     describe "required field validation" do
       it "rejects submission when a required field is omitted" do
         survey = create_survey_from_raw(<<~MD)
@@ -266,6 +277,96 @@ describe DiscourseSurveys::Helper do
         }.not_to raise_error
 
         expect(SurveyResponse.count).to eq(2)
+      end
+    end
+
+    describe "anonymous submission" do
+      let(:anon_token) { "0f8fad5bd9cb469fa165408f73b07c9e" }
+      let(:other_anon_token) { "1f8fad5bd9cb469fa165408f73b07c9f" }
+
+      def radio_survey
+        create_survey_from_raw(<<~MD)
+          [survey name="test"]
+          [radio question="Pick one:"]
+          - A
+          - B
+          [/radio]
+          [/survey]
+        MD
+      end
+
+      def submit_anonymously(survey, token: anon_token)
+        field = survey.survey_fields.first
+        DiscourseSurveys::Helper.submit_response(
+          post.id,
+          survey.name,
+          { field.digest => field.survey_field_options.first.digest },
+          nil,
+          token,
+        )
+      end
+
+      it "records the response against the anonymous token when enabled" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        survey = radio_survey
+
+        expect { submit_anonymously(survey) }.to change(SurveyResponse, :count).by(1)
+
+        saved = SurveyResponse.last
+        expect(saved.user_id).to be_blank
+        expect(saved.anon_token).to eq(anon_token)
+      end
+
+      it "rejects submissions when anonymous submissions are disabled" do
+        SiteSetting.surveys_allow_anonymous_submissions = false
+        survey = radio_survey
+
+        expect { submit_anonymously(survey) }.to raise_error(
+          StandardError,
+          I18n.t("survey.anonymous_submissions_disabled"),
+        ).and not_change(SurveyResponse, :count)
+      end
+
+      it "rejects a token that does not match the expected format" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        survey = radio_survey
+
+        expect { submit_anonymously(survey, token: "<script>alert(1)</script>") }.to raise_error(
+          StandardError,
+          I18n.t("survey.invalid_anonymous_token"),
+        ).and not_change(SurveyResponse, :count)
+      end
+
+      it "rejects a second submission from the same anonymous token" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        survey = radio_survey
+        submit_anonymously(survey)
+
+        expect { submit_anonymously(survey) }.to raise_error(
+          StandardError,
+          I18n.t("survey.user_already_responded"),
+        ).and not_change(SurveyResponse, :count)
+      end
+
+      it "accepts a submission from a different anonymous token" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        survey = radio_survey
+        submit_anonymously(survey)
+
+        expect { submit_anonymously(survey, token: other_anon_token) }.to change(
+          SurveyResponse,
+          :count,
+        ).by(1)
+      end
+
+      it "rejects responses to posts an anonymous visitor cannot see" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        survey = radio_survey
+        post.update!(hidden: true)
+
+        expect { submit_anonymously(survey) }.to raise_error(
+          Discourse::InvalidAccess,
+        ).and not_change(SurveyResponse, :count)
       end
     end
   end

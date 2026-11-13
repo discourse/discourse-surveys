@@ -4,6 +4,7 @@ module DiscourseSurveys
   class Helper
     VALID_FIELD_TYPES = %w[radio checkbox dropdown textarea number star thumbs].freeze
     FIELDS_WITH_OPTIONS = %w[radio checkbox dropdown].freeze
+    ANON_TOKEN_FORMAT = /\A[a-zA-Z0-9_-]{16,64}\z/
 
     class << self
       def cook_question(text)
@@ -73,10 +74,23 @@ module DiscourseSurveys
         end
       end
 
-      def submit_response(post_id, survey_name, response, user)
+      def submit_response(post_id, survey_name, response, user, anon_token = nil)
+        anonymous = user.blank?
+
+        if anonymous
+          unless SiteSetting.surveys_allow_anonymous_submissions
+            raise StandardError.new I18n.t("survey.anonymous_submissions_disabled")
+          end
+
+          anon_token = normalize_anon_token(anon_token)
+          raise StandardError.new I18n.t("survey.invalid_anonymous_token") if anon_token.blank?
+        else
+          anon_token = nil
+        end
+
         Survey.transaction do
           post = Post.find_by(id: post_id)
-          guardian = user.guardian
+          guardian = anonymous ? Guardian.new(nil) : user.guardian
           raise Discourse::InvalidAccess if !guardian.can_see_post?(post)
 
           # post must not be deleted
@@ -87,8 +101,8 @@ module DiscourseSurveys
             raise StandardError.new I18n.t("survey.topic_must_be_open_to_vote")
           end
 
-          # user must be allowed to post in topic
-          if !guardian.can_create_post?(post.topic)
+          # anonymous respondents have no posting rights, read access is the bar for them
+          if !anonymous && !guardian.can_create_post?(post.topic)
             raise StandardError.new I18n.t("survey.user_cant_post_in_topic")
           end
 
@@ -100,7 +114,7 @@ module DiscourseSurveys
           unless survey
             raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name)
           end
-          if survey.has_responded?(user)
+          if survey.has_responded?(anonymous ? nil : user, anon_token)
             raise StandardError.new I18n.t("survey.user_already_responded")
           end
 
@@ -162,20 +176,17 @@ module DiscourseSurveys
               end
 
           # save response
+          respondent = { user_id: anonymous ? nil : user.id, anon_token: anon_token }
           fields.each do |field_id, field_response|
             if field_response[:has_options]
               field_response[:option_ids].each do |option_id|
                 SurveyResponse.create!(
-                  survey_field_id: field_id,
-                  user_id: user.id,
-                  survey_field_option_id: option_id,
+                  respondent.merge(survey_field_id: field_id, survey_field_option_id: option_id),
                 )
               end
             else
               SurveyResponse.create!(
-                survey_field_id: field_id,
-                user_id: user.id,
-                value: field_response[:value],
+                respondent.merge(survey_field_id: field_id, value: field_response[:value]),
               )
             end
           end
@@ -214,6 +225,13 @@ module DiscourseSurveys
       end
 
       private
+
+      # Client-supplied identifier for an anonymous respondent; rejected outright if
+      # it doesn't match the shape the frontend generates.
+      def normalize_anon_token(token)
+        token = token.to_s
+        ANON_TOKEN_FORMAT.match?(token) ? token : nil
+      end
 
       def extract_field(element, type, position)
         hash = { "type" => type, "position" => position }

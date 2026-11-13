@@ -86,6 +86,46 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
         expect(response.parsed_body["surveys"][0]["response_count"]).to eq(1)
       end
 
+      it "counts anonymous respondents" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        post_record = Fabricate(:post, user: admin)
+        survey = create_survey.call(post_record, <<~MD)
+          [survey name="anon"]
+          [radio question="Pick one:"]
+          - Alpha
+          - Beta
+          [/radio]
+          [/survey]
+        MD
+
+        field = survey.survey_fields.first
+        option = field.survey_field_options.first
+
+        DiscourseSurveys::Helper.submit_response(
+          post_record.id,
+          survey.name,
+          { field.digest => option.digest },
+          nil,
+          "0f8fad5bd9cb469fa165408f73b07c9e",
+        )
+        DiscourseSurveys::Helper.submit_response(
+          post_record.id,
+          survey.name,
+          { field.digest => option.digest },
+          nil,
+          "1f8fad5bd9cb469fa165408f73b07c9f",
+        )
+        DiscourseSurveys::Helper.submit_response(
+          post_record.id,
+          survey.name,
+          { field.digest => option.digest },
+          user,
+        )
+
+        get "/admin/plugins/discourse-surveys/surveys.json"
+        expect(response.parsed_body["surveys"][0]["response_count"]).to eq(3)
+      end
+
       it "paginates results and includes load_more_surveys URL" do
         (DiscourseSurveys::AdminSurveysController::PAGE_SIZE + 1).times do |i|
           post_record = Fabricate(:post, user: admin)
@@ -198,6 +238,41 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
         expect(csv[1]).to include(user.username, user.email)
         expect(csv[1]).to include("Red")
         expect(csv[1]).to include("Great survey!")
+      end
+
+      it "includes anonymous responses" do
+        SiteSetting.surveys_allow_anonymous_submissions = true
+        post_record = Fabricate(:post, user: admin)
+        survey = create_survey.call(post_record, <<~MD)
+          [survey name="anon"]
+          [radio question="Favorite color:"]
+          - Red
+          - Blue
+          [/radio]
+          [textarea question="Comments:"]
+          [/textarea]
+          [/survey]
+        MD
+
+        radio_field = survey.survey_fields.find { |f| f.question.include?("Favorite color") }
+        text_field = survey.survey_fields.find { |f| f.question.include?("Comments") }
+        red_option = radio_field.survey_field_options.find { |o| o.html.include?("Red") }
+
+        DiscourseSurveys::Helper.submit_response(
+          post_record.id,
+          survey.name,
+          { radio_field.digest => red_option.digest, text_field.digest => "Anonymous feedback" },
+          nil,
+          "0f8fad5bd9cb469fa165408f73b07c9e",
+        )
+
+        get "/admin/plugins/discourse-surveys/surveys/#{survey.id}/export-csv"
+        expect(response.status).to eq(200)
+
+        csv = CSV.parse(response.body)
+        expect(csv.length).to eq(2)
+        expect(csv[1]).to include(I18n.t("survey.csv.anonymous"), "Red", "Anonymous feedback")
+        expect(csv[1][1]).to eq("")
       end
     end
   end

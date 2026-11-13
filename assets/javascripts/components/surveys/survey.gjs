@@ -10,10 +10,16 @@ import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
 import { not } from "discourse/truth-helpers";
 import { i18n } from "discourse-i18n";
+import {
+  anonymousToken,
+  hasSubmitted,
+  markSubmitted,
+} from "../../lib/anonymous-respondent";
 import SurveyField from "./field";
 
 export default class Survey extends Component {
   @service currentUser;
+  @service siteSettings;
 
   @tracked loading = false;
   @tracked submitted = false;
@@ -22,6 +28,26 @@ export default class Survey extends Component {
 
   get survey() {
     return this.args.post.surveys?.find((s) => s.name === this.args.surveyName);
+  }
+
+  get allowAnonymousSubmissions() {
+    return this.siteSettings.surveys_allow_anonymous_submissions;
+  }
+
+  get needsLogin() {
+    return !this.currentUser && !this.allowAnonymousSubmissions;
+  }
+
+  get hasResponded() {
+    if (this.submitted || this.survey?.user_responded) {
+      return true;
+    }
+
+    return (
+      !this.currentUser &&
+      this.allowAnonymousSubmissions &&
+      hasSubmitted(this.args.post.id, this.survey?.name)
+    );
   }
 
   get canSubmitResponse() {
@@ -42,7 +68,7 @@ export default class Survey extends Component {
 
   @action
   toggleOption(optionInfo) {
-    if (!this.currentUser) {
+    if (this.needsLogin) {
       return this.args.showLogin();
     }
 
@@ -80,7 +106,7 @@ export default class Survey extends Component {
 
   @action
   toggleValue(fieldInfo) {
-    if (!this.currentUser) {
+    if (this.needsLogin) {
       return this.args.showLogin();
     }
 
@@ -98,22 +124,28 @@ export default class Survey extends Component {
     if (!this.canSubmitResponse) {
       return;
     }
-    if (!this.currentUser) {
+    if (this.needsLogin) {
       return this.args.showLogin();
     }
 
     this.loading = true;
 
-    return ajax("/surveys/submit-response", {
-      type: "PUT",
-      data: {
-        post_id: this.args.post.id,
-        survey_name: this.survey.name,
-        response: this.response,
-      },
-    })
+    const data = {
+      post_id: this.args.post.id,
+      survey_name: this.survey.name,
+      response: this.response,
+    };
+
+    if (!this.currentUser) {
+      data.anon_token = anonymousToken();
+    }
+
+    return ajax("/surveys/submit-response", { type: "PUT", data })
       .then(() => {
         this.submitted = true;
+        if (!this.currentUser) {
+          markSubmitted(this.args.post.id, this.survey.name);
+        }
       })
       .catch(popupAjaxError)
       .finally(() => {
@@ -124,12 +156,7 @@ export default class Survey extends Component {
   <template>
     {{#if (not this.survey)}}
       Error: Survey not found
-    {{else if this.submitted}}
-      <span class="survey-submitted">
-        {{icon "far-circle-check"}}
-        <span>{{i18n "discourse_surveys.user_responded"}}</span>
-      </span>
-    {{else if this.survey.user_responded}}
+    {{else if this.hasResponded}}
       <span class="survey-submitted">
         {{icon "far-circle-check"}}
         <span>{{i18n "discourse_surveys.user_responded"}}</span>

@@ -2,6 +2,7 @@ en:
   site_settings:
     surveys_enabled: "Enable Surveys plugin"
     surveys_allowed_groups: "Groups whose members are allowed to create surveys."
+    surveys_allow_anonymous_submissions: "Allow users who are not logged in to submit survey responses. Anonymous responses are de-duplicated per browser, so clearing site data lets the same person respond again."
 
   survey:
     survey: "survey"
@@ -9,8 +10,10 @@ en:
       no_responses: "No responses yet"
       username: "Username"
       email: "Email"
+      anonymous: "Anonymous"
     insufficient_rights_to_create: "You don't have permission to create or edit a survey."
     post_survey_exists: "There is a survey associated already with this post."
+    no_survey_with_this_name: "There is no survey with the name '%{name}'."
     user_already_responded: "You have already responded to this survey."
     max_one_survey_per_post: "Only one survey is allowed in a post."
     cannot_edit: "Survey cannot be edited because it has a response."
@@ -19,6 +22,9 @@ en:
     topic_must_be_open_to_vote: "Topic must be open to vote."
     post_is_deleted: "Post is deleted."
     user_cant_post_in_topic: "You don't have permission to post in this topic."
+    anonymous_submissions_disabled: "Anonymous survey submissions are not allowed."
+    invalid_anonymous_token: "Your response could not be recorded. Please reload the page and try again."
+    response_requires_respondent: "A survey response must belong to either a user or an anonymous respondent."
     field_is_required: "The field '%{question}' is required."
     invalid_option: "Invalid option for field '%{question}'."
     invalid_number: "The value for field '%{question}' must be a number between %{min} and %{max}."
