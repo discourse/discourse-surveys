@@ -27,8 +27,7 @@ module DiscourseSurveys
           .joins(:survey_field)
           .where(survey_fields: { survey_id: surveys.map(&:id) })
           .group("survey_fields.survey_id")
-          .distinct
-          .count(:user_id)
+          .count(distinct_respondents)
 
       result = {
         surveys:
@@ -56,6 +55,14 @@ module DiscourseSurveys
                 filename: filename,
                 type: "text/csv; charset=utf-8",
                 disposition: "attachment"
+    end
+
+    private
+
+    # A respondent is either a user or a browser token, never both. COUNT ignores NULLs,
+    # so coalesce the two identifiers to keep anonymous respondents in the tally.
+    def distinct_respondents
+      Arel.sql("DISTINCT COALESCE(survey_responses.user_id::text, survey_responses.anon_token)")
     end
   end
 end

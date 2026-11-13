@@ -8,7 +8,7 @@ A comprehensive Discourse plugin for creating interactive surveys with multiple 
 - **Required/Optional Fields**: Mark fields as required to ensure completion
 - **Emoji Support**: Use emojis in your survey options
 - **Markdown Support**: Rich text formatting in questions and options
-- **User Authentication**: Automatic login prompts for anonymous users
+- **Optional Anonymous Responses**: Signed-out visitors can respond when `surveys_allow_anonymous_submissions` is enabled; otherwise they are prompted to sign in
 - **Response Tracking**: Prevents duplicate submissions from the same user
 - **Permission Aware**: Respects topic and category permissions
 - **Mobile Responsive**: Works seamlessly on all devices
@@ -272,10 +272,19 @@ The `class` attribute works on all field types, so you can style any field:
 
 ### For Survey Respondents
 1. Visit the topic containing the survey
-2. If not logged in, you'll be prompted to sign in when attempting to respond
+2. If not logged in, you can respond when `surveys_allow_anonymous_submissions` is enabled; otherwise you'll be prompted to sign in
 3. Fill out the required fields (optional fields can be skipped)
 4. Click "Submit" to save your response
 5. Once submitted, you'll see a confirmation message and cannot submit again
+
+### Anonymous Responses
+
+By default only logged-in users can respond. Enabling the `surveys_allow_anonymous_submissions` site setting lets signed-out visitors submit responses without an account.
+
+- Each browser is identified by a locally stored token, so the same browser can only respond once per survey
+- Clearing browser site data lets the same person respond again; this is inherent to anonymous collection
+- Anonymous submissions are rate limited per IP address to limit scripted abuse
+- Anonymous responses appear as "Anonymous" in CSV exports and are included in admin response counts
 
 ## Admin Dashboard
 
@@ -287,13 +296,13 @@ Administrators can manage surveys from the admin panel at **Admin â†’ Plugins â†
 
 ### CSV Export
 - Export survey responses as a CSV file for any survey that has received responses
-- The CSV includes each respondent's username, email, and their answers to all fields
+- The CSV includes each respondent's username, email, and their answers to all fields; anonymous respondents are listed as "Anonymous" with no email
 - Click the **Export CSV** button next to any survey with responses to download
 
 ## Permissions and Security
 
-- **Login Required**: Anonymous users must log in before submitting responses
-- **One Response Per User**: Each user can only submit one response per survey
+- **Login Required**: Anonymous users must log in before submitting responses, unless `surveys_allow_anonymous_submissions` is enabled
+- **One Response Per Respondent**: Each logged-in user can submit one response per survey; anonymous responses are limited to one per browser
 - **Topic Permissions**: Users must have read access to the topic to view surveys
 - **Posting Permissions**: Users must have posting permissions in the topic to submit responses
 - **Archived Topics**: Surveys in archived topics cannot accept new responses
