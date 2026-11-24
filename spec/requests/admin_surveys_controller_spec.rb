@@ -131,6 +131,53 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
     end
   end
 
+  describe "#update_invitation" do
+    fab!(:survey) { Survey.create!(post: Fabricate(:post)) }
+    let(:path) { "/admin/plugins/discourse-surveys/surveys/#{survey.id}/invitation.json" }
+
+    it "restricts configuration to admins" do
+      sign_in(user)
+      put path, params: { enabled: true, group_id: nil, category_id: nil }, as: :json
+      expect(response.status).to eq(404)
+    end
+
+    it "denies moderators even though they match the staff route constraint" do
+      sign_in(Fabricate(:moderator))
+      put path, params: { enabled: true, group_id: nil, category_id: nil }, as: :json
+      expect(response.status).to eq(403)
+      expect(survey.reload.invitation_enabled).to eq(false)
+    end
+
+    it "lists default, targeted, and cleared settings" do
+      sign_in(admin)
+      defaults = { "enabled" => false, "group_id" => nil, "category_id" => nil }
+      get "/admin/plugins/discourse-surveys/surveys.json"
+      expect(response.parsed_body["surveys"].first["invitation_config"]).to eq(defaults)
+
+      targets = {
+        "enabled" => true,
+        "group_id" => Fabricate(:group).id,
+        "category_id" => Fabricate(:category).id,
+      }
+      [targets, defaults].each do |config|
+        put path, params: config, as: :json
+        expect(response.status).to eq(200)
+        get "/admin/plugins/discourse-surveys/surveys.json"
+        expect(response.parsed_body["surveys"].first["invitation_config"]).to eq(config)
+      end
+    end
+
+    it "rejects invalid targets and boolean values without enabling the invitation" do
+      sign_in(admin)
+      config = { enabled: true, group_id: nil, category_id: nil }
+      [{ group_id: -999 }, { category_id: "invalid" }, { enabled: "yes" }].each do |invalid|
+        put path, params: config.merge(invalid), as: :json
+        expect(response.status).to eq(400)
+      end
+      expect(survey.reload.invitation_enabled).to eq(false)
+    end
+  end
+
   describe "#export_csv" do
     context "when not logged in" do
       it "returns 404" do

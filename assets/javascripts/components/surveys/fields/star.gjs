@@ -2,11 +2,15 @@ import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import icon from "discourse/helpers/d-icon";
-import { gt } from "discourse/truth-helpers";
+import { eq, gt } from "discourse/truth-helpers";
 
 const RATINGS = [0, 1, 2, 3, 4, 5];
 
 export default class SurveyStar extends Component {
+  get value() {
+    return Number(this.args.response[this.args.field.digest] || 0);
+  }
+
   @action
   changed(event) {
     const value = event.currentTarget.querySelector(`input:checked`)?.value;
@@ -30,6 +34,8 @@ export default class SurveyStar extends Component {
             id="star-rating-{{@postId}}-{{@field.digest}}-{{value}}"
             name="star-rating-{{@postId}}-{{@field.digest}}"
             class="star-rating-input"
+            aria-label={{value}}
+            checked={{eq this.value value}}
             value={{value}}
             type="radio"
           />
@@ -38,7 +44,7 @@ export default class SurveyStar extends Component {
             id="star-rating-{{@postId}}-{{@field.digest}}-0"
             name="star-rating-{{@postId}}-{{@field.digest}}"
             disabled
-            checked
+            checked={{eq this.value 0}}
             class="star-rating-input"
             value="0"
             type="radio"

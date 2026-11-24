@@ -3,6 +3,10 @@ import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 
 export default class SurveyTextarea extends Component {
+  get value() {
+    return this.args.response[this.args.field.digest];
+  }
+
   @action
   changed(e) {
     const value = e.target.value.replace(/[\u200B-\u200D\uFEFF]/, "");
@@ -14,7 +18,11 @@ export default class SurveyTextarea extends Component {
 
   <template>
     <span>
-      <textarea {{on "input" this.changed}}></textarea>
+      <textarea
+        aria-labelledby={{@questionId}}
+        value={{this.value}}
+        {{on "input" this.changed}}
+      ></textarea>
     </span>
   </template>
 }

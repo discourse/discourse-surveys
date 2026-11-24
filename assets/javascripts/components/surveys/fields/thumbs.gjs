@@ -2,8 +2,14 @@ import Component from "@glimmer/component";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import icon from "discourse/helpers/d-icon";
+import { eq } from "discourse/truth-helpers";
+import { i18n } from "discourse-i18n";
 
 export default class SurveyThumbs extends Component {
+  get value() {
+    return this.args.response[this.args.field.digest];
+  }
+
   @action
   changed(event) {
     const value = event.currentTarget.querySelector(`input:checked`)?.value;
@@ -19,6 +25,8 @@ export default class SurveyThumbs extends Component {
         id="thumbs-rating-up-{{@postId}}-{{@field.digest}}"
         name="thumbs-rating-{{@postId}}-{{@field.digest}}"
         class="thumbs-rating-input"
+        aria-label={{i18n "discourse_surveys.invitation.thumbs_up"}}
+        checked={{eq this.value "+1"}}
         value="+1"
         type="radio"
       />
@@ -33,6 +41,8 @@ export default class SurveyThumbs extends Component {
         id="thumbs-rating-down-{{@postId}}-{{@field.digest}}"
         name="thumbs-rating-{{@postId}}-{{@field.digest}}"
         class="thumbs-rating-input"
+        aria-label={{i18n "discourse_surveys.invitation.thumbs_down"}}
+        checked={{eq this.value "-1"}}
         value="-1"
         type="radio"
       />

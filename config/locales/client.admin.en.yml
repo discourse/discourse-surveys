@@ -1,0 +1,15 @@
+en:
+  admin_js:
+    discourse_surveys:
+      admin:
+        invitation:
+          heading: "Invitations"
+          "on": "Enabled"
+          "off": "Disabled"
+          edit: "Edit invitations for %{survey}"
+          enabled: "Enable invitations"
+          group: "Invite members of"
+          any_group: "Any group"
+          category: "Browsing category"
+          any_category: "Any category"
+          category_help: "When a category is selected, invitations appear only while browsing that exact category, not its subcategories."

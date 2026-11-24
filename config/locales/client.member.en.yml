@@ -1,0 +1,16 @@
+en:
+  js:
+    discourse_surveys:
+      invitation:
+        title: "Survey invitation"
+        description: "Would you like to take this optional survey?"
+        disclosure: "Your answers are linked to your account and included in the CSV export available to administrators."
+        start: "Take survey"
+        dismiss: "No thanks"
+        progress: "Question %{current} of %{total}"
+        back: "Back"
+        next: "Next"
+        skip: "Skip question"
+        finish: "Finish survey"
+        thumbs_up: "Thumbs up"
+        thumbs_down: "Thumbs down"

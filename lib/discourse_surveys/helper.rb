@@ -73,8 +73,9 @@ module DiscourseSurveys
         end
       end
 
-      def submit_response(post_id, survey_name, response, user)
-        Survey.transaction do
+      def submit_response(post_id, survey_name, response, user, via_invitation: false)
+        # Inline and invited responses share a check-and-insert, even across tabs.
+        user.with_lock do
           post = Post.find_by(id: post_id)
           guardian = user.guardian
           raise Discourse::InvalidAccess if !guardian.can_see_post?(post)
@@ -99,6 +100,9 @@ module DiscourseSurveys
             )
           unless survey
             raise StandardError.new I18n.t("survey.no_survey_with_this_name", name: survey_name)
+          end
+          if via_invitation && !InvitationDelivery.can_submit?(survey, user)
+            raise Discourse::InvalidAccess
           end
           if survey.has_responded?(user)
             raise StandardError.new I18n.t("survey.user_already_responded")

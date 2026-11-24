@@ -306,14 +306,23 @@ Administrators can manage surveys from the admin panel at **Admin → Plugins �
 - All survey field questions must be unique within a single survey
 - Survey field questions cannot be blank
 
+## Optional browsing invitations
+
+Surveys live in posts as before. To invite members to an existing survey, open **Admin → Plugins → Surveys → Export**, find the survey, and configure its invitation. Invitations start off. Optionally limit delivery to a group, an exact browsing category, or both. These settings control who gets a prompt, **not** who can answer in the post. They never grant access to the source post or topic.
+
+Eligible signed-in members see a dismissible invitation while browsing topics or topic lists. **Take survey** opens one question at a time. Members can go back without losing answers; only the final submission writes a response. The modal uses the same fields, validation, and results as the post. Answering either way counts once in the existing CSV. A member can receive at most one invitation per 24 hours across surveys and tabs; dismissing suppresses that survey for that member.
+
+Responses are **identified**, not anonymous. The existing CSV includes username, email, and answers from either surface. The submission endpoint filters response parameters from Rails request logs. Account anonymization or deletion erases that member’s survey responses and delivery history, including when Surveys is disabled. This does not rewrite prior exports, logs, or backups.
+
 ## Technical Details
 
 ### Database Schema
-The plugin creates four main database tables:
+The plugin stores survey definitions, answers and optional delivery history separately:
 - `surveys`: Main survey records
 - `survey_fields`: Individual fields within surveys
 - `survey_field_options`: Options for choice-based fields
-- `survey_responses`: User responses to survey fields
+- `survey_responses`: User responses to survey fields, shared by both interfaces
+- `survey_invitations`: Per-member claim and dismissal history; no answer content
 
 ### Styling
 The plugin includes responsive CSS that adapts to your theme. Custom styling can be added by targeting these CSS classes:

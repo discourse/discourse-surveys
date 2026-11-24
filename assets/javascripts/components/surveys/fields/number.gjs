@@ -30,20 +30,40 @@ export default class SurveyNumber extends Component {
     });
   }
 
+  @action
+  handleKey(choice, event) {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      this.toggle(choice);
+    }
+  }
+
+  @bind
+  isChosen(value) {
+    return this.args.response[this.args.field.digest] === value;
+  }
+
   @bind
   iconFor(value) {
-    const isChosen = this.args.response[this.args.field.digest] === value;
-
+    const isChosen = this.isChosen(value);
     return isChosen ? "far-circle-check" : "far-circle";
   }
 
   <template>
-    {{! template-lint-disable no-invalid-interactive }}
-    {{#each this.numbers as |value|}}
-      <li class="survey-field-number" {{on "click" (fn this.toggle value)}}>
-        {{icon (this.iconFor value)}}
-        <span>{{value}}</span>
-      </li>
-    {{/each}}
+    <ul>
+      {{#each this.numbers as |value|}}
+        <li
+          role="button"
+          tabindex="0"
+          aria-pressed={{if (this.isChosen value) "true" "false"}}
+          class="survey-field-number"
+          {{on "click" (fn this.toggle value)}}
+          {{on "keydown" (fn this.handleKey value)}}
+        >
+          {{icon (this.iconFor value)}}
+          <span>{{value}}</span>
+        </li>
+      {{/each}}
+    </ul>
   </template>
 }

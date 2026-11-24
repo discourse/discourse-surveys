@@ -10,6 +10,7 @@ class AdminSurveyListSerializer < ApplicationSerializer
              :topic_title,
              :topic_id,
              :field_count,
+             :invitation_config,
              :response_count
 
   def topic_title
