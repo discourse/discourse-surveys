@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Survey < ActiveRecord::Base
+  INVITATION_PLACEMENTS = %w[banner bottom_right].freeze
+
+  validates :invitation_placement, inclusion: { in: INVITATION_PLACEMENTS }
+
   belongs_to :post, -> { unscope(:where) }
   has_many :survey_fields, dependent: :destroy
   has_many :survey_responses, through: :survey_fields
@@ -10,6 +14,7 @@ class Survey < ActiveRecord::Base
   def invitation_config
     {
       enabled: invitation_enabled,
+      placement: invitation_placement,
       group_id: invitation_group_id,
       category_id: invitation_category_id,
     }
@@ -31,6 +36,7 @@ end
 #  id                     :bigint           not null, primary key
 #  active                 :boolean          default(TRUE), not null
 #  invitation_enabled     :boolean          default(FALSE), not null
+#  invitation_placement   :string           default("banner"), not null
 #  name                   :string           default("survey"), not null
 #  survey_number          :integer          default(1), not null
 #  title                  :text

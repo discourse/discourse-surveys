@@ -61,6 +61,10 @@ export default class SurveyInvitation extends Component {
     }
   }
 
+  get isCornerPrompt() {
+    return this.invitation?.placement === "bottom_right";
+  }
+
   @action
   async check(context) {
     if (this.#checked === context) {
@@ -113,10 +117,13 @@ export default class SurveyInvitation extends Component {
       {{#if this.invitation}}
         <aside
           aria-label={{i18n "discourse_surveys.invitation.title"}}
-          class="survey-invitation-banner"
+          class="survey-invitation-banner
+            {{if this.isCornerPrompt '--bottom-right'}}"
           ...attributes
         >
-          <strong>{{this.invitation.survey.title}}</strong>
+          {{#if this.invitation.survey.title}}
+            <strong>{{this.invitation.survey.title}}</strong>
+          {{/if}}
           {{i18n "discourse_surveys.invitation.description"}}
           <DButton
             class="btn-default survey-invitation-banner__start"

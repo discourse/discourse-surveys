@@ -308,7 +308,7 @@ Administrators can manage surveys from the admin panel at **Admin → Plugins �
 
 ## Optional browsing invitations
 
-Surveys live in posts as before. To invite members to an existing survey, open **Admin → Plugins → Surveys → Export**, find the survey, and configure its invitation. Invitations start off. Optionally limit delivery to a group, an exact browsing category, or both. These settings control who gets a prompt, **not** who can answer in the post. They never grant access to the source post or topic.
+Surveys live in posts as before. To invite members to an existing survey, open **Admin → Plugins → Surveys → Export**, find the survey, and configure its invitation. Invitations start off. Choose the default banner above the page content or a floating prompt in the bottom-right corner. Placement changes only the invitation, not the survey modal. Optionally limit delivery to a group, an exact browsing category, or both. These settings control who gets a prompt, **not** who can answer in the post. They never grant access to the source post or topic.
 
 Eligible signed-in members see a dismissible invitation while browsing topics or topic lists. **Take survey** opens one question at a time. Members can go back without losing answers; only the final submission writes a response. The modal uses the same fields, validation, and results as the post. Answering either way counts once in the existing CSV. A member can receive at most one invitation per 24 hours across surveys and tabs; dismissing suppresses that survey for that member.
 

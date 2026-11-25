@@ -25,6 +25,7 @@ RSpec.describe DiscourseSurveys::SurveyController do
       expect(claim).to eq(
         {
           "post_id" => source_post.id,
+          "placement" => "banner",
           "survey" =>
             SurveySerializer
               .new(survey, scope: user.guardian, root: false)
@@ -38,6 +39,13 @@ RSpec.describe DiscourseSurveys::SurveyController do
       expect(claim).to be_nil
       freeze_time(1.second.from_now)
       expect(claim).to be_present
+    end
+
+    it "returns the claimed survey's configured placement" do
+      survey.update!(invitation_placement: "bottom_right")
+      sign_in(user)
+
+      expect(claim).to include("post_id" => source_post.id, "placement" => "bottom_right")
     end
 
     it "requires both group membership and the exact browsing category" do

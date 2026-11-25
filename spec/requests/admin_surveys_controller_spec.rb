@@ -150,11 +150,17 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
 
     it "lists default, targeted, and cleared settings" do
       sign_in(admin)
-      defaults = { "enabled" => false, "group_id" => nil, "category_id" => nil }
+      defaults = {
+        "placement" => "banner",
+        "enabled" => false,
+        "group_id" => nil,
+        "category_id" => nil,
+      }
       get "/admin/plugins/discourse-surveys/surveys.json"
       expect(response.parsed_body["surveys"].first["invitation_config"]).to eq(defaults)
 
       targets = {
+        "placement" => "bottom_right",
         "enabled" => true,
         "group_id" => Fabricate(:group).id,
         "category_id" => Fabricate(:category).id,
@@ -162,9 +168,41 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
       [targets, defaults].each do |config|
         put path, params: config, as: :json
         expect(response.status).to eq(200)
+        expect(response.parsed_body["invitation_config"]).to eq(config)
         get "/admin/plugins/discourse-surveys/surveys.json"
         expect(response.parsed_body["surveys"].first["invitation_config"]).to eq(config)
       end
+    end
+
+    it "preserves settings omitted from placement-only and legacy updates" do
+      sign_in(admin)
+      targets = {
+        "enabled" => true,
+        "group_id" => Fabricate(:group).id,
+        "category_id" => Fabricate(:category).id,
+      }
+      put path, params: targets, as: :json
+      expect(response.status).to eq(200)
+
+      put path, params: { placement: "bottom_right" }, as: :json
+      expect(response.parsed_body.fetch("invitation_config")).to eq(
+        targets.merge("placement" => "bottom_right"),
+      )
+
+      put path, params: targets.merge("enabled" => false), as: :json
+      expect(response.parsed_body.fetch("invitation_config")).to eq(
+        targets.merge("enabled" => false, "placement" => "bottom_right"),
+      )
+    end
+
+    it "rejects invalid placements without applying other settings" do
+      sign_in(admin)
+      ["top_left", "", nil].each do |placement|
+        put path, params: { enabled: true, placement: placement }, as: :json
+        expect(response.status).to eq(400)
+      end
+      expect(survey.reload.invitation_enabled).to eq(false)
+      expect(survey.invitation_placement).to eq("banner")
     end
 
     it "rejects invalid targets and boolean values without enabling the invitation" do

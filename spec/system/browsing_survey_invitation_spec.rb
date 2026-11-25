@@ -17,9 +17,15 @@ RSpec.describe "Answering a survey while browsing" do
       [/survey]
     MD
     survey = Survey.find_by!(post: source)
-    survey.update!(invitation_enabled: true)
+    survey.update!(invitation_enabled: true, invitation_placement: "bottom_right")
     sign_in(member)
     visit "/latest"
+    expect(page).to have_css(
+      ".survey-invitation-banner.--bottom-right",
+      style: {
+        position: "fixed",
+      },
+    )
     click_button "Take survey"
     within(".d-modal") do
       expect(page).to have_text("Question 1 of 2")

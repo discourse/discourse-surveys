@@ -13,3 +13,6 @@ en:
           category: "Browsing category"
           any_category: "Any category"
           category_help: "When a category is selected, invitations appear only while browsing that exact category, not its subcategories."
+          placement: "Invitation placement"
+          banner: "Banner"
+          bottom_right: "Bottom right"

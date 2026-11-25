@@ -20,7 +20,11 @@ module DiscourseSurveys
       survey = InvitationDelivery.claim(current_user, category_id)
       invitation =
         if survey
-          { survey: serialize_data(survey, SurveySerializer, root: false), post_id: survey.post_id }
+          {
+            survey: serialize_data(survey, SurveySerializer, root: false),
+            post_id: survey.post_id,
+            placement: survey.invitation_placement,
+          }
         end
       render_json_dump(invitation: invitation)
     end

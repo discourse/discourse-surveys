@@ -19,12 +19,18 @@ export default class SurveyInvitationModal extends Component {
     return !this.saving;
   }
 
+  get formData() {
+    const config = this.args.model.survey.invitation_config;
+    return { ...config, placement: config?.placement ?? "banner" };
+  }
+
   @action
-  async save({ enabled, group_id, category_id }) {
+  async save({ enabled, group_id, category_id, placement }) {
     const config = {
       enabled: enabled ?? false,
       group_id: group_id == null ? null : Number(group_id),
       category_id: category_id ?? null,
+      placement,
     };
     this.saving = true;
     try {
@@ -56,7 +62,7 @@ export default class SurveyInvitationModal extends Component {
     >
       <:body>
         <Form
-          @data={{@model.survey.invitation_config}}
+          @data={{this.formData}}
           @commitOnSubmit={{false}}
           @onSubmit={{this.save}}
           as |form|
@@ -111,6 +117,21 @@ export default class SurveyInvitationModal extends Component {
                 }}
                 @value={{field.value}}
               />
+            </field.Control>
+          </form.Field>
+          <form.Field
+            @name="placement"
+            @title={{i18n "discourse_surveys.admin.invitation.placement"}}
+            @type="select"
+            as |field|
+          >
+            <field.Control @includeNone={{false}} as |select|>
+              <select.Option @value="banner">{{i18n
+                  "discourse_surveys.admin.invitation.banner"
+                }}</select.Option>
+              <select.Option @value="bottom_right">{{i18n
+                  "discourse_surveys.admin.invitation.bottom_right"
+                }}</select.Option>
             </field.Control>
           </form.Field>
           <form.Submit @label="save" />

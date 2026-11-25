@@ -30,7 +30,12 @@ module("Integration | Component | AdminSurveyList", function (hooks) {
       {
         id: 43,
         name: "Second",
-        invitation_config: { enabled: true, group_id: 50, category_id: 3 },
+        invitation_config: {
+          enabled: true,
+          group_id: 50,
+          category_id: 3,
+          placement: "bottom_right",
+        },
       },
     ];
     this.saves = [];
@@ -59,7 +64,12 @@ module("Integration | Component | AdminSurveyList", function (hooks) {
     await form.submit();
     assert.deepEqual(
       this.saves,
-      [["42", { enabled: true, group_id: 50, category_id: 3 }]],
+      [
+        [
+          "42",
+          { enabled: true, group_id: 50, category_id: 3, placement: "banner" },
+        ],
+      ],
       "saves typed filters for the selected survey"
     );
     assert
@@ -68,6 +78,41 @@ module("Integration | Component | AdminSurveyList", function (hooks) {
         i18n("discourse_surveys.admin.invitation.on"),
         "the list reflects the saved setting"
       );
+  });
+
+  test("restores invitation placement per survey", async function (assert) {
+    const placement = 'select[name="placement"]';
+    await click(second);
+    assert
+      .dom(placement)
+      .hasValue("bottom_right", "loads the configured placement");
+    const form = formKit(".d-modal form");
+    await form.field("placement").select("banner");
+    await form.submit();
+    await click(first);
+    assert
+      .dom(placement)
+      .hasValue("banner", "defaults to banner without a saved placement");
+    const firstForm = formKit(".d-modal form");
+    await firstForm.field("placement").select("bottom_right");
+    await firstForm.submit();
+    assert.deepEqual(
+      this.saves.map(([id, config]) => [id, config.placement]),
+      [
+        ["43", "banner"],
+        ["42", "bottom_right"],
+      ],
+      "saves each placement to its survey"
+    );
+    await click(first);
+    assert
+      .dom(placement)
+      .hasValue("bottom_right", "restores the first survey's selection");
+    await click(".d-modal .modal-close");
+    await click(second);
+    assert
+      .dom(placement)
+      .hasValue("banner", "keeps the second survey's selection");
   });
 
   test("closing the editor discards unsaved changes", async function (assert) {
@@ -97,7 +142,17 @@ module("Integration | Component | AdminSurveyList", function (hooks) {
     await form.submit();
     assert.deepEqual(
       this.saves,
-      [["43", { enabled: false, group_id: null, category_id: null }]],
+      [
+        [
+          "43",
+          {
+            enabled: false,
+            group_id: null,
+            category_id: null,
+            placement: "bottom_right",
+          },
+        ],
+      ],
       "sends explicit nulls to remove both restrictions"
     );
   });

@@ -207,4 +207,33 @@
   border: 1px solid var(--primary-low);
   border-radius: var(--d-border-radius);
   background: var(--secondary);
+
+  &.--bottom-right {
+    position: fixed;
+    z-index: z("header") - 1;
+    right: max(var(--space-3), env(safe-area-inset-right));
+    bottom: calc(
+      var(--space-3) + env(safe-area-inset-bottom) +
+        var(--footer-nav-height, 0px)
+    );
+    box-sizing: border-box;
+    width: min(
+      22rem,
+      calc(
+        100% - 2 *
+          var(--space-3) - env(safe-area-inset-left) - env(
+            safe-area-inset-right
+          )
+      )
+    );
+    max-height: 50dvh;
+    overflow: auto;
+    overflow-wrap: anywhere;
+    margin: 0;
+    box-shadow: var(--shadow-card);
+
+    strong {
+      flex-basis: 100%;
+    }
+  }
 }
