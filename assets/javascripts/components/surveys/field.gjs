@@ -1,3 +1,4 @@
+import { uniqueId } from "@ember/helper";
 import { trustHTML } from "@ember/template";
 import concatClass from "discourse/helpers/concat-class";
 import { i18n } from "discourse-i18n";
@@ -48,30 +49,35 @@ function configFor(field) {
 }
 
 <template>
-  <div
-    class={{concatClass "survey-field" @field.field_class}}
-    data-survey-field-id={{@field.digest}}
-  >
-    <span class="field-question">
-      <span>{{trustHTML @field.question}}</span>
-      {{#if @field.response_required}}
-        <span class="field-question__required" aria-hidden="true">*</span>
-        <span class="sr-only">
-          {{i18n "discourse_surveys.field_required"}}
-        </span>
-      {{/if}}
-    </span>
+  {{#let (uniqueId) as |questionId|}}
+    <div
+      role="group"
+      aria-labelledby={{questionId}}
+      class={{concatClass "survey-field" @field.field_class}}
+      data-survey-field-id={{@field.digest}}
+    >
+      <span id={{questionId}} class="field-question">
+        <span>{{trustHTML @field.question}}</span>
+        {{#if @field.response_required}}
+          <span class="field-question__required" aria-hidden="true">*</span>
+          <span class="sr-only">
+            {{i18n "discourse_surveys.field_required"}}
+          </span>
+        {{/if}}
+      </span>
 
-    {{#let (configFor @field) as |fieldConfig|}}
-      <div class="field-{{fieldConfig.name}}">
-        <fieldConfig.component
-          @postId={{@postId}}
-          @field={{@field}}
-          @toggleValue={{@toggleValue}}
-          @toggleOption={{@toggleOption}}
-          @response={{@response}}
-        />
-      </div>
-    {{/let}}
-  </div>
+      {{#let (configFor @field) as |fieldConfig|}}
+        <div class="field-{{fieldConfig.name}}">
+          <fieldConfig.component
+            @questionId={{questionId}}
+            @postId={{@postId}}
+            @field={{@field}}
+            @toggleValue={{@toggleValue}}
+            @toggleOption={{@toggleOption}}
+            @response={{@response}}
+          />
+        </div>
+      {{/let}}
+    </div>
+  {{/let}}
 </template>

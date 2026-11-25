@@ -131,6 +131,91 @@ RSpec.describe DiscourseSurveys::AdminSurveysController do
     end
   end
 
+  describe "#update_invitation" do
+    fab!(:survey) { Survey.create!(post: Fabricate(:post)) }
+    let(:path) { "/admin/plugins/discourse-surveys/surveys/#{survey.id}/invitation.json" }
+
+    it "restricts configuration to admins" do
+      sign_in(user)
+      put path, params: { enabled: true, group_id: nil, category_id: nil }, as: :json
+      expect(response.status).to eq(404)
+    end
+
+    it "denies moderators even though they match the staff route constraint" do
+      sign_in(Fabricate(:moderator))
+      put path, params: { enabled: true, group_id: nil, category_id: nil }, as: :json
+      expect(response.status).to eq(403)
+      expect(survey.reload.invitation_enabled).to eq(false)
+    end
+
+    it "lists default, targeted, and cleared settings" do
+      sign_in(admin)
+      defaults = {
+        "placement" => "banner",
+        "enabled" => false,
+        "group_id" => nil,
+        "category_id" => nil,
+      }
+      get "/admin/plugins/discourse-surveys/surveys.json"
+      expect(response.parsed_body["surveys"].first["invitation_config"]).to eq(defaults)
+
+      targets = {
+        "placement" => "bottom_right",
+        "enabled" => true,
+        "group_id" => Fabricate(:group).id,
+        "category_id" => Fabricate(:category).id,
+      }
+      [targets, defaults].each do |config|
+        put path, params: config, as: :json
+        expect(response.status).to eq(200)
+        expect(response.parsed_body["invitation_config"]).to eq(config)
+        get "/admin/plugins/discourse-surveys/surveys.json"
+        expect(response.parsed_body["surveys"].first["invitation_config"]).to eq(config)
+      end
+    end
+
+    it "preserves settings omitted from placement-only and legacy updates" do
+      sign_in(admin)
+      targets = {
+        "enabled" => true,
+        "group_id" => Fabricate(:group).id,
+        "category_id" => Fabricate(:category).id,
+      }
+      put path, params: targets, as: :json
+      expect(response.status).to eq(200)
+
+      put path, params: { placement: "bottom_right" }, as: :json
+      expect(response.parsed_body.fetch("invitation_config")).to eq(
+        targets.merge("placement" => "bottom_right"),
+      )
+
+      put path, params: targets.merge("enabled" => false), as: :json
+      expect(response.parsed_body.fetch("invitation_config")).to eq(
+        targets.merge("enabled" => false, "placement" => "bottom_right"),
+      )
+    end
+
+    it "rejects invalid placements without applying other settings" do
+      sign_in(admin)
+      ["top_left", "", nil].each do |placement|
+        put path, params: { enabled: true, placement: placement }, as: :json
+        expect(response.status).to eq(400)
+      end
+      expect(survey.reload.invitation_enabled).to eq(false)
+      expect(survey.invitation_placement).to eq("banner")
+    end
+
+    it "rejects invalid targets and boolean values without enabling the invitation" do
+      sign_in(admin)
+      config = { enabled: true, group_id: nil, category_id: nil }
+      [{ group_id: -999 }, { category_id: "invalid" }, { enabled: "yes" }].each do |invalid|
+        put path, params: config.merge(invalid), as: :json
+        expect(response.status).to eq(400)
+      end
+      expect(survey.reload.invitation_enabled).to eq(false)
+    end
+  end
+
   describe "#export_csv" do
     context "when not logged in" do
       it "returns 404" do

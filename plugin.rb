@@ -21,6 +21,7 @@ require_relative "lib/discourse_surveys/engine"
 add_admin_route("discourse_surveys.admin.title", "discourse-surveys", { use_new_show_route: true })
 
 after_initialize do
+  require_relative "lib/discourse_surveys/filter_survey_response"
   require_relative "app/controller/discourse_surveys/survey_controller"
   require_relative "app/controller/discourse_surveys/admin_surveys_controller"
   require_relative "app/models/survey"
@@ -34,6 +35,16 @@ after_initialize do
   require_relative "lib/discourse_surveys/survey_validator"
   require_relative "lib/discourse_surveys/post_extension"
   require_relative "lib/discourse_surveys/user_extension"
+
+  # Privacy cleanup must also run while surveys_enabled is off.
+  # rubocop:disable Discourse/Plugins/UsePluginInstanceOn
+  DiscourseEvent.on(:user_anonymized) do |user:, **|
+    user.with_lock do
+      SurveyResponse.where(user_id: user.id).delete_all
+      SurveyInvitation.where(user_id: user.id).delete_all
+    end
+  end
+  # rubocop:enable Discourse/Plugins/UsePluginInstanceOn
 
   reloadable_patch do
     Post.prepend(DiscourseSurveys::PostExtension)

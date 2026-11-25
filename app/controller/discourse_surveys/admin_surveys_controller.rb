@@ -45,6 +45,33 @@ module DiscourseSurveys
       render_json_dump(result)
     end
 
+    def update_invitation
+      survey = Survey.find(params[:id])
+      attributes = {}
+      if params.key?(:enabled)
+        enabled = params[:enabled]
+        raise Discourse::InvalidParameters.new(:enabled) if %w[true false].exclude?(enabled.to_s)
+        attributes[:invitation_enabled] = enabled
+      end
+      if params.key?(:placement)
+        placement = params[:placement]
+        if Survey::INVITATION_PLACEMENTS.exclude?(placement)
+          raise Discourse::InvalidParameters.new(:placement)
+        end
+        attributes[:invitation_placement] = placement
+      end
+      attributes[:invitation_group_id] = invitation_target_id(:group_id, Group) if params.key?(
+        :group_id,
+      )
+      attributes[:invitation_category_id] = invitation_target_id(
+        :category_id,
+        Category,
+      ) if params.key?(:category_id)
+
+      survey.update!(attributes)
+      render_json_dump(invitation_config: survey.invitation_config)
+    end
+
     def export_csv
       survey = Survey.find_by(id: params[:id])
       raise Discourse::NotFound unless survey
@@ -56,6 +83,17 @@ module DiscourseSurveys
                 filename: filename,
                 type: "text/csv; charset=utf-8",
                 disposition: "attachment"
+    end
+
+    private
+
+    def invitation_target_id(key, model)
+      value = params.fetch(key)
+      return if value.nil? || value == ""
+      unless value.to_s.match?(/\A\d+\z/) && model.exists?(id: value)
+        raise Discourse::InvalidParameters.new(key)
+      end
+      value
     end
   end
 end
